@@ -80,4 +80,11 @@ CREATE TABLE Reviews (
     FOREIGN KEY (AccommodationID) REFERENCES Accommodations(AccommodationID) ON DELETE CASCADE
 );
 
-
+-- Bảng Quản Lý Doanh Thu & Phí Dịch Vụ
+CREATE TABLE Revenue (
+    RevenueID INT AUTO_INCREMENT PRIMARY KEY,
+    OwnerID INT NOT NULL,
+    TotalRevenue DECIMAL(10,2) NOT NULL,
+    ManagementFee DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (OwnerID) REFERENCES Owners(OwnerID) ON DELETE CASCADE
+);
