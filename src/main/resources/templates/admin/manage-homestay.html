@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Homestay</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h1 class="text-center">Danh sách Homestay</h1>
+    <a href="/admin/homestays/add" class="btn btn-primary mb-3">Thêm Homestay</a>
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Tên</th>
+                <th>Hình ảnh</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="homestay : ${homestays}">
+                <td th:text="${homestay.id}"></td>
+                <td th:text="${homestay.name}"></td>
+                <td>
+                    <img th:if="${homestay.image}" th:src="@{/images/{img}(img=${homestay.image})}" class="img-thumbnail" width="100">
+                </td>
+                <td>
+                    <a th:href="@{/admin/homestays/add(id=${homestay.id})}" class="btn btn-warning btn-sm">Sửa</a>
+                    <a th:href="@{/admin/homestays/delete/{id}(id=${homestay.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Xác nhận xóa?')">Xóa</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
