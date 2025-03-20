@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/css/home.css"> <!-- Đường dẫn file CSS -->
+</head>
+<body>
+<!-- Thanh điều hướng -->
+<div class="navbar">
+    <div class="logo">
+        <a href="user/home">Homestay System</a> </div>
+    <div class="nav-links">
+    </div>
+    <div>
+        <a th:if="${#authentication == null}" th:href="@{/auth/login}">
+            <button class="btn btn-login">Đăng nhập</button>
+        </a>
+        <a th:if="${#authentication != null}" th:href="@{/auth/logout}">
+            <button class="btn btn-logout">Đăng xuất</button>
+        </a>
+    </div>
+</div>
+
+<!-- Nội dung trang Dashboard -->
+<div class="container">
+    <h2>Chào mừng đến Dashboard</h2>
+    <p th:text="${message} ?: 'Không có thông báo nào'"></p>
+</div>
+
+</body>
+</html>
