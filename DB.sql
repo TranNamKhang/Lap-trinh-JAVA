@@ -1,7 +1,7 @@
 CREATE DATABASE ChoTotTravel;
 USE ChoTotTravel;
 
--- Bảng Người Dùng (Guest & Customer)
+-- Người Dùng (Guest & Customer)
 CREATE TABLE Users (
     UserID INT AUTO_INCREMENT PRIMARY KEY,
     FullName VARCHAR(100) NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE Users (
     UserType ENUM('Guest', 'Customer') NOT NULL
 );
 
--- Bảng Chủ Homestay/Camping
+-- Chủ Homestay/Camping
 CREATE TABLE Owners (
     OwnerID INT AUTO_INCREMENT PRIMARY KEY,
     FullName VARCHAR(100) NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE Owners (
     PasswordHash VARCHAR(255) NOT NULL
 );
 
--- Bảng Homestay/Camping
+-- Homestay/Camping
 CREATE TABLE Accommodations (
     AccommodationID INT AUTO_INCREMENT PRIMARY KEY,
     OwnerID INT NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE Accommodations (
     FOREIGN KEY (OwnerID) REFERENCES Owners(OwnerID) ON DELETE CASCADE
 );
 
--- Bảng Dịch Vụ (Ăn uống, giải trí, v.v.)
+-- Dịch Vụ (Ăn uống, giải trí, v.v.)
 CREATE TABLE Services (
     ServiceID INT AUTO_INCREMENT PRIMARY KEY,
     AccommodationID INT NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE Services (
     FOREIGN KEY (AccommodationID) REFERENCES Accommodations(AccommodationID) ON DELETE CASCADE
 );
 
--- Bảng Đặt Chỗ
+-- Đặt Chỗ
 CREATE TABLE Bookings (
     BookingID INT AUTO_INCREMENT PRIMARY KEY,
     UserID INT NOT NULL,
@@ -57,7 +57,7 @@ CREATE TABLE Bookings (
     FOREIGN KEY (AccommodationID) REFERENCES Accommodations(AccommodationID) ON DELETE CASCADE
 );
 
--- Bảng Đặt Dịch Vụ
+-- Đặt Dịch Vụ
 CREATE TABLE BookingServices (
     BookingServiceID INT AUTO_INCREMENT PRIMARY KEY,
     BookingID INT NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE BookingServices (
     FOREIGN KEY (ServiceID) REFERENCES Services(ServiceID) ON DELETE CASCADE
 );
 
--- Bảng Đánh Giá & Phản Hồi
+-- Đánh Giá & Phản Hồi
 CREATE TABLE Reviews (
     ReviewID INT AUTO_INCREMENT PRIMARY KEY,
     UserID INT NOT NULL,
@@ -80,7 +80,7 @@ CREATE TABLE Reviews (
     FOREIGN KEY (AccommodationID) REFERENCES Accommodations(AccommodationID) ON DELETE CASCADE
 );
 
--- Bảng Quản Lý Doanh Thu & Phí Dịch Vụ
+-- Quản Lý Doanh Thu & Phí Dịch Vụ
 CREATE TABLE Revenue (
     RevenueID INT AUTO_INCREMENT PRIMARY KEY,
     OwnerID INT NOT NULL,
