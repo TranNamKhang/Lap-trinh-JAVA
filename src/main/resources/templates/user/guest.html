@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chỗ Tốt Travel - Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/guest.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="container">
+        <a class="brand" th:href="@{/user/home}">🏕 Chỗ Tốt Travel</a>
+        <ul class="nav-links">
+            <li><a th:href="@{/user/home}">Trang chủ</a></li>
+            <li><a th:href="@{/homestays}">Danh sách Homestays</a></li>
+            <li><a th:href="@{/about}">Giới thiệu</a></li>
+            <li><a th:href="@{/contact}">Liên hệ</a></li>
+            <li>
+                <a th:if="${#authentication == null}" class="btn-login" th:href="@{/auth/login}">Đăng nhập</a>
+                <a th:if="${#authentication != null}" class="btn-logout" th:href="@{/auth/logout}">Đăng xuất</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Main Container -->
+<div class="container main-content">
+    <div class="text-center">
+        <h2>🌿 Chào mừng đến với Chỗ Tốt Travel!</h2>
+        <p class="lead">Đặt chỗ homestay & camping tiện lợi, nhanh chóng.</p>
+    </div>
+
+    <!-- Hiển thị thông báo -->
+    <div th:if="${message}" class="alert">
+        <span th:text="${message}"></span>
+    </div>
+
+    <!-- Danh sách homestays -->
+    <h3 class="section-title">🏡 Danh sách Homestays</h3>
+    <div class="homestay-list">
+        <div class="homestay-card" th:each="homestay : ${homestays}">
+            <img th:src="@{${homestay.image}}" alt="Homestay Image">
+            <div class="homestay-info">
+                <h5 th:text="${homestay.name}">Tên Homestay</h5>
+                <p th:text="${homestay.description}">Mô tả ngắn...</p>
+                <a href="#" class="btn-detail">Chi tiết</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 Chỗ Tốt Travel. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>
