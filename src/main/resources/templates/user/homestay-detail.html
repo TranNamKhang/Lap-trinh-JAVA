@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết Homestay</title>
+    <link rel="stylesheet" th:href="@{/css/homestaydetail.css}">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <a class="brand" th:href="@{/user/guest}"> Chỗ Tốt Travel</a>
+                <ul class="nav-links">
+                    <li><a th:href="@{/user/home}">Trang chủ</a></li>
+                    <li><a th:href="@{/homestays}">Danh sách Homestays</a></li>
+                    <li><a th:href="@{/about}">Giới thiệu</a></li>
+                    <li><a th:href="@{/contact}">Liên hệ</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div class="content">
+        <div class="container">
+            <div class="homestay-details">
+                <div class="homestay-image">
+                    <img th:src="@{${homestay.image}}" alt="Homestay Image">
+                </div>
+                <div class="homestay-info">
+                    <h2 th:text="${homestay != null ? homestay.name : 'Chưa có tên'}">Tên Homestay</h2>
+                    <p><strong>Mô tả:</strong> <span th:text="${homestay != null ? homestay.description : 'Chưa có mô tả'}"></span></p>
+                    <p><strong>Giá:</strong> <span th:text="${homestay != null ? homestay.price : 'Đang cập nhật'}"></span> VND</p>
+                    <p><strong>Địa chỉ:</strong> <span th:text="${homestay != null ? homestay.address : 'Chưa có địa chỉ'}"></span></p>
+                    <!-- Nút Đặt ngay -->
+                    <a th:href="@{/user/book/{homestayId}(homestayId=${homestay.id})}" class="btn-book-now">Đặt ngay</a>    cái này ông Hùng làm
+                </div>
+            </div>
+        </div>
+    </div>
+                                                Thêm phần đánh giá và Bình luận nữa (này ông Khang làm)
+    <footer class="footer">
+        <p>&copy; 2025 Chỗ Tốt Travel. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>
