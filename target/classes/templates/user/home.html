@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chỗ Tốt Travel - Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <a class="brand" th:href="@{/user/guest}"> Chỗ Tốt Travel</a>
+                <ul class="nav-links">
+                    <li><a th:href="@{/user/home}">Trang chủ</a></li>
+                    <li><a th:href="@{/homestays}">Danh sách Homestays</a></li>
+                    <li><a th:href="@{/about}">Giới thiệu</a></li>
+                    <li><a th:href="@{/contact}">Liên hệ</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <section class="hero">
+            <div class="container text-center">
+                <h2>🌿 Chào mừng đến với Chỗ Tốt Travel!</h2>
+                <p class="lead">Đặt chỗ homestay & camping tiện lợi, nhanh chóng.</p>
+            </div>
+        </section>
+
+        <section class="homestays">
+            <div class="container">
+                <h3 class="section-title"> Danh sách Homestays</h3>
+                <div class="homestay-list">
+                    <div class="homestay-card" th:each="homestay : ${homestays}">
+                        <img th:src="@{${homestay.image}}" alt="Homestay Image">
+                        <div class="homestay-info">
+                            <h5 th:text="${homestay.name} ?: 'Chưa có tên'">Tên Homestay</h5>
+                            <p th:text="${homestay.description} ?: 'Chưa có mô tả'">Mô tả ngắn...</p>
+                            <a th:href="@{/user/homestays/{id}(id=${homestay.id})}" class="btn-detail">Chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <p>&copy; 2025 Chỗ Tốt Travel. All Rights Reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chỗ Tốt Travel - Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/guest.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="container">
+        <a class="brand" th:href="@{/user/guest}">🏕 Chỗ Tốt Travel</a>
+        <div class="nav-right">
+            <ul class="nav-links">
+                <li><a th:href="@{/user/home}">Trang chủ</a></li>
+                <li><a th:href="@{/homestays}">Danh sách Homestays</a></li>
+                <li><a th:href="@{/about}">Giới thiệu</a></li>
+                <li><a th:href="@{/contact}">Liên hệ</a></li>
+            </ul>
+            <div class="nav-auth">
+                <a th:if="${#authentication == null}" class="btn-login" th:href="@{/auth/login}">Đăng nhập</a>
+                <a th:if="${#authentication != null}" class="btn-logout" th:href="@{/auth/logout}">Đăng xuất</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Container -->
+<div class="container main-content">
+    <h3 class="section-title">Danh sách Homestays</h3>
+    <div class="homestay-list">
+        <div class="homestay-card" th:each="homestay : ${homestays}">
+            <img th:src="@{${homestay.image}}" alt="Homestay Image">
+            <div class="homestay-info">
+                <h5 th:text="${homestay.name}">Tên Homestay</h5>
+                <p th:text="${homestay.description}">Mô tả ngắn...</p>
+                <a href="#" class="btn-detail">Chi tiết</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 Chỗ Tốt Travel. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>
