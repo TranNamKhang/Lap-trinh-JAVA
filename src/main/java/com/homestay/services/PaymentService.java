@@ -19,5 +19,8 @@ public class PaymentService {
         return paymentRepository.findAll();
     }
 
-
+    // Lấy thông tin thanh toán theo ID
+    public Optional<Payment> getPaymentById(Long id) {
+        return paymentRepository.findById(id);
+    }
 }
