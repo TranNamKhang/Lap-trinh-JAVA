@@ -34,17 +34,32 @@
 
         <div class="mb-3">
             <label class="form-label">Giá tiền mỗi đêm:</label>
-            <input type="number" name="pricePerNight" th:value="${homestay.pricePerNight}" class="form-control" required/>
+            <input type="text" name="pricePerNight" class="form-control" required 
+                   th:value="${homestay.pricePerNight != null ? #numbers.formatDecimal(homestay.pricePerNight, 0, 'COMMA', 0, 'POINT') : ''}" 
+                   oninput="formatCurrency(this)"/>
         </div>
         
         <div class="mb-3">
             <label class="form-label">Hình ảnh:</label>
             <input type="file" name="imageFile" accept="image/*" class="form-control"/>
+            <div class="mt-2" th:if="${homestay.image}">
+                <img th:src="@{${homestay.image}}" alt="Homestay Image" width="150" class="border rounded">
+            </div>
         </div>
         
         <button type="submit" class="btn btn-success">Lưu</button>
         <a href="/admin/homestays" class="btn btn-secondary">Quay lại</a>
     </form>
 </div>
+
+<script>
+    function formatCurrency(input) {
+        let value = input.value.replace(/\D/g, '');
+        if (value) {
+            input.value = parseInt(value).toLocaleString('vi-VN') + ' VND';
+        }
+    }
+</script>
+
 </body>
 </html>

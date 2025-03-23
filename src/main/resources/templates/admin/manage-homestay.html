@@ -33,7 +33,7 @@
                 <td th:text="${homestay.address}"></td>
                 <td th:text="${homestay.location}"></td>
                 <td th:text="${homestay.description}"></td>
-                <td th:text="${homestay.pricePerNight} + ' VND'"></td>
+                <td th:text="${#numbers.formatDecimal(homestay.pricePerNight, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                 <td>
                     <img th:if="${homestay.image}" th:src="@{${homestay.image}}" alt="Homestay Image" width="100">
                 </td>

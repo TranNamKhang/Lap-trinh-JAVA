@@ -1,7 +1,10 @@
 package com.homestay.models;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 @Entity
 @Table(name = "homestays")
@@ -14,20 +17,22 @@ public class Homestay {
     private String address; // Địa chỉ
     private String location;
     private String description;
-    private double pricePerNight;
+
+    @Column(precision = 15, scale = 2) // Định dạng tiền tệ VNĐ
+    private BigDecimal pricePerNight;
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
 
-    @OneToMany(mappedBy = "homestay", cascade = CascadeType.ALL)
-    private List<Booking> bookings;
 
     private String image;
+    @Transient
+    private String formattedPrice;
 
     public Homestay() {}
 
-    public Homestay(Long id, String name, String address, String location, String description, double pricePerNight, User owner, List<Booking> bookings, String image) {
+    public Homestay(Long id, String name, String address, String location, String description, BigDecimal pricePerNight, User owner,  String image) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -35,8 +40,8 @@ public class Homestay {
         this.description = description;
         this.pricePerNight = pricePerNight;
         this.owner = owner;
-        this.bookings = bookings;
         this.image = image;
+        this.formattedPrice = formatPrice(pricePerNight);
     }
 
     public Long getId() {
@@ -79,12 +84,13 @@ public class Homestay {
         this.description = description;
     }
 
-    public double getPricePerNight() {
+    public BigDecimal getPricePerNight() {
         return pricePerNight;
     }
 
-    public void setPricePerNight(double pricePerNight) {
+    public void setPricePerNight(BigDecimal pricePerNight) {
         this.pricePerNight = pricePerNight;
+        this.formattedPrice = formatPrice(pricePerNight);
     }
 
     public User getOwner() {
@@ -95,14 +101,6 @@ public class Homestay {
         this.owner = owner;
     }
 
-    public List<Booking> getBookings() {
-        return bookings;
-    }
-
-    public void setBookings(List<Booking> bookings) {
-        this.bookings = bookings;
-    }
-
     public String getImage() {
         return image;
     }
@@ -111,10 +109,17 @@ public class Homestay {
         this.image = image;
     }
 
-    public Double getPrice() {
-        return this.pricePerNight;
+    public String getFormattedPrice() {
+        return formattedPrice;
     }
-    
 
-    
+    public void setFormattedPrice(String formattedPrice) {
+        this.formattedPrice = formattedPrice;
+    }
+
+    private String formatPrice(BigDecimal price) {
+        if (price == null) return "0 VNĐ";
+        NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+        return currencyFormat.format(price) + " VNĐ";
+    }
 }

@@ -6,6 +6,7 @@ C:\Users\tdanh\Documents\ChoTotTravel\src\main\java\com\homestay\models\User.jav
 C:\Users\tdanh\Documents\ChoTotTravel\src\main\java\com\homestay\security\UserDetailsServiceImpl.java
 C:\Users\tdanh\Documents\ChoTotTravel\src\main\java\com\homestay\controllers\AdminController.java
 C:\Users\tdanh\Documents\ChoTotTravel\src\main\java\com\homestay\models\Review.java
+C:\Users\tdanh\Documents\ChoTotTravel\src\main\java\com\homestay\controllers\PasswordChangeRequest.java
 C:\Users\tdanh\Documents\ChoTotTravel\src\main\java\com\homestay\controllers\UserController.java
 C:\Users\tdanh\Documents\ChoTotTravel\src\main\java\com\homestay\HomestayApplicationTests.java
 C:\Users\tdanh\Documents\ChoTotTravel\src\main\java\com\homestay\models\Role.java
@@ -14,8 +15,10 @@ C:\Users\tdanh\Documents\ChoTotTravel\src\main\java\com\homestay\controllers\Hom
 C:\Users\tdanh\Documents\ChoTotTravel\src\main\java\com\homestay\security\SecurityConfig.java
 C:\Users\tdanh\Documents\ChoTotTravel\src\main\java\com\homestay\controllers\GuestController.java
 C:\Users\tdanh\Documents\ChoTotTravel\src\main\java\com\homestay\models\Payment.java
+C:\Users\tdanh\Documents\ChoTotTravel\src\main\java\com\homestay\models\PasswordChangeRequest.java
 C:\Users\tdanh\Documents\ChoTotTravel\src\main\java\com\homestay\security\WebConfig.java
 C:\Users\tdanh\Documents\ChoTotTravel\src\main\java\com\homestay\services\HomestayService.java
+C:\Users\tdanh\Documents\ChoTotTravel\src\main\java\com\homestay\controllers\ProfileController.java
 C:\Users\tdanh\Documents\ChoTotTravel\src\main\java\com\homestay\models\Homestay.java
 C:\Users\tdanh\Documents\ChoTotTravel\src\main\java\com\homestay\services\UserService.java
 C:\Users\tdanh\Documents\ChoTotTravel\src\main\java\com\homestay\controllers\AuthController.java

@@ -5,6 +5,7 @@ import com.homestay.models.User;
 import com.homestay.services.HomestayService;
 import com.homestay.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,8 +13,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+import java.text.NumberFormat;
 import java.util.Optional;
 
+@PreAuthorize("hasAuthority('ROLE_ADMIN')") // Bảo vệ tất cả API trong AdminController
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -69,10 +74,14 @@ public class AdminController {
         return "redirect:/admin/users";
     }
 
-    // Quản lý Homestay
-    @GetMapping("/homestays")
+     @GetMapping("/homestays")
     public String listHomestays(Model model) {
-        model.addAttribute("homestays", homestayService.getAllHomestays());
+        List<Homestay> homestays = homestayService.getAllHomestays();
+        NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+
+        homestays.forEach(h -> h.setFormattedPrice(currencyFormat.format(h.getPricePerNight()) + " VNĐ"));
+
+        model.addAttribute("homestays", homestays);
         return "admin/manage-homestay";
     }
 
