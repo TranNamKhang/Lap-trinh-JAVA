@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỉnh sửa hồ sơ</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Chỉnh sửa hồ sơ</h2>
+
+        <!-- Form cập nhật thông tin -->
+        <form th:action="@{/profile/update}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="id" th:value="${user.id}">
+
+            <label for="username">Tên đăng nhập:</label>
+            <input type="text" id="username" name="username" th:value="${user.username}" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" th:value="${user.email}" required>
+
+            <label for="phone">Số điện thoại:</label>
+            <input type="text" id="phone" name="phone" th:value="${user.phone}" required>
+
+            <label for="avatar">Ảnh đại diện:</label>
+            <input type="file" id="avatar" name="avatar">
+            <img th:src="@{${user.avatar}}" alt="Ảnh đại diện" width="100">
+
+            <button type="submit">Lưu thay đổi</button>
+        </form>
+
+        <h3>Đổi mật khẩu</h3>
+        <!-- Form đổi mật khẩu -->
+        <form th:action="@{/profile/change-password}" method="post">
+            <label for="oldPassword">Mật khẩu cũ:</label>
+            <input type="password" id="oldPassword" name="oldPassword" required>
+
+            <label for="newPassword">Mật khẩu mới:</label>
+            <input type="password" id="newPassword" name="newPassword" required>
+
+            <button type="submit">Đổi mật khẩu</button>
+        </form>
+
+        <a th:href="@{/profile}">Quay lại hồ sơ</a>
+    </div>
+</body>
+</html>

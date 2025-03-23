@@ -1,0 +1,87 @@
+/* Định dạng tổng thể */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* Container chính */
+.container {
+    max-width: 900px;
+    margin: 50px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Tiêu đề */
+h2 {
+    font-size: 28px;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+/* Gạch chân cho tiêu đề */
+h2::after {
+    content: "";
+    width: 80px;
+    height: 3px;
+    background: #27ae60;
+    display: block;
+    margin: 10px auto 0;
+    border-radius: 2px;
+}
+
+/* Phần mô tả */
+p {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* Danh sách dịch vụ */
+ul {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+}
+
+ul li {
+    font-size: 18px;
+    padding: 12px 15px;
+    background: #ecf0f1;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+ul li:hover {
+    background: #27ae60;
+    color: white;
+    transform: translateX(5px);
+}
+
+/* Biểu tượng trước mỗi dịch vụ */
+ul li::before {
+    content: "✅";
+    margin-right: 10px;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 15px;
+    background: #2c3e50;
+    color: white;
+    margin-top: 30px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}

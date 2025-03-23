@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Người dùng</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+<div class="container">
+    <h1>Danh sách Người dùng</h1>
+
+    <!-- Hiển thị thông báo nếu không có người dùng -->
+    <div th:if="${#lists.isEmpty(users)}">
+        <p>Không có người dùng nào.</p>
+    </div>
+
+    <!-- Table hiển thị người dùng -->
+    <table class="table" th:if="${!#lists.isEmpty(users)}">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên</th>
+            <th>Email</th>
+            <th>Số điện thoại</th>
+            <th>Role</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.username}"></td>
+            <td th:text="${user.email}"></td>
+            <td th:text="${user.phone}"></td>
+            <td th:text="${user.role}"></td>
+            <td>
+                <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="btn-edit">Chỉnh sửa</a>
+                <a th:href="@{/admin/users/delete/{id}(id=${user.id})}"
+                   onclick="return confirm('Bạn có chắc chắn muốn xóa?')" class="btn-delete">Xóa</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a href="/admin" class="btn-back">Quay lại Dashboard</a>
+</div>
+</body>
+</html>
