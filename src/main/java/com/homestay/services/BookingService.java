@@ -10,18 +10,5 @@ import java.util.Optional;
 
 @Service
 public class BookingService {
-    @Autowired
-    private BookingRepository bookingRepository;
-
-    public List<Booking> getBookingsByUserId(Long userId) {
-        return bookingRepository.findByUserId(userId);
-    }
-
-    public Optional<Booking> getBookingById(Long id) {
-        return bookingRepository.findById(id);
-    }
-
-    public Booking createBooking(Booking booking) {
-        return bookingRepository.save(booking);
-    }
+  
 }
