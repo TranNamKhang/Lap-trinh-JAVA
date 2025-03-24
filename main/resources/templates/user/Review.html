@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đánh giá Homestay</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 50%;
+            text-align: center;
+        }
+        h2, h3 {
+            color: #333;
+        }
+        #review-list {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            margin-top: 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Đánh giá Homestay</h2>
+
+    <div id="review-list">
+        <h3>Danh sách đánh giá</h3>
+        <!-- Danh sách đánh giá sẽ được hiển thị tại đây -->
+    </div>
+
+    <h3>Gửi đánh giá của bạn</h3>
+    <form id="review-form">
+        <label for="customerName">Tên của bạn:</label>
+        <input type="text" id="customerName" placeholder="Nhập tên của bạn" required>
+
+        <label for="rating">Chọn số sao:</label>
+        <select id="rating" required>
+            <option value="5">⭐⭐⭐⭐⭐ - Tuyệt vời</option>
+            <option value="4">⭐⭐⭐⭐ - Tốt</option>
+            <option value="3">⭐⭐⭐ - Bình thường</option>
+            <option value="2">⭐⭐ - Không tốt</option>
+            <option value="1">⭐ - Rất tệ</option>
+        </select>
+
+        <label for="comment">Nội dung đánh giá:</label>
+        <textarea id="comment" rows="4" placeholder="Nhập nội dung đánh giá..." required></textarea>
+
+        <button type="submit">Gửi đánh giá</button>
+    </form>
+</div>
+
+<script src="/static/js/review.js"></script>
+</body>
+</html>
