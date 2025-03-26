@@ -1,27 +1,48 @@
 package com.homestay.models;
 
 import jakarta.persistence.*;
-import lombok.*;
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "payments")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class Payment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "booking_id")
-    private Booking booking;
-
+    private String customerName;
     private double amount;
-    private String paymentMethod;
-    private String transactionId;
-    private LocalDateTime paymentDate;
-    private String status;
+    private String status; // Pending, Confirmed, Canceled
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }
