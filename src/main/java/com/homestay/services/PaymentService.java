@@ -11,6 +11,7 @@ import java.util.Optional;
 @Service
 public class PaymentService {
 
+
     @Autowired
     private PaymentRepository paymentRepository;
 
@@ -22,5 +23,22 @@ public class PaymentService {
     // Lấy thông tin thanh toán theo ID
     public Optional<Payment> getPaymentById(Long id) {
         return paymentRepository.findById(id);
+    }
+
+    // Tạo thanh toán mới
+    public Payment createPayment(Payment payment) {
+        payment.setStatus("Pending"); // Mặc định trạng thái là "Pending"
+        return paymentRepository.save(payment);
+    }
+
+    // Cập nhật trạng thái thanh toán
+    public Payment updatePaymentStatus(Long id, String status) {
+        Optional<Payment> optionalPayment = paymentRepository.findById(id);
+        if (optionalPayment.isPresent()) {
+            Payment payment = optionalPayment.get();
+            payment.setStatus(status);
+            return paymentRepository.save(payment);
+        }
+        return null;
     }
 }
