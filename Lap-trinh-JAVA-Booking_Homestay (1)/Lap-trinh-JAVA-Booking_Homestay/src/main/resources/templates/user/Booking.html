@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đặt Chỗ</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<h1>Danh Sách Homestay</h1>
+<table>
+    <tr>
+        <th>Tên</th>
+        <th>Vị Trí</th>
+        <th>Giá</th>
+        <th>Hành Động</th>
+    </tr>
+    <tr th:each="homestay : ${homestays}">
+        <td th:text="${homestay.name}"></td>
+        <td th:text="${homestay.location}"></td>
+        <td th:text="${homestay.price} + ' VND'"></td>
+        <td>
+            <button th:attr="onclick='openBookingForm(' + ${homestay.id} + ')'"><b>Đặt Ngay</b></button>
+        </td>
+    </tr>
+</table>
+
+<!-- Form Đặt Chỗ -->
+<div id="booking-form" style="display: none;">
+    <h2>Đặt Chỗ</h2>
+    <form th:action="@{/bookings}" method="post">
+        <input type="hidden" name="homestayId" id="homestayId">
+        <label>Ngày Nhận Phòng:</label>
+        <input type="date" name="checkIn" required>
+        <label>Ngày Trả Phòng:</label>
+        <input type="date" name="checkOut" required>
+        <label>Số Lượng Khách:</label>
+        <input type="number" name="numberOfGuests" min="1" required>
+        <label>Phương Thức Thanh Toán:</label>
+        <select name="paymentMethod">
+            <option value="credit_card">Thẻ Tín Dụng</option>
+            <option value="paypal">PayPal</option>
+            <option value="cash">Tiền Mặt</option>
+        </select>
+        <button type="submit">Xác Nhận Đặt Chỗ</button>
+    </form>
+    <button onclick="closeBookingForm()">Đóng</button>
+</div>
+
+<script>
+    function openBookingForm(homestayId) {
+        document.getElementById('homestayId').value = homestayId;
+        document.getElementById('booking-form').style.display = 'block';
+    }
+    function closeBookingForm() {
+        document.getElementById('booking-form').style.display = 'none';
+    }
+</script>
+</body>
+</html>
