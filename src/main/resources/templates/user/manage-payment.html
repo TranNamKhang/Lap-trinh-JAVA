@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Thanh Toán</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+  <h1>Quản Lý Thanh Toán</h1>
+  <table>
+    <thead>
+    <tr>
+      <th>Mã Giao Dịch</th>
+      <th>Mã Đặt Chỗ</th>
+      <th>Ngày Thanh Toán</th>
+      <th>Số Tiền</th>
+      <th>Trạng Thái</th>
+      <th>Hành Động</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="payment : ${payments}">
+      <td th:text="${payment.transactionId}"></td>
+      <td th:text="${payment.bookingId}"></td>
+      <td th:text="${payment.date}"></td>
+      <td th:text="${payment.amount}"></td>
+      <td th:text="${payment.status}"></td>
+      <td>
+        <form th:action="@{/admin/payment/confirm}" method="post">
+          <input type="hidden" name="transactionId" th:value="${payment.transactionId}">
+          <button type="submit" class="btn-confirm" th:disabled="${payment.status != 'Đang Chờ'}">Xác Nhận</button>
+        </form>
+        <form th:action="@{/admin/payment/cancel}" method="post">
+          <input type="hidden" name="transactionId" th:value="${payment.transactionId}">
+          <button type="submit" class="btn-cancel" th:disabled="${payment.status != 'Đang Chờ'}">Hủy</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh Toán</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+    <h1>Thông Tin Thanh Toán</h1>
+    <div class="booking-info">
+        <h2>Thông Tin Đặt Chỗ</h2>
+        <p><strong>Mã Đặt Chỗ:</strong> <span th:text="${booking.id}"></span></p>
+        <p><strong>Tên Khách Hàng:</strong> <span th:text="${booking.customerName}"></span></p>
+        <p><strong>Tổng Số Tiền:</strong> <span th:text="${booking.totalAmount}"></span></p>
+    </div>
+
+    <div class="payment-method">
+        <h2>Thông Tin Chuyển Khoản</h2>
+        <p><strong>Ngân Hàng:</strong> <span th:text="${payment.bankName}"></span></p>
+        <p><strong>Số Tài Khoản:</strong> <span th:text="${payment.accountNumber}"></span></p>
+        <p><strong>Chủ Tài Khoản:</strong> <span th:text="${payment.accountHolder}"></span></p>
+        <p>Vui lòng ghi rõ mã đặt chỗ trong nội dung chuyển khoản.</p>
+    </div>
+
+    <div class="confirm-payment">
+        <form th:action="@{/payment/confirm}" method="post">
+            <input type="hidden" name="bookingId" th:value="${booking.id}">
+            <button type="submit" class="btn-confirm">Xác Nhận Đã Thanh Toán</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

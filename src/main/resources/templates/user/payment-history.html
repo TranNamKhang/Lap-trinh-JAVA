@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch Sử Thanh Toán</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+    <h1>Lịch Sử Thanh Toán</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>Mã Giao Dịch</th>
+            <th>Ngày Thanh Toán</th>
+            <th>Số Tiền</th>
+            <th>Trạng Thái</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="payment : ${paymentHistory}">
+            <td th:text="${payment.transactionId}"></td>
+            <td th:text="${payment.date}"></td>
+            <td th:text="${payment.amount}"></td>
+            <td th:text="${payment.status}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
