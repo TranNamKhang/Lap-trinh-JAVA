@@ -4,8 +4,19 @@
     <meta charset="UTF-8">
     <title>Đặt phòng Homestay</title>
     <link rel="stylesheet" th:href="@{/css/booking.css}">
+    <script>
+        function setMinDate() {
+            const today = new Date();
+            const dd = String(today.getDate()).padStart(2, '0');
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); 
+            const yyyy = today.getFullYear();
+            const minDate = yyyy + '-' + mm + '-' + dd; 
+            document.getElementById('checkIn').setAttribute('min', minDate);
+            document.getElementById('checkOut').setAttribute('min', minDate);
+        }
+    </script>
 </head>
-<body>
+<body onload="setMinDate()">
     <header>
         <nav class="navbar">
             <div class="container">

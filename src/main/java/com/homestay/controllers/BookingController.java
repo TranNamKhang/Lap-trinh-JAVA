@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Controller
@@ -35,7 +36,7 @@ public class BookingController {
             return "redirect:/login";
         }
         User user = userOptional.get();
-        model.addAttribute("bookings", bookingService.getBookingsByUser(user.getId()));
+        model.addAttribute("bookings", bookingService.getBookingsByUser (user.getId()));
         return "user/booking/list";
     }
 
@@ -54,7 +55,7 @@ public class BookingController {
         }
 
         Booking booking = new Booking();
-        booking.setUser(user);
+        booking.setUser (user);
         booking.setHomestay(homestay.get());
 
         model.addAttribute("booking", booking);
@@ -64,13 +65,25 @@ public class BookingController {
 
     @PostMapping
     public String createBooking(@ModelAttribute Booking booking,
-                                @AuthenticationPrincipal UserDetails userDetails) {
+                                @AuthenticationPrincipal UserDetails userDetails, Model model) {
         Optional<User> userOptional = userService.getUsername(userDetails.getUsername());
         if (userOptional.isEmpty()) {
             return "redirect:/login";
         }
         User user = userOptional.get();
-        booking.setUser(user);
+        booking.setUser (user);
+
+        LocalDate today = LocalDate.now();
+        if (booking.getCheckIn().isBefore(today)) {
+            model.addAttribute("error", "Ngày nhận phòng không được trước ngày hôm nay.");
+            return "user/booking/form"; 
+        }
+
+        if (booking.getCheckOut().isBefore(booking.getCheckIn())) {
+            model.addAttribute("error", "Ngày trả phòng phải sau ngày nhận phòng.");
+            return "user/booking/form"; 
+        }
+
         bookingService.createBooking(booking);
         return "redirect:/user/booking";
     }
@@ -88,7 +101,7 @@ public class BookingController {
         if (bookingOptional.isPresent()) {
             Booking booking = bookingOptional.get();
             
-            if (booking.getUser() != null && booking.getUser().getId().equals(user.getId())) {
+            if (booking.getUser () != null && booking.getUser ().getId().equals(user.getId())) {
                 bookingService.cancelBooking(id);
             }
         }
