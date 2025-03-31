@@ -29,7 +29,6 @@ public class AdminController {
         return "admin/dashboard";
     }
 
-    // Quản lý người dùng
     @GetMapping("/users")
     public String listUsers(Model model) {
         model.addAttribute("users", userService.getAllUsers());

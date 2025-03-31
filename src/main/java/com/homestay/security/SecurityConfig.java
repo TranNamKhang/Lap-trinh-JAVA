@@ -51,7 +51,8 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .requestMatchers("/css/**", "/js/**", "/image/**", "/uploads/images/**", "/uploads/avatars/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/user/**", "/user/profile/**", "/user/update-profile/**").authenticated()
-            )
+                .requestMatchers("/user/bookings/**", "/user/booking/**", "/user/form/**").hasRole("USER")
+                )
             .formLogin(login -> login
                 .loginPage("/auth/login")
                 .successHandler(new CustomAuthenticationSuccessHandler())
