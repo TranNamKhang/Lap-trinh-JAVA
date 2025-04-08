@@ -24,6 +24,7 @@ public class AdminController {
     @Autowired
     private HomestayService homestayService;
 
+
     @GetMapping
     public String adminDashboard() {
         return "admin/dashboard";
@@ -68,13 +69,6 @@ public class AdminController {
         return "redirect:/admin/users";
     }
 
-    // Quản lý Homestay
-    @GetMapping("/homestays")
-    public String listHomestays(Model model) {
-        model.addAttribute("homestays", homestayService.getAllHomestays());
-        return "admin/manage-homestay";
-    }
-
     @GetMapping("/homestays/add")
     public String showAddHomestayForm(@RequestParam(value = "id", required = false) Long id, Model model) {
         model.addAttribute("homestay", id != null ? 
@@ -84,7 +78,7 @@ public class AdminController {
     }
 
     @PostMapping("/homestays/save")
-    public String saveHomestay(@ModelAttribute Homestay homestay,
+    public String saveHomestay(@ModelAttribute Homestay homestay, 
                                @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                RedirectAttributes redirectAttributes) {
         try {
@@ -99,7 +93,7 @@ public class AdminController {
             } else if (homestay.getId() != null) {
                 homestayService.getHomestayById(homestay.getId()).ifPresent(h -> homestay.setImage(h.getImage()));
             }
-
+    
             homestayService.createHomestay(homestay);
             redirectAttributes.addFlashAttribute("successMessage", "Đã lưu homestay thành công!");
         } catch (IOException e) {
@@ -107,7 +101,7 @@ public class AdminController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi không xác định: " + e.getMessage());
         }
-
+    
         return "redirect:/admin/homestays";
     }
 
@@ -120,5 +114,11 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("successMessage", "Đã xóa homestay!");
         }
         return "redirect:/admin/homestays";
+    }
+
+    @GetMapping("/homestays")
+    public String listHomestays(Model model) {
+        model.addAttribute("homestays", homestayService.getAllHomestays());
+        return "admin/manage-homestay";
     }
 }

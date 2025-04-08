@@ -16,39 +16,15 @@
             <label class="form-label">Tên:</label>
             <input type="text" name="name" th:value="${homestay.name}" class="form-control" required/>
         </div>
-
-        <div class="mb-3">
-            <label class="form-label">Địa chỉ:</label>
-            <input type="text" name="address" th:value="${homestay.address}" class="form-control" required/>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Vị trí:</label>
-            <input type="text" name="location" th:value="${homestay.location}" class="form-control"/>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Mô tả:</label>
-            <textarea name="description" class="form-control" required th:text="${homestay.description}"></textarea>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Giá tiền mỗi đêm:</label>
-            <input type="number" name="pricePerNight" class="form-control" required th:value="${homestay.pricePerNight}" />
-        </div>
         
         <div class="mb-3">
             <label class="form-label">Hình ảnh:</label>
             <input type="file" name="imageFile" accept="image/*" class="form-control"/>
-            <div class="mt-2" th:if="${homestay.image}">
-                <img th:src="@{${homestay.image}}" alt="Homestay Image" width="150" class="border rounded">
-            </div>
         </div>
         
         <button type="submit" class="btn btn-success">Lưu</button>
         <a href="/admin/homestays" class="btn btn-secondary">Quay lại</a>
     </form>
 </div>
-
 </body>
 </html>
