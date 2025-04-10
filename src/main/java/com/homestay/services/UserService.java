@@ -6,9 +6,16 @@ import com.homestay.repositories.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +25,10 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    // Đọc giá trị đường dẫn từ application.properties hoặc có thể hardcode ở đây
+    @Value("${upload.avatar.dir:C:/Users/tdanh/Documents/chotottravel/uploads/avatars/}")
+    private String uploadDir;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -31,14 +42,13 @@ public class UserService {
         if (existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("Email đã tồn tại!");
         }
-        if (existsByPhone(user.getPhone())) {  // Kiểm tra số điện thoại
+        if (existsByPhone(user.getPhone())) {
             throw new IllegalArgumentException("Số điện thoại đã tồn tại!");
         }
 
         validateUser(user);
-        user.setPassword(passwordEncoder.encode(user.getPassword())); 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        // Đặt role mặc định nếu chưa có
         if (user.getRole() == null) {
             user.setRole(Role.USER);
         }
@@ -54,17 +64,14 @@ public class UserService {
     }
 
     public Optional<User> findById(Long id) {
-        logger.info("📌 Tìm người dùng với ID: {}", id);
         return userRepository.findById(id);
     }
 
     public Optional<User> getUserByEmail(String email) {
-        logger.info("📌 Tìm người dùng với email: {}", email);
         return userRepository.findByEmail(email);
     }
 
-    public Optional<User> getUserByUsername(String username) {
-        logger.info("📌 Tìm người dùng với username: {}", username);
+    public Optional<User> getUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
@@ -72,23 +79,24 @@ public class UserService {
         return userRepository.findById(id).map(user -> {
             logger.info("🔄 Cập nhật thông tin người dùng ID: {}", id);
 
-            // Cập nhật các trường thông tin
-            user.setUsername(updatedUser.getUsername());
-            user.setEmail(updatedUser.getEmail());
-            user.setPhone(updatedUser.getPhone());
-
+            if (updatedUser.getUsername() != null && !updatedUser.getUsername().isEmpty()) {
+                user.setUsername(updatedUser.getUsername());
+            }
+            if (updatedUser.getEmail() != null && !updatedUser.getEmail().isEmpty()) {
+                user.setEmail(updatedUser.getEmail());
+            }
+            if (updatedUser.getPhone() != null && !updatedUser.getPhone().isEmpty()) {
+                user.setPhone(updatedUser.getPhone());
+            }
             if (updatedUser.getRole() != null) {
                 user.setRole(updatedUser.getRole());
             }
 
             return userRepository.save(user);
-        }).orElseThrow(() -> {
-            logger.error("❌ Không tìm thấy người dùng ID: {}", id);
-            return new IllegalArgumentException("Không tìm thấy người dùng!");
-        });
+        }).orElseThrow(() -> new IllegalArgumentException("Không tìm thấy người dùng!"));
     }
 
-        public void updatePassword(Long id, String newPassword) {
+    public void updatePassword(Long id, String newPassword) {
         userRepository.findById(id).ifPresent(user -> {
             user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(user);
@@ -96,9 +104,12 @@ public class UserService {
         });
     }
 
+    public User save(User user) {
+        return userRepository.save(user);
+    }
+
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
-            logger.error("❌ Không tìm thấy người dùng ID: {}", id);
             throw new IllegalArgumentException("Người dùng không tồn tại!");
         }
         userRepository.deleteById(id);
@@ -111,8 +122,6 @@ public class UserService {
             User user = new User("admin", passwordEncoder.encode("123"), "tdanh589@gmail.com", "0123456789", Role.ADMIN);
             userRepository.save(user);
             logger.info("✅ Tài khoản admin tạo thành công!");
-        } else {
-            logger.info("⚠️ Tài khoản admin đã tồn tại!");
         }
     }
 
@@ -125,15 +134,31 @@ public class UserService {
     }
 
     public boolean existsByPhone(String phone) {
-        return userRepository.existsByPhone(phone);  
+        return userRepository.existsByPhone(phone);
     }
 
     private void validateUser(User user) {
-        if (user.getUsername().length() < 3 || user.getUsername().length() > 20) {
-            throw new IllegalArgumentException("Tên đăng nhập phải có từ 3 đến 20 ký tự!");
+        if (user.getPassword().length() < 8) {
+            throw new IllegalArgumentException("Mật khẩu quá ngắn! Ít nhất 8 ký tự.");
         }
-        if (!user.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-            throw new IllegalArgumentException("Email không hợp lệ!");
+    }
+
+    // Phương thức lưu ảnh avatar
+    public String saveImage(MultipartFile file) throws IOException {
+        // Lấy tên file và đặt tên mới
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        Path filePath = Paths.get(uploadDir, fileName);
+        
+        // Kiểm tra nếu thư mục upload không tồn tại thì tạo mới
+        File uploadDirPath = new File(uploadDir);
+        if (!uploadDirPath.exists()) {
+            uploadDirPath.mkdirs();
         }
+
+        // Lưu file vào thư mục
+        Files.copy(file.getInputStream(), filePath);
+
+        // Trả về đường dẫn tương đối để lưu trong cơ sở dữ liệu
+        return "/uploads/avatars/" + fileName;
     }
 }

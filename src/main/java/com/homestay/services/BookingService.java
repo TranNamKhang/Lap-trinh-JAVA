@@ -2,55 +2,53 @@ package com.homestay.services;
 
 import com.homestay.models.Booking;
 import com.homestay.repositories.BookingRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class BookingService {
 
-    @Autowired
-    private BookingRepository bookingRepository;
+    private final BookingRepository bookingRepository;
 
-    // Lấy danh sách tất cả các booking
-    public List<Booking> getAllBookings() {
-        return bookingRepository.findAll();
+    public BookingService(BookingRepository bookingRepository) {
+        this.bookingRepository = bookingRepository;
     }
 
-    // Lấy booking theo ID
+    // Lấy danh sách đặt phòng của người dùng
+    public List<Booking> getBookingsByUser (Long userId) {
+        return bookingRepository.findByUserId(userId);
+    }
+
+    // Lấy thông tin đặt phòng theo ID
     public Optional<Booking> getBookingById(Long id) {
         return bookingRepository.findById(id);
     }
 
-    // Tạo booking mới
+    // Tạo đặt phòng mới
     public Booking createBooking(Booking booking) {
+        booking.setStatus(Booking.BookingStatus.PENDING);
+        booking.setBookingDate(LocalDateTime.now());
         return bookingRepository.save(booking);
     }
 
-    // Cập nhật booking
-    public Booking updateBooking(Long id, Booking bookingDetails) {
-        return bookingRepository.findById(id).map(booking -> {
-            booking.setCheckIn(bookingDetails.getCheckIn());
-            booking.setCheckOut(bookingDetails.getCheckOut());
-            booking.setTotalPrice(bookingDetails.getTotalPrice());
-            booking.setStatus(bookingDetails.getStatus());
-            booking.setPaymentMethod(bookingDetails.getPaymentMethod());
-            return bookingRepository.save(booking);
-        }).orElseThrow(() -> new RuntimeException("Booking not found"));
+    // Hủy đặt phòng
+    public void cancelBooking(Long bookingId) {
+        Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
+        if (bookingOptional.isPresent()) {
+            Booking booking = bookingOptional.get();
+            booking.cancelBooking(); // Gọi phương thức hủy đặt phòng
+            bookingRepository.save(booking); // Lưu lại trạng thái đã hủy
+        }
     }
 
-    // Xóa booking
-    public void deleteBooking(Long id) {
-        bookingRepository.deleteById(id);
-    }
-
-    // Cập nhật trạng thái booking
-    public Booking updateBookingStatus(Long id, Booking.BookingStatus status) {
-        return bookingRepository.findById(id).map(booking -> {
-            booking.setStatus(status);
-            return bookingRepository.save(booking);
-        }).orElseThrow(() -> new RuntimeException("Booking not found"));
+    // Xóa tất cả các booking liên quan đến một homestay
+    public void deleteBookingsByHomestayId(Long homestayId) {
+        List<Booking> bookings = bookingRepository.findByHomestayId(homestayId);
+        for (Booking booking : bookings) {
+            bookingRepository.delete(booking);
+        }
     }
 }

@@ -1,30 +1,27 @@
-/* Định dạng chung */
+/* booking.css */
+
 body {
-    font-family: 'Poppins', sans-serif;
     margin: 0;
-    padding: 0;
-    background-color: #f8f9fa;
+    font-family: 'Roboto', sans-serif;
+    background-color: #fefbf6;
     color: #333;
 }
 
-/* Thanh điều hướng */
+/* Navbar */
 .navbar {
-    background: linear-gradient(135deg, #007bff, #0056b3);
-    padding: 15px 0;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #a3b18a;
+    padding: 1rem 2rem;
 }
 
 .navbar .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1200px;
-    margin: auto;
 }
 
 .navbar .brand {
-    color: white;
-    font-size: 24px;
+    color: #fff;
+    font-size: 1.6rem;
     font-weight: bold;
     text-decoration: none;
 }
@@ -32,127 +29,110 @@ body {
 .nav-links {
     list-style: none;
     display: flex;
+    gap: 1.2rem;
     padding: 0;
     margin: 0;
 }
 
-.nav-links li {
-    margin-left: 20px;
-}
-
-.nav-links a {
-    color: white;
+.nav-links li a {
+    color: #fefefe;
     text-decoration: none;
-    font-size: 16px;
-    padding: 8px 12px;
-    transition: 0.3s;
-    border-radius: 5px;
+    font-weight: 500;
+    transition: opacity 0.3s ease;
 }
 
-.nav-links a:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+.nav-links li a:hover {
+    opacity: 0.8;
 }
 
-/* Container chính */
+/* Main Container */
 .container {
     max-width: 800px;
-    background: white;
-    padding: 30px;
-    margin: 40px auto;
+    margin: 3rem auto;
+    padding: 2rem;
+    background-color: #fff;
     border-radius: 12px;
-    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 h2 {
-    font-size: 26px;
-    color: #333;
-    margin-bottom: 20px;
+    text-align: center;
+    color: #5a5a5a;
+    margin-bottom: 2rem;
 }
 
-/* Thông tin homestay */
 .homestay-info {
-    background: #f1f1f1;
-    padding: 20px;
-    border-radius: 10px;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 2rem;
 }
 
 .homestay-info h3 {
-    font-size: 22px;
-    margin-bottom: 10px;
-    color: #007bff;
+    font-size: 1.8rem;
+    color: #6b705c;
 }
 
 .homestay-info p {
-    margin: 5px 0;
-    font-size: 16px;
-    color: #555;
+    margin: 0.3rem 0;
 }
 
 .homestay-img {
-    width: 100%;
-    max-height: 300px;
+    max-width: 100%;
+    height: 280px;
     object-fit: cover;
-    border-radius: 8px;
-    margin-top: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin-top: 1rem;
 }
 
-/* Form đặt phòng */
+/* Form Styling */
 form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 1.2rem;
 }
 
 label {
-    font-weight: 600;
-    font-size: 16px;
-    text-align: left;
+    font-weight: 500;
+    color: #333;
 }
 
-input, select {
-    padding: 10px;
+input[type="date"],
+input[type="number"],
+select {
+    padding: 0.6rem;
     border: 1px solid #ccc;
     border-radius: 8px;
-    font-size: 16px;
-    transition: 0.3s;
+    font-size: 1rem;
+    background-color: #f8f8f8;
+    transition: border-color 0.3s ease;
 }
 
-input:focus, select:focus {
-    border-color: #007bff;
-    box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5);
+input:focus,
+select:focus {
+    border-color: #a3b18a;
     outline: none;
 }
 
-/* Nút xác nhận */
 .btn-confirm {
-    margin-top: 20px;
-    padding: 12px;
-    background: linear-gradient(135deg, #007bff, #0056b3);
-    color: white;
-    font-size: 18px;
+    padding: 0.8rem;
+    background-color: #a3b18a;
+    color: #fff;
     border: none;
-    cursor: pointer;
     border-radius: 8px;
-    transition: 0.3s;
+    font-size: 1.1rem;
     font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .btn-confirm:hover {
-    background: linear-gradient(135deg, #0056b3, #004494);
-    box-shadow: 0px 4px 10px rgba(0, 123, 255, 0.3);
+    background-color: #7f9b6f;
 }
 
 /* Footer */
 .footer {
     text-align: center;
-    background: #333;
-    color: white;
-    padding: 12px 0;
-    font-size: 14px;
-    margin-top: 40px;
-    border-radius: 0 0 12px 12px;
+    padding: 1rem;
+    background-color: #a3b18a;
+    color: #fff;
+    margin-top: 3rem;
 }

@@ -4,60 +4,93 @@
     <meta charset="UTF-8">
     <title>Chi tiết Homestay</title>
     <link rel="stylesheet" th:href="@{/css/homestaydetail.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <nav class="navbar">
-            <div class="container">
-                <a class="brand" th:href="@{/user/guest}">Chỗ Tốt Travel</a>
-                <ul class="nav-links">
-                    <li><a th:href="@{/user/home}">Trang chủ</a></li>
-                    <li><a th:href="@{/homestays}">Danh sách Homestays</a></li>
-                    <li><a th:href="@{/about}">Giới thiệu</a></li>
-                    <li><a th:href="@{/contact}">Liên hệ</a></li>
-                </ul>
-            </div>
-        </nav>
-    </header>
-
-    <div class="content">
+<header>
+    <nav class="navbar">
         <div class="container">
-            <div class="homestay-details">
-                <div class="homestay-image">
-                    <img th:src="@{${homestay.image}}" alt="Homestay Image">
+            <a class="brand" th:href="@{/user/guest}">Chỗ Tốt Travel</a>
+            <ul class="nav-links">
+                <li><a th:href="@{/user/home}">Trang chủ</a></li>
+                <li><a th:href="@{/homestays}">Danh sách Homestays</a></li>
+                <li><a th:href="@{/about}">Giới thiệu</a></li>
+                <li><a th:href="@{/contact}">Liên hệ</a></li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<main class="content">
+    <div class="container">
+        <!-- Chi tiết Homestay -->
+        <section class="homestay-details">
+            <div class="homestay-image">
+                <img th:src="@{${homestay.image}}" alt="Homestay Image">
+            </div>
+            <div class="homestay-info">
+                <h2 th:text="${homestay != null ? homestay.name : 'Chưa có tên'}">Tên Homestay</h2>
+
+                <div class="info-item">
+                    <strong>Mô tả:</strong>
+                    <p th:text="${homestay != null ? homestay.description : 'Chưa có mô tả'}"></p>
                 </div>
-                <div class="homestay-info">
-                    <h2 th:text="${homestay != null ? homestay.name : 'Chưa có tên'}">Tên Homestay</h2>
+
+                <div class="info-item">
+                    <strong>Giá:</strong>
                     <p>
-                        <strong>Mô tả:</strong> 
-                        <span th:text="${homestay != null ? homestay.description : 'Chưa có mô tả'}"></span>
-                    </p>
-                    <p>
-                        <strong>Giá:</strong> 
                         <span th:text="${homestay != null && homestay.pricePerNight != null ? #numbers.formatDecimal(homestay.pricePerNight, 0, 'COMMA', 2, 'POINT') : 'Đang cập nhật'}"></span> VND
                     </p>
-                    <p>
-                        <strong>Địa chỉ:</strong> 
-                        <span th:text="${homestay != null ? homestay.address : 'Chưa có địa chỉ'}"></span>
-                    </p>
-                    <a th:href="@{/user/booking/form(homestayId=${homestay.id})}" class="btn-book-now">Đặt ngay</a>
                 </div>
-            </div>
-            <div class="reviews-comments">
-                <h3>Đánh giá Homestay</h3>
-                <div class="reviews">
-                    <p>Chưa có đánh giá. (Phần này do ông Khang phát triển)</p>
-                </div>
-                <h3>Bình luận</h3>
-                <div class="comments">
-                    <p>Chưa có bình luận. (Phần này do ông Khang phát triển)</p>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <footer class="footer">
-        <p>&copy; 2025 Chỗ Tốt Travel. All Rights Reserved.</p>
-    </footer>
+                <div class="info-item">
+                    <strong>Địa chỉ:</strong>
+                    <p th:text="${homestay != null ? homestay.address : 'Chưa có địa chỉ'}"></p>
+                </div>
+
+                <a th:href="@{/user/booking/form(homestayId=${homestay.id})}" class="btn-book-now">Đặt ngay</a>
+            </div>
+        </section>
+
+        <!-- Ảnh phụ -->
+        <section class="homestay-extra-images" th:if="${homestay.extraImages != null and !homestay.extraImages.isEmpty()}">
+            <h3>Hình ảnh khác</h3>
+            <button class="arrow left-arrow" onclick="scrollSlider(-1)">&#10094;</button>
+            <div class="image-slider">
+                <div class="image-track" id="imageTrack">
+                    <div th:each="img : ${homestay.extraImages}" class="extra-image">
+                        <img th:src="@{${img}}" alt="Ảnh phụ Homestay">
+                    </div>
+                </div>
+            </div>
+            <button class="arrow right-arrow" onclick="scrollSlider(1)">&#10095;</button>
+        </section>
+    </div>
+</main>
+
+<!-- Script slider -->
+<script>
+    let scrollAmount = 0;
+    const imageTrack = document.getElementById('imageTrack');
+    const slideWidth = 320; // 300px ảnh + 20px margin (đã tính)
+    
+    // Tính tổng số ảnh
+    const images = imageTrack.querySelectorAll('.extra-image');
+    const totalSlides = images.length;
+
+    // Tính chiều rộng tối đa có thể trượt
+    const maxScroll = (totalSlides * slideWidth) - (slideWidth * 3); 
+    // Giả sử hiển thị 3 ảnh/lần – điều chỉnh nếu khác
+
+    function scrollSlider(direction) {
+        scrollAmount += direction * slideWidth;
+
+        // Giới hạn không vượt quá trái/phải
+        if (scrollAmount < 0) scrollAmount = 0;
+        if (scrollAmount > maxScroll) scrollAmount = maxScroll;
+
+        imageTrack.style.transform = `translateX(-${scrollAmount}px)`;
+    }
+</script>
 </body>
 </html>

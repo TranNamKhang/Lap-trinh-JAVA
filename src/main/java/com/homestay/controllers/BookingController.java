@@ -1,61 +1,110 @@
 package com.homestay.controllers;
 
 import com.homestay.models.Booking;
-import com.homestay.models.Booking.BookingStatus;
+import com.homestay.models.Homestay;
+import com.homestay.models.User;
 import com.homestay.services.BookingService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import com.homestay.services.HomestayService;
+import com.homestay.services.UserService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.time.LocalDate;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/bookings")
+@Controller
+@RequestMapping("/user/booking")
 public class BookingController {
 
-    @Autowired
-    private BookingService bookingService;
+    private final BookingService bookingService;
+    private final HomestayService homestayService;
+    private final UserService userService;
 
-    // Lấy tất cả booking
+    public BookingController(BookingService bookingService, HomestayService homestayService, UserService userService) {
+        this.bookingService = bookingService;
+        this.homestayService = homestayService;
+        this.userService = userService;
+    }
+
     @GetMapping
-    public ResponseEntity<List<Booking>> getAllBookings() {
-        return ResponseEntity.ok(bookingService.getAllBookings());
+    public String getUserBookings(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        Optional<User> userOptional = userService.getUsername(userDetails.getUsername());
+        if (userOptional.isEmpty()) {
+            return "redirect:/login";
+        }
+        User user = userOptional.get();
+        model.addAttribute("bookings", bookingService.getBookingsByUser (user.getId()));
+        return "user/booking/list";
     }
 
-    // Lấy booking theo ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Booking> getBookingById(@PathVariable Long id) {
-        Optional<Booking> booking = bookingService.getBookingById(id);
-        return booking.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @GetMapping("/form")
+    public String showBookingForm(@RequestParam("homestayId") Long homestayId,
+                                  @AuthenticationPrincipal UserDetails userDetails, Model model) {
+        Optional<User> userOptional = userService.getUsername(userDetails.getUsername());
+        if (userOptional.isEmpty()) {
+            return "redirect:/login";
+        }
+        User user = userOptional.get();
+        
+        Optional<Homestay> homestay = homestayService.getHomestayById(homestayId);
+        if (homestay.isEmpty()) {
+            return "error/404";
+        }
+
+        Booking booking = new Booking();
+        booking.setUser (user);
+        booking.setHomestay(homestay.get());
+
+        model.addAttribute("booking", booking);
+        model.addAttribute("homestay", homestay.get());
+        return "user/booking/form";
     }
 
-    // Tạo mới booking (qua JSON)
     @PostMapping
-    public ResponseEntity<Booking> createBooking(@RequestBody Booking booking) {
-        Booking savedBooking = bookingService.createBooking(booking);
-        return ResponseEntity.ok(savedBooking);
+    public String createBooking(@ModelAttribute Booking booking,
+                                @AuthenticationPrincipal UserDetails userDetails, Model model) {
+        Optional<User> userOptional = userService.getUsername(userDetails.getUsername());
+        if (userOptional.isEmpty()) {
+            return "redirect:/login";
+        }
+        User user = userOptional.get();
+        booking.setUser (user);
+
+        LocalDate today = LocalDate.now();
+        if (booking.getCheckIn().isBefore(today)) {
+            model.addAttribute("error", "Ngày nhận phòng không được trước ngày hôm nay.");
+            return "user/booking/form"; 
+        }
+
+        if (booking.getCheckOut().isBefore(booking.getCheckIn())) {
+            model.addAttribute("error", "Ngày trả phòng phải sau ngày nhận phòng.");
+            return "user/booking/form"; 
+        }
+
+        bookingService.createBooking(booking);
+        return "redirect:/user/booking";
     }
 
-    // Cập nhật booking
-    @PutMapping("/{id}")
-    public ResponseEntity<Booking> updateBooking(@PathVariable Long id, @RequestBody Booking bookingDetails) {
-        Booking updatedBooking = bookingService.updateBooking(id, bookingDetails);
-        return ResponseEntity.ok(updatedBooking);
-    }
+    @PostMapping("/cancel/{id}")
+    public String cancelBooking(@PathVariable Long id,
+                                @AuthenticationPrincipal UserDetails userDetails) {
+        Optional<User> userOptional = userService.getUsername(userDetails.getUsername());
+        if (userOptional.isEmpty()) {
+            return "redirect:/login";
+        }
+        User user = userOptional.get();
 
-    // Xóa booking
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBooking(@PathVariable Long id) {
-        bookingService.deleteBooking(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    // Cập nhật trạng thái booking
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<Booking> updateBookingStatus(@PathVariable Long id, @RequestParam BookingStatus status) {
-        Booking updatedBooking = bookingService.updateBookingStatus(id, status);
-        return ResponseEntity.ok(updatedBooking);
+        Optional<Booking> bookingOptional = bookingService.getBookingById(id);
+        if (bookingOptional.isPresent()) {
+            Booking booking = bookingOptional.get();
+            
+            if (booking.getUser () != null && booking.getUser ().getId().equals(user.getId())) {
+                bookingService.cancelBooking(id);
+            }
+        }
+        return "redirect:/user/booking";
     }
 }

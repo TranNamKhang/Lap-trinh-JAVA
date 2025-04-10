@@ -4,6 +4,8 @@ import com.homestay.models.Homestay;
 import com.homestay.models.User;
 import com.homestay.services.HomestayService;
 import com.homestay.services.UserService;
+import com.homestay.services.VisitCounterService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -24,9 +28,12 @@ public class AdminController {
     @Autowired
     private HomestayService homestayService;
 
+    @Autowired
+    private VisitCounterService visitCounterService;
 
     @GetMapping
-    public String adminDashboard() {
+    public String adminDashboard(Model model) {
+        model.addAttribute("visitorCount", visitCounterService.getTotalVisits());
         return "admin/dashboard";
     }
 
@@ -69,6 +76,13 @@ public class AdminController {
         return "redirect:/admin/users";
     }
 
+    // Quản lý Homestay
+    @GetMapping("/homestays")
+    public String listHomestays(Model model) {
+        model.addAttribute("homestays", homestayService.getAllHomestays());
+        return "admin/manage-homestay";
+    }
+
     @GetMapping("/homestays/add")
     public String showAddHomestayForm(@RequestParam(value = "id", required = false) Long id, Model model) {
         model.addAttribute("homestay", id != null ? 
@@ -78,14 +92,16 @@ public class AdminController {
     }
 
     @PostMapping("/homestays/save")
-    public String saveHomestay(@ModelAttribute Homestay homestay, 
+    public String saveHomestay(@ModelAttribute Homestay homestay,
                                @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+                               @RequestParam(value = "extraImageFiles", required = false) MultipartFile[] extraImageFiles,
                                RedirectAttributes redirectAttributes) {
         try {
+            // Xử lý ảnh chính
             if (imageFile != null && !imageFile.isEmpty()) {
                 String contentType = imageFile.getContentType();
                 if (contentType == null || !contentType.startsWith("image/")) {
-                    redirectAttributes.addFlashAttribute("errorMessage", "Tệp không hợp lệ!");
+                    redirectAttributes.addFlashAttribute("errorMessage", "Tệp ảnh chính không hợp lệ!");
                     return "redirect:/admin/homestays/add";
                 }
                 String imagePath = homestayService.saveImage(imageFile);
@@ -93,6 +109,31 @@ public class AdminController {
             } else if (homestay.getId() != null) {
                 homestayService.getHomestayById(homestay.getId()).ifPresent(h -> homestay.setImage(h.getImage()));
             }
+    
+            // Xử lý ảnh phụ
+            List<String> extraImagePaths = new ArrayList<>();
+    
+            if (homestay.getId() != null) {
+                homestayService.getHomestayById(homestay.getId()).ifPresent(h -> {
+                    if (h.getExtraImages() != null) {
+                        extraImagePaths.addAll(h.getExtraImages());
+                    }
+                });
+            }
+    
+            if (extraImageFiles != null && extraImageFiles.length > 0) {
+                for (MultipartFile file : extraImageFiles) {
+                    if (!file.isEmpty()) {
+                        String contentType = file.getContentType();
+                        if (contentType != null && contentType.startsWith("image/")) {
+                            String path = homestayService.saveImage(file);
+                            extraImagePaths.add(path);
+                        }
+                    }
+                }
+            }
+    
+            homestay.setExtraImages(extraImagePaths);
     
             homestayService.createHomestay(homestay);
             redirectAttributes.addFlashAttribute("successMessage", "Đã lưu homestay thành công!");
@@ -116,9 +157,4 @@ public class AdminController {
         return "redirect:/admin/homestays";
     }
 
-    @GetMapping("/homestays")
-    public String listHomestays(Model model) {
-        model.addAttribute("homestays", homestayService.getAllHomestays());
-        return "admin/manage-homestay";
-    }
 }

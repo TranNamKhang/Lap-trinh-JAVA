@@ -8,12 +8,20 @@
 <body>
 <div class="container mt-4">
     <h1 class="text-center">Danh sách Homestay</h1>
-    <a href="/admin/homestays/add" class="btn btn-primary mb-3">Thêm Homestay</a>
-    <table class="table table-bordered table-hover">
-        <thead class="table-dark">
+    
+    <div class="mb-3">
+        <a href="/admin/homestays/add" class="btn btn-primary">Thêm Homestay</a>
+    </div>
+
+    <table class="table table-bordered">
+        <thead>
             <tr>
                 <th>ID</th>
                 <th>Tên</th>
+                <th>Địa chỉ</th>
+                <th>Vị trí</th>
+                <th>Mô tả</th>
+                <th>Giá tiền</th>
                 <th>Hình ảnh</th>
                 <th>Hành động</th>
             </tr>
@@ -22,12 +30,17 @@
             <tr th:each="homestay : ${homestays}">
                 <td th:text="${homestay.id}"></td>
                 <td th:text="${homestay.name}"></td>
+                <td th:text="${homestay.address}"></td>
+                <td th:text="${homestay.location}"></td>
+                <td th:text="${homestay.description}"></td>
+                <td th:text="${homestay.pricePerNight} + ' VND'"></td>
                 <td>
-                    <img th:if="${homestay.image}" th:src="@{/images/{img}(img=${homestay.image})}" class="img-thumbnail" width="100">
+                    <img th:if="${homestay.image}" th:src="@{${homestay.image}}" alt="Homestay Image" width="100">
                 </td>
                 <td>
-                    <a th:href="@{/admin/homestays/add(id=${homestay.id})}" class="btn btn-warning btn-sm">Sửa</a>
-                    <a th:href="@{/admin/homestays/delete/{id}(id=${homestay.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Xác nhận xóa?')">Xóa</a>
+                    <a th:href="@{/admin/homestays/add(id=${homestay.id})}" class="btn btn-warning">Chỉnh sửa</a>
+                    <a th:href="@{/admin/homestays/delete/{id}(id=${homestay.id})}" class="btn btn-danger" 
+                       onclick="return confirm('Bạn có chắc chắn muốn xóa homestay này?')">Xóa</a>
                 </td>
             </tr>
         </tbody>

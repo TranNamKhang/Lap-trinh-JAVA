@@ -33,7 +33,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public String loginRedirect() {
-        return "redirect:/user/home";
+        return "redirect:/user/dashboard";
     }
 
     @GetMapping("/register")
@@ -45,7 +45,7 @@ public class AuthController {
     @GetMapping("/dashboard")
     public String guestLogin(Model model) {
         model.addAttribute("message", "Chào mừng bạn đến Homestay!");
-        return "user/home";
+        return "user/dashboard";
     }
 
     @PostMapping("/register")
