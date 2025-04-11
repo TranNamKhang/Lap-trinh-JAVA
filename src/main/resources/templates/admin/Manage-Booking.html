@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý đặt chỗ</title>
+</head>
+<body>
+<h2>Danh sách đặt chỗ</h2>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Tên người dùng</th>
+        <th>Homestay</th>
+        <th>Ngày nhận</th>
+        <th>Ngày trả</th>
+        <th>Số khách</th>
+        <th>Tổng tiền</th>
+        <th>Trạng thái</th>
+        <th>Cập nhật</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="booking : ${bookings}">
+        <td th:text="${booking.id}"></td>
+        <td th:text="${booking.user.username}"></td>
+        <td th:text="${booking.homestay.name}"></td>
+        <td th:text="${booking.checkIn}"></td>
+        <td th:text="${booking.checkOut}"></td>
+        <td th:text="${booking.numberOfGuests}"></td>
+        <td th:text="${booking.totalPrice}"></td>
+        <td th:text="${booking.status}"></td>
+        <td>
+            <form th:action="@{'/booking/' + ${booking.id} + '/status'}" method="post">
+                <select name="status">
+                    <option value="PENDING">Đang xử lý</option>
+                    <option value="CONFIRMED">Đã xác nhận</option>
+                    <option value="CANCELLED">Đã hủy</option>
+                    <option value="COMPLETED">Hoàn tất</option>
+                </select>
+                <button type="submit">Cập nhật</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

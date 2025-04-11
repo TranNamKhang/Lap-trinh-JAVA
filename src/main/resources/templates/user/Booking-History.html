@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lịch sử đặt chỗ</title>
+</head>
+<body>
+<h2>Lịch sử đặt chỗ của bạn</h2>
+<table border="1">
+    <thead>
+    <tr>
+        <th>Homestay</th>
+        <th>Ngày nhận</th>
+        <th>Ngày trả</th>
+        <th>Số khách</th>
+        <th>Phương thức thanh toán</th>
+        <th>Tổng tiền</th>
+        <th>Trạng thái</th>
+        <th>Xem chi tiết</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="booking : ${bookings}">
+        <td th:text="${booking.homestay.name}"></td>
+        <td th:text="${booking.checkIn}"></td>
+        <td th:text="${booking.checkOut}"></td>
+        <td th:text="${booking.numberOfGuests}"></td>
+        <td th:text="${booking.paymentMethod}"></td>
+        <td th:text="${booking.totalPrice}"></td>
+        <td th:text="${booking.status}"></td>
+        <td><a th:href="@{'/booking/' + ${booking.id} + '/detail'}">Chi tiết</a></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
