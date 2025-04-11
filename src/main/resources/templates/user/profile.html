@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hồ sơ cá nhân</title>
+    <link rel="stylesheet" href="/css/profile.css">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+</head>
+<body>
+
+    <div class="container">
+        <h2>Hồ sơ cá nhân</h2>
+
+        <!-- Hiển thị thông báo cập nhật thành công -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <p th:text="${successMessage}"></p>
+        </div>
+
+        <!-- Hiển thị ảnh đại diện -->
+        <div class="profile-avatar">
+            <img th:src="@{${avatarUrl}}" alt="Avatar" width="150">
+        </div>
+
+        <!-- Thông tin cá nhân -->
+        <div class="profile-info">
+            <p><strong>Tên đăng nhập:</strong> <span th:text="${user.username}"></span></p>
+            <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+            <p><strong>Số điện thoại:</strong> <span th:text="${user.phone}"></span></p>
+        </div>
+
+        <!-- Nút chỉnh sửa -->
+        <a href="/user/update-profile" class="btn btn-warning">Chỉnh sửa hồ sơ</a>
+    </div>
+
+</body>
+</html>

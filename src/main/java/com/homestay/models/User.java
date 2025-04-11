@@ -1,10 +1,10 @@
 package com.homestay.models;
 
 import jakarta.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.Pattern;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "users")
@@ -38,6 +38,11 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(nullable = true)
+    private String avatar;
+
+    // Constructor, getter và setter
+
     public User() {}
 
     public User(String username, String password, String email, String phone, Role role) {
@@ -65,4 +70,12 @@ public class User {
 
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
+
+    public String getAvatar() { return avatar; }
+    public void setAvatar(String avatar) { this.avatar = avatar; }
+
+    // Phương thức hỗ trợ mã hóa mật khẩu nếu cần
+    public void encodePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 }

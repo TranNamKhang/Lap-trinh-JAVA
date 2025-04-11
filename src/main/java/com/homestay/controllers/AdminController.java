@@ -1,7 +1,9 @@
 package com.homestay.controllers;
 
+import com.homestay.models.Category;
 import com.homestay.models.Homestay;
 import com.homestay.models.User;
+import com.homestay.services.CategoryService;
 import com.homestay.services.HomestayService;
 import com.homestay.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,28 +26,31 @@ public class AdminController {
     @Autowired
     private HomestayService homestayService;
 
-    // Dashboard chính
+    private final CategoryService categoryService;
+    @Autowired
+    public AdminController(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
+
     @GetMapping
     public String adminDashboard() {
         return "admin/dashboard";
     }
 
-    // Danh sách người dùng
     @GetMapping("/users")
     public String listUsers(Model model) {
         model.addAttribute("users", userService.getAllUsers());
         return "admin/manage-user";
     }
 
-    // Xóa user với xử lý lỗi
     @GetMapping("/users/delete/{id}")
     public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         if (userService.findById(id).isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Người dùng không tồn tại!");
-            return "redirect:/admin/users";
+        } else {
+            userService.deleteUser(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Đã xóa người dùng!");
         }
-        userService.deleteUser(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Đã xóa người dùng!");
         return "redirect:/admin/users";
     }
 
@@ -64,30 +69,40 @@ public class AdminController {
     public String updateUser(@PathVariable Long id, @ModelAttribute User updatedUser, RedirectAttributes redirectAttributes) {
         if (userService.findById(id).isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Người dùng không tồn tại!");
-            return "redirect:/admin/users";
+        } else {
+            userService.updateUser(id, updatedUser);
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật thành công!");
         }
-        userService.updateUser(id, updatedUser);
-        redirectAttributes.addFlashAttribute("successMessage", "Cập nhật thành công!");
         return "redirect:/admin/users";
+    }
+
+    // Quản lý Homestay
+    @GetMapping("/homestays")
+    public String listHomestays(Model model) {
+        model.addAttribute("homestays", homestayService.getAllHomestays());
+        return "admin/manage-homestay";
     }
 
     @GetMapping("/homestays/add")
     public String showAddHomestayForm(@RequestParam(value = "id", required = false) Long id, Model model) {
-        model.addAttribute("homestay", id != null ? 
-                homestayService.getHomestayById(id).orElse(new Homestay()) : 
-                new Homestay());
+        Homestay homestay = (id != null)
+                ?homestayService.getHomestayById(id).orElse(new Homestay())
+                : new Homestay();
+        model.addAttribute("homestay",  homestay);
+        model.addAttribute("categories", categoryService.getAllCategories());
         return "admin/manage-homestay-form";
     }
 
     @PostMapping("/homestays/save")
-    public String saveHomestay(@ModelAttribute Homestay homestay, 
+    public String saveHomestay(@ModelAttribute Homestay homestay,
+                               @RequestParam("categoryId") Long categoryId,
                                @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                RedirectAttributes redirectAttributes) {
         try {
             if (imageFile != null && !imageFile.isEmpty()) {
                 String contentType = imageFile.getContentType();
                 if (contentType == null || !contentType.startsWith("image/")) {
-                    redirectAttributes.addFlashAttribute("errorMessage", "Tep ko hop le!");
+                    redirectAttributes.addFlashAttribute("errorMessage", "Tệp không hợp lệ!");
                     return "redirect:/admin/homestays/add";
                 }
                 String imagePath = homestayService.saveImage(imageFile);
@@ -95,33 +110,29 @@ public class AdminController {
             } else if (homestay.getId() != null) {
                 homestayService.getHomestayById(homestay.getId()).ifPresent(h -> homestay.setImage(h.getImage()));
             }
-    
+
+            Category category = categoryService.getCategoryById(categoryId);
+            homestay.setCategory(category);
+
             homestayService.createHomestay(homestay);
-            redirectAttributes.addFlashAttribute("successMessage", "da luu vao homestay");
+            redirectAttributes.addFlashAttribute("successMessage", "Đã lưu homestay thành công!");
         } catch (IOException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Loi upload: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi upload: " + e.getMessage());
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "loi ko xac dinh: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi không xác định: " + e.getMessage());
         }
-    
+
         return "redirect:/admin/homestays";
     }
-    
 
     @GetMapping("/homestays/delete/{id}")
     public String deleteHomestay(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         if (homestayService.getHomestayById(id).isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Homestay không tồn tại!");
-            return "redirect:/admin/homestays";
+        } else {
+            homestayService.deleteHomestay(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Đã xóa homestay!");
         }
-        homestayService.deleteHomestay(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Đã xóa homestay!");
         return "redirect:/admin/homestays";
-    }
-
-    @GetMapping("/homestays")
-    public String listHomestays(Model model) {
-        model.addAttribute("homestays", homestayService.getAllHomestays());
-        return "admin/manage-homestay";
     }
 }

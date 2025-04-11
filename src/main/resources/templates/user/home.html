@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỗ Tốt Travel - Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <header>
+        <nav class="navbar">
+            <a class="brand" th:href="@{/user/home}">Chỗ Tốt Travel</a>
+            <ul class="nav-links">
+                <li><a th:href="@{/user/home}">Trang chủ</a></li>
+                <li><a th:href="@{/homestays}">Danh sách Homestays</a></li>
+                <li><a th:href="@{/about}">Giới thiệu</a></li>
+                <li><a th:href="@{/contact}">Liên hệ</a></li>
+                <li th:if="${authenticatedUser != null}">
+                    <a th:href="@{/user/profile}">
+                        <img th:src="${avatarUrl != null ? avatarUrl : '/images/default.jpg'}" 
+                             alt="Avatar" class="avatar">
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <style>
+            .filter-form {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 12px;
+                margin-bottom: 24px;
+            }
+
+            .filter-form label {
+                font-weight: 600;
+                color: #2c3e50;
+            }
+
+            .filter-form select {
+                padding: 8px 12px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                font-size: 15px;
+                min-width: 200px;
+                background-color: #fff;
+            }
+
+            .filter-form button {
+                background-color: #3498db;
+                color: white;
+                padding: 8px 16px;
+                border: none;
+                border-radius: 6px;
+                font-size: 15px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .filter-form button:hover {
+                background-color: #2980b9;
+            }
+        </style>
+    </header>    
+
+    <!-- Main Content -->
+    <main>
+        <section class="hero">
+            <div class="container text-center">
+                <h2> Chào mừng đến với Chỗ Tốt Travel!</h2>
+                <p class="lead">Đặt chỗ homestay & camping tiện lợi, nhanh chóng.</p>
+            </div>
+        </section>
+
+        <section class="homestays">
+            <div class="container">
+                <h3 class="section-title">Danh sách Homestays</h3>
+                <!-- Bộ lọc danh mục -->
+                <form th:action="@{/user/home}" method="get" class="filter-form">
+                    <label for="categoryId"> Lọc theo danh mục:</label>
+                    <select name="categoryId" id="categoryId">
+                        <option value="">-- Tất cả danh mục --</option>
+                        <option th:each="category : ${categories}"
+                                th:value="${category.id}"
+                                th:text="${category.name}"
+                                th:selected="${selectedCategoryId != null and category.id == selectedCategoryId}">
+                        </option>
+                    </select>
+                    <button type="submit">🔍 Lọc</button>
+                </form>
+
+
+                <div class="homestay-list">
+                    <div class="homestay-card" th:each="homestay : ${homestays}">
+                        <img th:src="${homestay.image != null ? homestay.image : '/images/default-homestay.jpg'}" 
+                             alt="Homestay Image">
+                        <div class="homestay-info">
+                            <h5 th:text="${homestay.name} ?: 'Chưa có tên'">Tên Homestay</h5>
+                            <p th:text="${homestay.description} ?: 'Chưa có mô tả'">Mô tả ngắn...</p>
+                            <a th:href="@{/user/homestays/{id}(id=${homestay.id})}" class="btn-detail">Chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <p>&copy; 2025 Chỗ Tốt Travel. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Script cho lần đăng nhập đầu tiên -->
+    <th:block th:if="${firstLogin}">
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var script = document.createElement("script");
+                script.src = "/js/script.js";
+                document.body.appendChild(script);
+            });
+        </script>
+    </th:block>
+</body>
+</html>

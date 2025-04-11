@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đặt phòng Homestay</title>
+    <link rel="stylesheet" th:href="@{/css/booking.css}">
+    <script>
+        function setMinDate() {
+            const today = new Date();
+            const dd = String(today.getDate()).padStart(2, '0');
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); 
+            const yyyy = today.getFullYear();
+            const minDate = yyyy + '-' + mm + '-' + dd; 
+            document.getElementById('checkIn').setAttribute('min', minDate);
+            document.getElementById('checkOut').setAttribute('min', minDate);
+        }
+    </script>
+</head>
+<body onload="setMinDate()">
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <a class="brand" th:href="@{/user/home}">Chỗ Tốt Travel</a>
+                <ul class="nav-links">
+                    <li><a th:href="@{/user/home}">Trang chủ</a></li>
+                    <li><a th:href="@{/homestays}">Danh sách Homestays</a></li>
+                    <li><a th:href="@{/about}">Giới thiệu</a></li>
+                    <li><a th:href="@{/contact}">Liên hệ</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Đặt phòng Homestay</h2>
+
+        <div class="homestay-info">
+            <h3 th:text="${homestay.name}">Tên Homestay</h3>
+            <p><strong>Địa chỉ:</strong> <span th:text="${homestay.address}"></span></p>
+            <p><strong>Giá:</strong> <span th:text="${#numbers.formatDecimal(homestay.pricePerNight, 0, 'COMMA', 2, 'POINT')}"></span> VND / đêm</p>
+            <img th:src="@{${homestay.image}}" alt="Homestay Image" class="homestay-img">
+        </div>
+
+        <form th:action="@{/user/booking}" method="post" th:object="${booking}">
+            <input type="hidden" th:field="*{homestay.id}">
+
+            <label for="checkIn">Ngày nhận phòng:</label>
+            <input type="date" id="checkIn" th:field="*{checkIn}" required>
+
+            <label for="checkOut">Ngày trả phòng:</label>
+            <input type="date" id="checkOut" th:field="*{checkOut}" required>
+
+            <label for="numberOfGuests">Số lượng khách:</label>
+            <input type="number" id="numberOfGuests" th:field="*{numberOfGuests}" min="1" required>
+
+            <label for="paymentMethod">Phương thức thanh toán:</label>
+            <select id="paymentMethod" th:field="*{paymentMethod}">
+                <option value="CASH">Tiền mặt</option>
+                <option value="CARD">Thẻ ngân hàng</option>
+            </select>
+
+            <button type="submit" class="btn-confirm">Xác nhận đặt phòng</button>
+        </form>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Chỗ Tốt Travel. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý danh mục Homestay</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f1f3f6;
+            padding: 40px;
+            margin: 0;
+        }
+
+        h2 {
+            color: #34495e;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: #1abc9c;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .button:hover {
+            background-color: #16a085;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+        }
+
+        th, td {
+            padding: 16px 20px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fcfcfc;
+        }
+
+        td a {
+            color: #2980b9;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        td a:hover {
+            color: #1f618d;
+        }
+
+        td a.delete-icon {
+            color: #e74c3c;
+        }
+
+        td a.delete-icon:hover {
+            color: #c0392b;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .btn-back:hover {
+            color: #222;
+        }
+
+        @media (max-width: 768px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            th {
+                display: none;
+            }
+
+            td {
+                position: relative;
+                padding-left: 50%;
+                border-bottom: 1px solid #eee;
+            }
+
+            td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 20px;
+                top: 16px;
+                font-weight: bold;
+                color: #555;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h2>Quản lý danh mục Homestay</h2>
+
+<a th:href="@{/admin/categories/new}" class="button">
+    <i class="fas fa-plus"></i> Thêm danh mục mới
+</a>
+
+<table>
+    <thead>
+    <tr>
+        <th>STT</th>
+        <th>Tên danh mục</th>
+        <th>Mô tả</th>
+        <th>Thao tác</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="category, iterStat : ${categories}">
+        <td th:text="${iterStat.index + 1}" data-label="STT"></td>
+        <td th:text="${category.name}" data-label="Tên danh mục"></td>
+        <td th:text="${category.description}" data-label="Mô tả"></td>
+        <td data-label="Thao tác">
+            <a th:href="@{'/admin/categories/edit/' + ${category.id}}" title="Sửa">
+                <i class="fas fa-pen"></i>
+            </a>
+            <a th:href="@{'/admin/categories/delete/' + ${category.id}}"
+               onclick="return confirm('Bạn có chắc muốn xóa?');"
+               title="Xóa"
+               class="delete-icon">
+                <i class="fas fa-trash"></i>
+            </a>
+        </td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(categories)}">
+        <td colspan="4" style="text-align: center; color: #999;">Không có danh mục nào.</td>
+    </tr>
+    </tbody>
+</table>
+
+<a href="/admin" class="btn-back">← Quay lại</a>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    let successMessage = /*[[${successMessage}]]*/ null;
+    let errorMessage = /*[[${errorMessage}]]*/ null;
+
+    if (successMessage) {
+        alert(successMessage);
+    } else if (errorMessage) {
+        alert(errorMessage);
+    }
+    /*]]>*/
+</script>
+
+</body>
+</html>

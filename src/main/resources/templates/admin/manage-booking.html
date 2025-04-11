@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Booking</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Quản lý Booking</h1>
+
+        <!-- Thông báo thành công hoặc lỗi -->
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+        <a href="/admin/bookings/add" class="btn btn-primary mb-3">Thêm Booking</a>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên người dùng</th>
+                    <th>Homestay</th>
+                    <th>Ngày nhận phòng</th>
+                    <th>Ngày trả phòng</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="booking : ${bookings}">
+                    <td th:text="${booking.id}"></td>
+                    <td th:text="${booking.user.name}"></td>
+                    <td th:text="${booking.homestay.name}"></td>
+                    <td th:text="${#dates.format(booking.checkIn, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${#dates.format(booking.checkOut, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${booking.status}"></td>
+                    <td>
+                        <a th:href="@{/admin/bookings/edit/{id}(id=${booking.id})}" class="btn btn-warning btn-sm">Chỉnh sửa</a>
+                        <a th:href="@{/admin/bookings/delete/{id}(id=${booking.id})}" class="btn btn-danger btn-sm" 
+                           onclick="return confirm('Bạn có chắc chắn muốn xóa booking này không?');">Xóa</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

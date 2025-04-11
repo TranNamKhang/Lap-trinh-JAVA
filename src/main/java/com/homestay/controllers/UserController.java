@@ -4,9 +4,8 @@ import com.homestay.models.User;
 import com.homestay.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -14,14 +13,18 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
+    // Đăng ký người dùng mới
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         try {
+            // Kiểm tra sự tồn tại của tên đăng nhập, email, và số điện thoại
             if (userService.existsByUsername(user.getUsername())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên đăng nhập đã tồn tại!");
             }
@@ -30,10 +33,17 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email đã tồn tại!");
             }
 
+            if (userService.existsByPhone(user.getPhone())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Số điện thoại đã tồn tại!");
+            }
+
+            // Kiểm tra mật khẩu có ít nhất 8 ký tự
             if (user.getPassword().length() < 8) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mật khẩu quá ngắn, ít nhất 8 ký tự.");
             }
 
+            // Mã hóa mật khẩu
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             userService.registerUser(user);
             return ResponseEntity.status(HttpStatus.CREATED).body("Đăng ký thành công!");
 
@@ -42,15 +52,4 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{email}")
-    public ResponseEntity<Object> getUserByEmail(@PathVariable String email) {
-        Optional<User> user = userService.getUserByEmail(email);
-
-        if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Không tìm thấy người dùng với email: " + email);
-        }
-    }
 }
