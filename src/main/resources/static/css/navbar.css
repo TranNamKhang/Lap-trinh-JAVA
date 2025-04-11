@@ -1,0 +1,45 @@
+/* navbar.css */
+.navbar {
+    background: linear-gradient(135deg, #2c3e50, #34495e); /* Gradient xanh đậm */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #f1c40f !important; /* Màu vàng nổi bật */
+}
+
+.navbar-toggler {
+    border: none;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+
+.navbar-nav .nav-item {
+    margin-right: 15px;
+}
+
+.navbar-nav .nav-link {
+    font-size: 1rem;
+    color: #ecf0f1 !important; /* Màu trắng xám */
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #f1c40f !important; /* Màu vàng khi hover */
+    text-decoration: underline;
+}
+
+@media (max-width: 992px) {
+    .navbar-nav {
+        text-align: center;
+    }
+
+    .navbar-nav .nav-item {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
