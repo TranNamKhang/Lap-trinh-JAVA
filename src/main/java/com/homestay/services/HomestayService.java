@@ -2,6 +2,10 @@ package com.homestay.services;
 
 import com.homestay.models.Homestay;
 import com.homestay.repositories.HomestayRepository;
+
+import jakarta.transaction.Transactional;
+
+import com.homestay.repositories.BookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,9 +19,11 @@ import java.util.*;
 
 @Service
 public class HomestayService {
-
     @Autowired
     private HomestayRepository homestayRepository;
+
+    @Autowired
+    private BookingRepository bookingRepository;
 
     private static final String IMAGE_UPLOAD_DIR = "C:/Users/tdanh/Documents/chotottravel/uploads/images";
 
@@ -56,14 +62,20 @@ public class HomestayService {
             return homestayRepository.save(homestay);
         });
     }
-
+    
+    @Transactional
     public boolean deleteHomestay(Long id) {
         if (homestayRepository.existsById(id)) {
+            // Xoá tất cả booking liên quan
+            bookingRepository.deleteByHomestayId(id);
+    
+            // Xoá homestay
             homestayRepository.deleteById(id);
             return true;
         }
         return false;
     }
+    
 
     public String saveImage(MultipartFile imageFile) throws IOException {
         return saveSingleImage(imageFile);

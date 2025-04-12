@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán QR - Đặt phòng [[${booking?.id}]]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .qr-code-container {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .qr-code-image {
+            max-width: 280px;
+            height: auto;
+            margin-bottom: 15px;
+            border: 1px solid #dee2e6;
+            padding: 5px;
+            border-radius: 8px;
+            background-color: white;
+        }
+        .payment-details {
+            margin-top: 15px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+        }
+        .payment-details p {
+            margin-bottom: 0.75rem;
+            font-size: 0.95em;
+        }
+        .payment-details .label {
+            color: #6c757d;
+            min-width: 140px;
+            display: inline-block;
+        }
+        .payment-details .value {
+            font-weight: 500;
+        }
+        .payment-details .amount-value {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #dc3545;
+        }
+        .payment-details .content-value {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #0d6efd;
+        }
+        .instruction-text {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        .card-header i {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4 mb-5">
+    <div class="card shadow-sm" th:if="${booking != null and qrCodeImageUrl != null}">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0"><i class="fas fa-qrcode"></i> Quét mã QR để thanh toán</h4>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info d-flex align-items-center" role="alert">
+                <i class="fas fa-info-circle fa-lg me-2"></i>
+                <div>
+                    Đơn đặt phòng mã <strong>[[${booking.id}]]</strong> đang chờ thanh toán. Vui lòng hoàn tất thanh toán để xác nhận.
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-5 text-center qr-code-container">
+                    <img th:src="${qrCodeImageUrl}" alt="QR Code Thanh toán VietQR" class="qr-code-image img-fluid" />
+                    <p class="instruction-text mt-2">
+                        <i class="fas fa-mobile-alt"></i> Sử dụng App Ngân hàng hoặc Ví điện tử hỗ trợ VietQR để quét mã này.
+                    </p>
+                    <p class="instruction-text">
+                        <small>(Nếu không quét được, vui lòng chuyển khoản thủ công theo thông tin bên cạnh)</small>
+                    </p>
+                </div>
+
+                <div class="col-md-7">
+                    <div class="payment-details">
+                        <h5 class="mb-3 border-bottom pb-2"><i class="fas fa-university"></i> Thông tin chuyển khoản</h5>
+                        <p><span class="label">Ngân hàng:</span> <span class="value">Techcombank</span></p>
+                        <p><span class="label">Số tài khoản:</span> <span class="value text-success fw-bold">19038888888888</span></p>
+                        <p><span class="label">Tên tài khoản:</span> <span class="value">CÔNG TY TNHH HOMESTAY</span></p>
+                        <p><span class="label">Số tiền:</span>
+                            <span class="amount-value" th:if="${paymentAmount != null}" th:text="${#numbers.formatDecimal(paymentAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+                            <span class="amount-value text-danger" th:unless="${paymentAmount != null}">(Lỗi)</span>
+                        </p>
+                        <p><span class="label">Nội dung CK:</span>
+                            <span class="content-value">THANH TOAN DON HANG #[[${booking.id}]]</span>
+                            <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1 ms-1" onclick="copyToClipboard(this)" data-text="THANH TOAN DON HANG #[[${booking.id}]]">
+                                <i class="far fa-copy"></i>
+                            </button>
+                        </p>
+                        <hr class="my-3">
+                        <h6 class="mt-3"><i class="fas fa-receipt"></i> Thông tin đơn hàng</h6>
+                        <p><span class="label">Mã đặt phòng:</span> <span class="value" th:text="${booking.id}"></span></p>
+                        <p><span class="label">Homestay:</span> <span class="value" th:text="${booking.homestay?.name ?: 'N/A'}"></span></p>
+                        <p><span class="label">Ngày nhận:</span> <span class="value" th:text="${booking.checkIn != null ? #temporals.format(booking.checkIn, 'dd/MM/yyyy') : 'N/A'}"></span></p>
+                        <p><span class="label">Ngày trả:</span> <span class="value" th:text="${booking.checkOut != null ? #temporals.format(booking.checkOut, 'dd/MM/yyyy') : 'N/A'}"></span></p>
+                        <p><span class="label">Số khách:</span> <span class="value" th:text="${booking.numberOfGuests}"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-warning mt-4" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Quan trọng:</strong> Vui lòng chuyển khoản <strong class="text-danger">ĐÚNG SỐ TIỀN</strong> và <strong class="text-primary">ĐÚNG NỘI DUNG</strong> như trên. Đơn hàng sẽ được <strong class="text-success">xác nhận</strong> sau khi hệ thống ghi nhận thanh toán thành công (có thể mất vài phút hoặc cần xác nhận thủ công tùy trường hợp).
+            </div>
+
+            <div class="text-center mt-4">
+                <a th:href="@{/payment/history/{id}(id=${booking.id})}" class="btn btn-info me-2">
+                    <i class="fas fa-history"></i> Kiểm tra trạng thái & Lịch sử
+                </a>
+                <a th:href="@{/user/home}" class="btn btn-secondary">
+                    <i class="fas fa-home"></i> Về trang chủ
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div th:unless="${booking != null and qrCodeImageUrl != null}" class="alert alert-danger text-center">
+        <p>Không thể hiển thị thông tin thanh toán QR. Vui lòng quay lại hoặc liên hệ hỗ trợ.</p>
+        <a th:href="@{/user/booking}" class="btn btn-secondary mt-2">
+            <i class="fas fa-arrow-left"></i> Quay lại danh sách đặt phòng
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function copyToClipboard(button) {
+        const textToCopy = button.getAttribute('data-text');
+        if (!textToCopy) return;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const originalIcon = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i> Đã chép';
+            button.classList.add('btn-success', 'disabled');
+            button.classList.remove('btn-outline-secondary');
+            setTimeout(() => {
+                button.innerHTML = originalIcon;
+                button.classList.remove('btn-success', 'disabled');
+                button.classList.add('btn-outline-secondary');
+            }, 1500);
+        }).catch(err => {
+            console.error('Lỗi sao chép: ', err);
+            alert('Không thể sao chép nội dung.');
+        });
+    }
+</script>
+</body>
+</html>

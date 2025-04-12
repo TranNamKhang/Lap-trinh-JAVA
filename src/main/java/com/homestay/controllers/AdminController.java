@@ -31,7 +31,11 @@ public class AdminController {
     @Autowired
     private VisitCounterService visitCounterService;
 
-    @GetMapping
+    @GetMapping("/dashboard")
+    public String dashboard(Model model) {
+        model.addAttribute("visitorCount", visitCounterService.getTotalVisits());
+        return "admin/dashboard";
+    }
     public String adminDashboard(Model model) {
         model.addAttribute("visitorCount", visitCounterService.getTotalVisits());
         return "admin/dashboard";

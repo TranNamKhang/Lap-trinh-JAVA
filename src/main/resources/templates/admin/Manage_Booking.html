@@ -2,41 +2,63 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Đặt Chỗ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<h1>Quản Lý Đặt Chỗ</h1>
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Khách Hàng</th>
-        <th>Homestay</th>
-        <th>Ngày Nhận</th>
-        <th>Ngày Trả</th>
-        <th>Trạng Thái</th>
-        <th>Hành Động</th>
-    </tr>
-    <tr th:each="booking : ${bookings}">
-        <td th:text="${booking.id}"></td>
-        <td th:text="${booking.user.name}"></td>
-        <td th:text="${booking.homestay.name}"></td>
-        <td th:text="${booking.checkIn}"></td>
-        <td th:text="${booking.checkOut}"></td>
-        <td>
-            <form th:action="@{/admin/bookings/update}" method="post">
-                <input type="hidden" name="bookingId" th:value="${booking.id}">
-                <select name="status">
-                    <option value="PENDING" th:selected="${booking.status == 'PENDING'}">Đang xử lý</option>
-                    <option value="CONFIRMED" th:selected="${booking.status == 'CONFIRMED'}">Đã xác nhận</option>
-                    <option value="CANCELLED" th:selected="${booking.status == 'CANCELLED'}">Đã hủy</option>
-                    <option value="COMPLETED" th:selected="${booking.status == 'COMPLETED'}">Hoàn thành</option>
-                </select>
-                <button type="submit">Cập Nhật</button>
-            </form>
-        </td>
-    </tr>
-</table>
-<a th:href="@{/admin}">Quay lại Trang Quản Trị</a>
+<div class="container mt-5">
+    <h1 class="mb-4"><i class="fas fa-calendar-check me-2"></i>Quản Lý Đặt Chỗ</h1>
+
+    <div class="table-responsive card shadow-sm">
+        <table class="table table-striped table-hover mb-0">
+            <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Khách Hàng</th>
+                <th>Homestay</th>
+                <th>Ngày Nhận</th>
+                <th>Ngày Trả</th>
+                <th>Trạng Thái</th>
+                <th>Hành Động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="booking : ${bookings}">
+                <td th:text="${booking.id}"></td>
+                <td th:text="${booking.user.name}"></td>
+                <td th:text="${booking.homestay.name}"></td>
+                <td th:text="${booking.checkIn}"></td>
+                <td th:text="${booking.checkOut}"></td>
+                <td>
+                    <form th:action="@{/admin/bookings/update}" method="post" class="d-flex">
+                        <input type="hidden" name="bookingId" th:value="${booking.id}">
+                        <select name="status" class="form-select form-select-sm me-2">
+                            <option value="PENDING" th:selected="${booking.status == 'PENDING'}">Đang xử lý</option>
+                            <option value="CONFIRMED" th:selected="${booking.status == 'CONFIRMED'}">Đã xác nhận</option>
+                            <option value="CANCELLED" th:selected="${booking.status == 'CANCELLED'}">Đã hủy</option>
+                            <option value="COMPLETED" th:selected="${booking.status == 'COMPLETED'}">Hoàn thành</option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary">Cập Nhật</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(bookings)}">
+                <td colspan="7" class="text-center text-muted fst-italic py-3">Chưa có đơn đặt phòng nào trong hệ thống.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4">
+        <a th:href="@{/admin}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại Trang Quản Trị
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

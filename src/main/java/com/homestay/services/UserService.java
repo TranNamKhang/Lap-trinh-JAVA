@@ -27,7 +27,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     // Đọc giá trị đường dẫn từ application.properties hoặc có thể hardcode ở đây
-    @Value("${upload.avatar.dir:C:/Users/tdanh/Documents/chotottravel/uploads/avatars/}")
+    @Value("${upload.avatar.dir:D:/java/Lap-trinh-JAVA-main/uploads/avatars}")
     private String uploadDir;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {

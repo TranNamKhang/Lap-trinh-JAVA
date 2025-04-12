@@ -80,4 +80,8 @@ public class Homestay {
 
     public List<String> getExtraImages() { return extraImages; }
     public void setExtraImages(List<String> extraImages) { this.extraImages = extraImages; }
+
+    public double getPrice() {
+        return pricePerNight.doubleValue();
+    }
 }
