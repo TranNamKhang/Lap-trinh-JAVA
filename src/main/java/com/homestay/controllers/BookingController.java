@@ -1,31 +1,110 @@
 package com.homestay.controllers;
 
 import com.homestay.models.Booking;
+import com.homestay.models.Homestay;
+import com.homestay.models.User;
 import com.homestay.services.BookingService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.homestay.services.HomestayService;
+import com.homestay.services.UserService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.time.LocalDate;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/bookings")
+@Controller
+@RequestMapping("/user/booking")
 public class BookingController {
-    @Autowired
-    private BookingService bookingService;
 
-    @GetMapping("/user/{userId}")
-    public List<Booking> getBookingsByUserId(@PathVariable Long userId) {
-        return bookingService.getBookingsByUserId(userId);
+    private final BookingService bookingService;
+    private final HomestayService homestayService;
+    private final UserService userService;
+
+    public BookingController(BookingService bookingService, HomestayService homestayService, UserService userService) {
+        this.bookingService = bookingService;
+        this.homestayService = homestayService;
+        this.userService = userService;
     }
 
-    @GetMapping("/{id}")
-    public Optional<Booking> getBookingById(@PathVariable Long id) {
-        return bookingService.getBookingById(id);
+    @GetMapping
+    public String getUserBookings(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        Optional<User> userOptional = userService.getUsername(userDetails.getUsername());
+        if (userOptional.isEmpty()) {
+            return "redirect:/login";
+        }
+        User user = userOptional.get();
+        model.addAttribute("bookings", bookingService.getBookingsByUser (user.getId()));
+        return "user/booking/list";
     }
 
-    @PostMapping("/")
-    public Booking createBooking(@RequestBody Booking booking) {
-        return bookingService.createBooking(booking);
+    @GetMapping("/form")
+    public String showBookingForm(@RequestParam("homestayId") Long homestayId,
+                                  @AuthenticationPrincipal UserDetails userDetails, Model model) {
+        Optional<User> userOptional = userService.getUsername(userDetails.getUsername());
+        if (userOptional.isEmpty()) {
+            return "redirect:/login";
+        }
+        User user = userOptional.get();
+        
+        Optional<Homestay> homestay = homestayService.getHomestayById(homestayId);
+        if (homestay.isEmpty()) {
+            return "error/404";
+        }
+
+        Booking booking = new Booking();
+        booking.setUser (user);
+        booking.setHomestay(homestay.get());
+
+        model.addAttribute("booking", booking);
+        model.addAttribute("homestay", homestay.get());
+        return "user/booking/form";
+    }
+
+    @PostMapping
+    public String createBooking(@ModelAttribute Booking booking,
+                                @AuthenticationPrincipal UserDetails userDetails, Model model) {
+        Optional<User> userOptional = userService.getUsername(userDetails.getUsername());
+        if (userOptional.isEmpty()) {
+            return "redirect:/login";
+        }
+        User user = userOptional.get();
+        booking.setUser (user);
+
+        LocalDate today = LocalDate.now();
+        if (booking.getCheckIn().isBefore(today)) {
+            model.addAttribute("error", "Ngày nhận phòng không được trước ngày hôm nay.");
+            return "user/booking/form"; 
+        }
+
+        if (booking.getCheckOut().isBefore(booking.getCheckIn())) {
+            model.addAttribute("error", "Ngày trả phòng phải sau ngày nhận phòng.");
+            return "user/booking/form"; 
+        }
+
+        bookingService.createBooking(booking);
+        return "redirect:/user/booking";
+    }
+
+    @PostMapping("/cancel/{id}")
+    public String cancelBooking(@PathVariable Long id,
+                                @AuthenticationPrincipal UserDetails userDetails) {
+        Optional<User> userOptional = userService.getUsername(userDetails.getUsername());
+        if (userOptional.isEmpty()) {
+            return "redirect:/login";
+        }
+        User user = userOptional.get();
+
+        Optional<Booking> bookingOptional = bookingService.getBookingById(id);
+        if (bookingOptional.isPresent()) {
+            Booking booking = bookingOptional.get();
+            
+            if (booking.getUser () != null && booking.getUser ().getId().equals(user.getId())) {
+                bookingService.cancelBooking(id);
+            }
+        }
+        return "redirect:/user/booking";
     }
 }

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <title>Chi tiết đặt phòng</title>
+</head>
+<body>
+    <h1>Chi tiết đặt phòng</h1>
+    <p>ID: <span th:text="${booking.id}"></span></p>
+    <p>Check-in: <span th:text="${booking.checkIn}"></span></p>
+    <p>Check-out: <span th:text="${booking.checkOut}"></span></p>
+    <p>Trạng thái: <span th:text="${booking.status}"></span></p>
+    <p>Phương thức thanh toán: <span th:text="${booking.paymentMethod}"></span></p>
+    <p>Tổng giá: <span th:text="${booking.totalPrice}"></span></p>
+    <p>Số khách: <span th:text="${booking.numberOfGuests}"></span></p>
+    
+    <a th:href="@{/user/bookings/edit/{id}(id=${booking.id})}">Chỉnh sửa</a>
+    <form th:action="@{/user/bookings/delete/{id}(id=${booking.id})}" method="post">
+        <button type="submit">Xóa</button>
+    </form>
+    <a href="/user/bookings">Quay lại danh sách</a>
+</body>
+</html>

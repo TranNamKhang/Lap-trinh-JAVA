@@ -17,4 +17,8 @@ public interface HomestayRepository extends JpaRepository<Homestay, Long> {
 
     // Tìm homestay theo tên
     List<Homestay> findByNameContainingIgnoreCase(String name);
+
+    List<Homestay> findByCategoryId(Long categoryId);
+
+    long countByCategoryId(Long id);
 }

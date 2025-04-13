@@ -21,15 +21,12 @@ public class HomestayService {
     @Autowired
     private HomestayRepository homestayRepository;
 
-    private static final String UPLOAD_DIR = "src/main/resources/static/uploads/";
+    private static final String UPLOAD_DIR = "D:/01 THANH IT/HK2 NAM 2/Lap trinh Java/ProjectJavaHomestay/uploads";
 
     public List<Homestay> getAllHomestays() {
         return homestayRepository.findAll();
     }
 
-    public Optional<Homestay> getHomestayById(Long id) {
-        return homestayRepository.findById(id);
-    }
 
     public List<Homestay> getHomestaysByLocation(String location) {
         return homestayRepository.findByLocationContainingIgnoreCase(location);
@@ -61,31 +58,31 @@ public class HomestayService {
         return false;
     }
 
-    /**
-     * Lưu ảnh vào thư mục uploads và trả về tên file
-     */
     public String saveImage(MultipartFile imageFile) throws IOException {
         if (imageFile.isEmpty()) {
             return null;
         }
     
-        // Định nghĩa thư mục lưu ảnh trong thư mục static
-        String uploadDir = "C:/Users/tdanh/Documents/homestay/src/main/resources/static/uploads/images";
+        String uploadDir = "D:/01 THANH IT/HK2 NAM 2/Lap trinh Java/ProjectJavaHomestay/uploads/images";
     
-        // Tạo thư mục nếu chưa tồn tại
         File directory = new File(uploadDir);
         if (!directory.exists()) {
             directory.mkdirs();
         }
     
-        // Tạo tên file duy nhất
         String fileName = UUID.randomUUID().toString() + "_" + imageFile.getOriginalFilename();
         Path filePath = Paths.get(uploadDir, fileName);
     
-        // Lưu file ảnh
         Files.write(filePath, imageFile.getBytes());
     
-        // Trả về đường dẫn có thể sử dụng trên Thymeleaf
         return "/uploads/images/" + fileName;
+    }
+
+    public List<Homestay> findByCategoryId(Long categoryId) {
+        return homestayRepository.findByCategoryId(categoryId);
+    }
+
+    public Optional<Homestay> getHomestayById(Long id) {
+        return homestayRepository.findById(id);
     }
 }    

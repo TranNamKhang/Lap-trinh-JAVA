@@ -6,23 +6,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 @RequestMapping("/admin/categories")
 public class CategoryController {
-    @Autowired
-    private CategoryService categoryService;
+
+    private final CategoryService categoryService;
+
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
     @GetMapping
-    public String viewCategories(Model model) {
+    public String showCategoryList(Model model) {
+        System.out.println("Số danh mục: " + categoryService.getAllCategories().size());
         model.addAttribute("categories", categoryService.getAllCategories());
-        return "admin/manage_category";
+        return "admin/manage-category";
     }
 
     @GetMapping("/new")
     public String showAddForm(Model model) {
         model.addAttribute("category", new Category());
-        return "admin/manage_category_form";
+        return "admin/manage-category-form";
     }
 
     @PostMapping("/save")
@@ -35,12 +44,17 @@ public class CategoryController {
     public String showEditForm(@PathVariable Long id, Model model) {
         Category category = categoryService.getCategoryById(id);
         model.addAttribute("category", category);
-        return "admin/manage_category_form";
+        return "admin/manage-category-form";
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteCategory(@PathVariable Long id) {
-        categoryService.deleteCategory(id);
+    public String deleteCategory(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            categoryService.deleteCategory(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Xóa danh mục thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Danh mục đang được sử dụng, không thể xóa!");
+        }
         return "redirect:/admin/categories";
     }
 }
