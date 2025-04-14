@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỗ Tốt Travel - Trang chủ</title>
+    <link rel="stylesheet" href="/css/home.css"> <!-- Tải CSS của bạn -->
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-logo">Chỗ Tốt Travel</a>
+            <div class="navbar-links">
+                <a href="/" class="nav-link">Trang chủ</a>
+                <a href="/about" class="nav-link">Giới thiệu</a>
+                <a href="/contact" class="nav-link">Liên hệ</a>
+                <a href="/user/profile" class="nav-link">
+                    <img th:src="@{${avatarUrl != null ? avatarUrl : '/images/default.jpg'}}" alt="Avatar" class="avatar">
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1 class="text-center mb-4">Khám phá Homestay</h1>
+        
+        <!-- Province Filter Section -->
+        <div class="province-section">
+            <h3 class="province-title">Chọn điểm đến của bạn</h3>
+            <div class="province-filter">
+                <a th:href="@{/user/home}" class="province-btn" th:classappend="${currentProvince == null} ? 'active'">
+                    <span>Tất cả</span>
+                </a>
+                <a th:each="province : ${provinces}"
+                   th:href="@{/user/province/{province}(province=${province})}"
+                   class="province-btn"
+                   th:classappend="${currentProvince == province} ? 'active'">
+                    <span th:text="${province}"></span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Homestay Grid -->
+        <div class="homestay-grid">
+            <div class="homestay-card" th:each="homestay : ${homestays}">
+                <div class="homestay-image-container">
+                    <img th:src="@{${homestay.image}}" class="homestay-image" alt="Homestay Image">
+                    <div class="price-tag">
+                        <span th:text="${#numbers.formatDecimal(homestay.pricePerNight, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${homestay.name}"></h5>
+                    <p class="card-text">
+                        📍 <span th:text="${homestay.province}"></span>
+                    </p>
+                    <p class="card-text" th:text="${homestay.description}"></p>
+                    <a th:href="@{/user/homestays/{id}(id=${homestay.id})}" class="btn-detail">Xem chi tiết</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Chỗ Tốt Travel. All rights reserved.</p>
+    </footer>
+
+    <script src="/js/script.js"></script> <!-- Nếu có cần JavaScript của bạn -->
+</body>
+</html>

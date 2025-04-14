@@ -1,0 +1,217 @@
+/* Định dạng tổng thể */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 400px;
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Hiển thị thông báo */
+.alert {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+/* Ảnh đại diện */
+.profile-avatar {
+    margin-bottom: 15px;
+}
+.profile-avatar img {
+    border-radius: 50%;
+    border: 3px solid #ddd;
+}
+
+/* Thông tin cá nhân */
+.profile-info {
+    text-align: left;
+    padding: 10px 20px;
+    background: #f9f9f9;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+.profile-info p {
+    margin: 10px 0;
+    color: #555;
+}
+.profile-info strong {
+    color: #222;
+}
+
+/* Nút chỉnh sửa */
+.btn {
+    display: inline-block;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+.btn-warning {
+    background-color: #ffc107;
+    color: #333;
+    border: none;
+}
+.btn-warning:hover {
+    background-color: #e0a800;
+}
+
+/* Reset mặc định */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Container chính */
+.container {
+    width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Tiêu đề */
+h2 {
+    margin-bottom: 15px;
+    font-size: 22px;
+    color: #333;
+}
+
+/* Ảnh đại diện */
+.profile-avatar img {
+    display: block;
+    margin: 0 auto 10px;
+    border-radius: 50%;
+    border: 3px solid #ddd;
+}
+
+/* Form nhóm */
+.form-group {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-weight: bold;
+    font-size: 14px;
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* Nút bấm */
+button, .btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #545b62;
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #1e7e34;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+/* Hiển thị thông báo */
+.alert {
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-danger {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Form đổi mật khẩu */
+#changePasswordForm {
+    display: none;
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+}
+
