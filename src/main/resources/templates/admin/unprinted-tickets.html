@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Vé chưa in</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100%;
+            background-color: #343a40;
+            padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 20px;
+            color: #f8f9fa;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #495057;
+        }
+
+        .sidebar .logo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 60px;
+            background-color: #212529;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: white;
+            letter-spacing: 1px;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .sidebar .logo {
+                position: relative;
+                width: 100%;
+            }
+        }
+        
+        .ticket-status {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        .status-unprinted {
+            background-color: #ffc107;
+            color: #212529;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="logo">Homestay Admin</div>
+    <a href="/admin/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a href="/admin/users"><i class="bi bi-people"></i> Quản lý Người dùng</a>
+    <a href="/admin/homestays"><i class="bi bi-house"></i> Quản lý Homestay</a>
+    <a href="/admin/bookings/pending"><i class="bi bi-calendar-check"></i> Đặt phòng chờ duyệt</a>
+    <a href="/admin/tickets"><i class="bi bi-ticket-perforated"></i> Quản lý Vé</a>
+    <a href="/admin/tickets/unprinted" class="active"><i class="bi bi-printer"></i> Vé chưa in</a>
+    <a href="/"><i class="bi bi-house-door"></i> Về Trang chủ</a>
+    <a href="/logout"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <h2 class="mb-4">Vé chưa in</h2>
+
+    <!-- Flash Messages -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Filter Buttons -->
+    <div class="mb-4">
+        <a href="/admin/tickets" class="btn btn-secondary me-2"><i class="bi bi-list"></i> Tất cả Vé</a>
+        <a href="/admin/tickets/unprinted" class="btn btn-warning active"><i class="bi bi-printer"></i> Vé chưa in</a>
+    </div>
+
+    <!-- Tickets Table -->
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Mã vé</th>
+                    <th>Mã đặt phòng</th>
+                    <th>Khách hàng</th>
+                    <th>Homestay</th>
+                    <th>Ngày nhận phòng</th>
+                    <th>Ngày trả phòng</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày tạo</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${tickets != null}" th:each="ticket : ${tickets}">
+                    <td th:text="${ticket.ticketNumber}">TK-12345678</td>
+                    <td th:text="${ticket.booking.id}">1</td>
+                    <td th:text="${ticket.booking.user != null ? ticket.booking.user.username : ''}">username</td>
+                    <td th:text="${ticket.booking.homestay != null ? ticket.booking.homestay.name : ''}">Homestay</td>
+                    <td th:text="${ticket.booking.checkIn != null ? #temporals.format(ticket.booking.checkIn, 'dd/MM/yyyy') : ''}">01/01/2023</td>
+                    <td th:text="${ticket.booking.checkOut != null ? #temporals.format(ticket.booking.checkOut, 'dd/MM/yyyy') : ''}">05/01/2023</td>
+                    <td>
+                        <span class="ticket-status status-unprinted">Chưa in</span>
+                    </td>
+                    <td th:text="${ticket.createdAt != null ? #temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm') : ''}">01/01/2023 12:00</td>
+                    <td>
+                        <div class="btn-group">
+                            <a th:href="@{/admin/tickets/{id}(id=${ticket.id})}" class="btn btn-info btn-sm">
+                                <i class="bi bi-eye"></i> Xem
+                            </a>
+                            <a th:href="@{/admin/tickets/{id}/pdf(id=${ticket.id})}" class="btn btn-secondary btn-sm ms-1" target="_blank">
+                                <i class="bi bi-file-pdf"></i> PDF
+                            </a>
+                            <form th:action="@{/admin/tickets/{id}/print(id=${ticket.id})}" method="post" class="d-inline ms-1">
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-printer"></i> In vé
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Empty State -->
+    <div th:if="${tickets == null || #lists.isEmpty(tickets)}" class="text-center mt-4">
+        <p class="text-muted">Không có vé nào chưa in.</p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
