@@ -66,13 +66,11 @@ public class AuthController {
                 return "redirect:/auth/register";
             }
 
-            // Kiểm tra độ dài mật khẩu
             if (user.getPassword().length() < 8) {
                 redirectAttributes.addFlashAttribute("message", "Mật khẩu quá ngắn, vui lòng nhập lại (ít nhất 8 ký tự).");
                 return "redirect:/auth/register";
             }
 
-            // Đăng ký người dùng mới
             userService.registerUser(user);
             redirectAttributes.addFlashAttribute("message", "Đăng ký thành công! Vui lòng đăng nhập.");
             return "redirect:/auth/login";

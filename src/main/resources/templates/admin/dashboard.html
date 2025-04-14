@@ -97,17 +97,21 @@
     <div class="logo">Homestay Admin</div>
     <a href="/admin/users">👤 Quản lý Người dùng</a>
     <a href="/admin/homestays">🏠 Quản lý Homestay</a>
-    <a href="/admin/bookings">📅 Quản lý Booking</a>
+    <a href="/admin/bookings/pending">📅 Quản lý Đặt phòng</a>
+    <a href="/admin/tickets">🎫 Quản lý Vé</a>
+    <a href="/admin/tickets/unprinted">🖨️ Vé chưa in</a>
     <a href="/">🏠 Về Trang chủ</a>
     <a href="/logout">🚪 Đăng xuất</a>
 </div>
 
 <!-- Main Content -->
 <div class="main-content">
-    <h1 class="mb-4">Bảng Điều Khiển</h1>
-    <p>
-        Tổng số lượt truy cập: <span class="visitor-count" th:text="${visitorCount}">0</span>
-    </p>
+    <div class="container-fluid">
+        <h1 class="mb-4">Bảng Điều Khiển</h1>
+        <p>
+            Tổng số lượt truy cập: <span class="visitor-count" th:text="${visitorCount}">0</span>
+        </p>
+    </div>
 
     <div class="footer">
         &copy; 2025 Homestay Admin. All rights reserved.

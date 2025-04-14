@@ -32,25 +32,26 @@ public class ProfileController {
     private UserDetailsService userDetailsService;
 
     @GetMapping("/user/profile")
-    public String viewProfile(Model model) {
-        User user = getAuthenticatedUser();
-        if (user == null) {
-            return "redirect:/auth/login?error=notfound";
-        }
-        model.addAttribute("user", user);
-        model.addAttribute("avatarUrl", user.getAvatar());
-        return "user/profile";
+public String viewProfile(Model model) {
+    User user = getAuthenticatedUser();
+    if (user == null) {
+        return "redirect:/auth/login?error=notfound";
     }
+    model.addAttribute("user", user);
+    model.addAttribute("avatarUrl", user.getAvatar() != null && !user.getAvatar().isEmpty() ? user.getAvatar() : "/images/default.jpg");
+    return "user/profile";
+}
 
-    @GetMapping("/user/update-profile")
-    public String updateProfilePage(Model model) {
-        User user = getAuthenticatedUser();
-        if (user == null) {
-            return "redirect:/auth/login?error=notfound";
-        }
-        model.addAttribute("user", user);
-        return "user/update-profile";
+@GetMapping("/user/update-profile")
+public String updateProfilePage(Model model) {
+    User user = getAuthenticatedUser();
+    if (user == null) {
+        return "redirect:/auth/login?error=notfound";
     }
+    model.addAttribute("user", user);
+    model.addAttribute("avatarUrl", user.getAvatar() != null && !user.getAvatar().isEmpty() ? user.getAvatar() : "/images/default.jpg");
+    return "user/update-profile";
+}
 
     @PostMapping("/user/update-profile")
     public String updateProfile(@RequestParam("username") String username,

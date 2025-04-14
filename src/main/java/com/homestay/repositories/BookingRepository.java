@@ -13,7 +13,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByUserId(Long userId);
     List<Booking> findByHomestayId(Long homestayId);
 
-    // Using explicit query to avoid property resolution issues
     @Query("SELECT b FROM Booking b WHERE b.status = :status")
     List<Booking> findByStatus(@Param("status") BookingStatus status);
     void deleteByHomestayId(Long homestayId);

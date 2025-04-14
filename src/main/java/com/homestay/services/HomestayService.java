@@ -1,11 +1,13 @@
 package com.homestay.services;
 
+import com.homestay.models.Booking;
 import com.homestay.models.Homestay;
 import com.homestay.repositories.HomestayRepository;
+import com.homestay.repositories.BookingRepository;
+import com.homestay.repositories.TicketRepository;
 
 import jakarta.transaction.Transactional;
 
-import com.homestay.repositories.BookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,11 +21,18 @@ import java.util.*;
 
 @Service
 public class HomestayService {
-    @Autowired
-    private HomestayRepository homestayRepository;
+    private final HomestayRepository homestayRepository;
+    private final BookingRepository bookingRepository;
+    private final TicketRepository ticketRepository;
 
     @Autowired
-    private BookingRepository bookingRepository;
+    public HomestayService(HomestayRepository homestayRepository, 
+                          BookingRepository bookingRepository,
+                          TicketRepository ticketRepository) {
+        this.homestayRepository = homestayRepository;
+        this.bookingRepository = bookingRepository;
+        this.ticketRepository = ticketRepository;
+    }
 
     private static final String IMAGE_UPLOAD_DIR = "C:/Users/tdanh/Documents/chotottravel/uploads/images";
 
@@ -33,6 +42,10 @@ public class HomestayService {
 
     public List<Homestay> getHomestaysByLocation(String location) {
         return homestayRepository.findByLocationContainingIgnoreCase(location);
+    }
+
+    public List<Homestay> getHomestaysByProvince(String province) {
+        return homestayRepository.findByProvinceContainingIgnoreCase(province);
     }
 
     public Optional<Homestay> getHomestayById(Long id) {
@@ -66,10 +79,14 @@ public class HomestayService {
     @Transactional
     public boolean deleteHomestay(Long id) {
         if (homestayRepository.existsById(id)) {
-            // Xoá tất cả booking liên quan
+            List<Booking> bookings = bookingRepository.findByHomestayId(id);
+            
+            for (Booking booking : bookings) {
+                ticketRepository.deleteByBookingId(booking.getId());
+            }
+            
             bookingRepository.deleteByHomestayId(id);
-    
-            // Xoá homestay
+            
             homestayRepository.deleteById(id);
             return true;
         }

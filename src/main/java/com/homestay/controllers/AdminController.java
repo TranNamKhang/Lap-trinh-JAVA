@@ -1,8 +1,12 @@
 package com.homestay.controllers;
 
+import com.homestay.models.Booking;
 import com.homestay.models.Homestay;
+import com.homestay.models.Ticket;
 import com.homestay.models.User;
+import com.homestay.services.BookingService;
 import com.homestay.services.HomestayService;
+import com.homestay.services.TicketService;
 import com.homestay.services.UserService;
 import com.homestay.services.VisitCounterService;
 
@@ -15,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,16 +36,20 @@ public class AdminController {
     @Autowired
     private VisitCounterService visitCounterService;
 
+    @Autowired
+    private BookingService bookingService;
+
+    @Autowired
+    private TicketService ticketService;
+
+    // Trang dashboard
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
         model.addAttribute("visitorCount", visitCounterService.getTotalVisits());
         return "admin/dashboard";
     }
-    public String adminDashboard(Model model) {
-        model.addAttribute("visitorCount", visitCounterService.getTotalVisits());
-        return "admin/dashboard";
-    }
 
+    // Quản lý người dùng
     @GetMapping("/users")
     public String listUsers(Model model) {
         model.addAttribute("users", userService.getAllUsers());
@@ -83,48 +92,61 @@ public class AdminController {
     // Quản lý Homestay
     @GetMapping("/homestays")
     public String listHomestays(Model model) {
+        List<String> provinces = Arrays.asList(
+            "Hà Nội", "Hồ Chí Minh", "Đà Nẵng", "Hải Phòng", "Cần Thơ",
+            "Bình Thuận", "Nha Trang", "Đà Lạt", "Hạ Long", "Phú Quốc"
+        );
+        
         model.addAttribute("homestays", homestayService.getAllHomestays());
+        model.addAttribute("provinces", provinces);
+        return "admin/manage-homestay";
+    }
+
+    @GetMapping("/homestays/province/{province}")
+    public String listHomestaysByProvince(@PathVariable String province, Model model) {
+        List<String> provinces = Arrays.asList(
+            "Hà Nội", "Hồ Chí Minh", "Đà Nẵng", "Hải Phòng", "Cần Thơ",
+            "Bình Thuận", "Nha Trang", "Đà Lạt", "Hạ Long", "Phú Quốc"
+        );
+        
+        List<Homestay> homestays = homestayService.getHomestaysByProvince(province);
+        model.addAttribute("homestays", homestays);
+        model.addAttribute("currentProvince", province);
+        model.addAttribute("provinces", provinces);
         return "admin/manage-homestay";
     }
 
     @GetMapping("/homestays/add")
     public String showAddHomestayForm(@RequestParam(value = "id", required = false) Long id, Model model) {
-        model.addAttribute("homestay", id != null ? 
+        Homestay homestay = id != null ? 
                 homestayService.getHomestayById(id).orElse(new Homestay()) : 
-                new Homestay());
+                new Homestay();
+        
+        List<String> provinces = Arrays.asList(
+            "Hà Nội", "Hồ Chí Minh", "Đà Nẵng", "Hải Phòng", "Cần Thơ",
+            "Bình Thuận", "Nha Trang", "Đà Lạt", "Hạ Long", "Phú Quốc"
+        );
+        
+        model.addAttribute("homestay", homestay);
+        model.addAttribute("provinces", provinces);
         return "admin/manage-homestay-form";
     }
 
     @PostMapping("/homestays/save")
     public String saveHomestay(@ModelAttribute Homestay homestay,
-                               @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
-                               @RequestParam(value = "extraImageFiles", required = false) MultipartFile[] extraImageFiles,
-                               RedirectAttributes redirectAttributes) {
+                             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+                             @RequestParam(value = "extraImageFiles", required = false) MultipartFile[] extraImageFiles,
+                             RedirectAttributes redirectAttributes) {
         try {
-            // Xử lý ảnh chính
             if (imageFile != null && !imageFile.isEmpty()) {
                 String contentType = imageFile.getContentType();
-                if (contentType == null || !contentType.startsWith("image/")) {
-                    redirectAttributes.addFlashAttribute("errorMessage", "Tệp ảnh chính không hợp lệ!");
-                    return "redirect:/admin/homestays/add";
+                if (contentType != null && contentType.startsWith("image/")) {
+                    String path = homestayService.saveImage(imageFile);
+                    homestay.setImage(path);
                 }
-                String imagePath = homestayService.saveImage(imageFile);
-                homestay.setImage(imagePath);
-            } else if (homestay.getId() != null) {
-                homestayService.getHomestayById(homestay.getId()).ifPresent(h -> homestay.setImage(h.getImage()));
             }
-    
-            // Xử lý ảnh phụ
+
             List<String> extraImagePaths = new ArrayList<>();
-    
-            if (homestay.getId() != null) {
-                homestayService.getHomestayById(homestay.getId()).ifPresent(h -> {
-                    if (h.getExtraImages() != null) {
-                        extraImagePaths.addAll(h.getExtraImages());
-                    }
-                });
-            }
-    
             if (extraImageFiles != null && extraImageFiles.length > 0) {
                 for (MultipartFile file : extraImageFiles) {
                     if (!file.isEmpty()) {
@@ -136,9 +158,8 @@ public class AdminController {
                     }
                 }
             }
-    
+
             homestay.setExtraImages(extraImagePaths);
-    
             homestayService.createHomestay(homestay);
             redirectAttributes.addFlashAttribute("successMessage", "Đã lưu homestay thành công!");
         } catch (IOException e) {
@@ -146,7 +167,7 @@ public class AdminController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi không xác định: " + e.getMessage());
         }
-    
+
         return "redirect:/admin/homestays";
     }
 
@@ -161,4 +182,90 @@ public class AdminController {
         return "redirect:/admin/homestays";
     }
 
+    @GetMapping("/bookings/pending")
+    public String viewPendingBookings(Model model) {
+        List<Booking> pendingBookings = bookingService.getBookingsByStatus(Booking.BookingStatus.PENDING);
+        model.addAttribute("bookings", pendingBookings);
+        return "admin/pending-bookings";
+    }
+
+    @PostMapping("/bookings/{id}/approve")
+    public String approveBooking(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            boolean success = bookingService.updateBookingStatus(id, Booking.BookingStatus.CONFIRMED);
+            if (success) {
+                redirectAttributes.addFlashAttribute("successMessage", "Đã duyệt đặt phòng thành công!");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy đặt phòng hoặc đã bị hủy.");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Đã xảy ra lỗi khi duyệt đặt phòng.");
+        }
+        return "redirect:/admin/bookings/pending";
+    }
+
+    @PostMapping("/bookings/{id}/reject")
+    public String rejectBooking(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            boolean success = bookingService.updateBookingStatus(id, Booking.BookingStatus.CANCELLED);
+            if (success) {
+                redirectAttributes.addFlashAttribute("successMessage", "Đã từ chối đặt phòng thành công!");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy đặt phòng hoặc đã bị hủy.");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Đã xảy ra lỗi khi từ chối đặt phòng.");
+        }
+        return "redirect:/admin/bookings/pending";
+    }
+
+     @GetMapping("/tickets")
+    public String viewAllTickets(Model model) {
+        List<Ticket> tickets = ticketService.getAllTickets();
+        model.addAttribute("tickets", tickets);
+        return "admin/tickets";
+    }
+
+    @GetMapping("/tickets/unprinted")
+    public String viewUnprintedTickets(Model model) {
+        List<Ticket> unprintedTickets = ticketService.getUnprintedTickets();
+        model.addAttribute("tickets", unprintedTickets);
+        return "admin/unprinted-tickets";
+    }
+
+    @GetMapping("/tickets/{id}")
+    public String viewTicket(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        Optional<Ticket> ticketOpt = ticketService.getTicketById(id);
+        if (ticketOpt.isPresent()) {
+            model.addAttribute("ticket", ticketOpt.get());
+            return "admin/ticket-details";
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy vé với ID: " + id);
+            return "redirect:/admin/tickets";
+        }
+    }
+
+    @PostMapping("/tickets/{id}/print")
+    public String printTicket(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        boolean success = ticketService.markAsPrinted(id);
+        if (success) {
+            redirectAttributes.addFlashAttribute("successMessage", "Vé đã được đánh dấu là đã in!");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy vé với ID: " + id);
+        }
+        return "redirect:/admin/tickets/unprinted";
+    }
+
+    @GetMapping("/tickets/{id}/pdf")
+    public String viewTicketPdf(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        Optional<Ticket> ticketOpt = ticketService.getTicketById(id);
+        if (ticketOpt.isPresent()) {
+            model.addAttribute("ticket", ticketOpt.get());
+            return "admin/ticket-pdf";
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy vé với ID: " + id);
+            return "redirect:/admin/tickets";
+        }
+    }
 }
+

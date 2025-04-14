@@ -27,15 +27,15 @@ public class Payment {
     private BigDecimal amount;
 
     @Column(length = 50)
-    private String paymentMethod; // Đổi tên từ method sang paymentMethod để thống nhất với Booking
+    private String paymentMethod; 
 
     @Column(length = 20, nullable = false)
-    private String status; // PENDING, CONFIRMED, CANCELLED, FAILED (Cân nhắc dùng Enum)
+    private String status; 
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @Column(unique = true) // Mã tham chiếu của giao dịch thanh toán
+    @Column(unique = true) 
     private String transactionRef;
 
     @PrePersist

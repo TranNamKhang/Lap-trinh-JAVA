@@ -25,7 +25,7 @@
 
             <label for="avatar">Ảnh đại diện:</label>
             <input type="file" id="avatar" name="avatar">
-            <img th:src="@{${user.avatar}}" alt="Ảnh đại diện" width="100">
+            <img th:src="@{${user.avatar != null ? user.avatar : '/uploads/images/default.jpg'}}" alt="Ảnh đại diện" width="100">
 
             <button type="submit">Lưu thay đổi</button>
         </form>

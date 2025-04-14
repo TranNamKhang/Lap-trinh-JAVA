@@ -16,7 +16,6 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     List<Payment> findByBooking(com.homestay.models.Booking booking);
 
-    // Tìm theo mã giao dịch tham chiếu (transactionRef)
     Optional<Payment> findByTransactionRef(String transactionRef);
 
     @Modifying

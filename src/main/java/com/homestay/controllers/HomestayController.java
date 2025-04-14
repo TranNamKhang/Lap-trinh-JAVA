@@ -55,6 +55,15 @@ public class HomestayController {
                 new ResponseEntity<>(homestays, HttpStatus.OK);
     }
 
+    @GetMapping("/api/search/province")
+    @ResponseBody
+    public ResponseEntity<List<Homestay>> getHomestaysByProvince(@RequestParam String province) {
+        List<Homestay> homestays = homestayService.getHomestaysByProvince(province);
+        return homestays.isEmpty() ? 
+                new ResponseEntity<>(HttpStatus.NO_CONTENT) : 
+                new ResponseEntity<>(homestays, HttpStatus.OK);
+    }
+
     @PostMapping("/api")
     @ResponseBody
     public ResponseEntity<Homestay> createHomestay(@RequestBody Homestay homestay) {

@@ -18,6 +18,7 @@ public class Homestay {
     private String name;
     private String address;
     private String location;
+    private String province;
 
     @Lob
     private String description;
@@ -36,10 +37,13 @@ public class Homestay {
     private User owner;
 
     private String image;
+    
+    private String ownerName;
+    private String ownerPhone;
 
     public Homestay() {}
 
-    public Homestay(Long id, String name, String address, String location, String description, BigDecimal pricePerNight, User owner, String image) {
+    public Homestay(Long id, String name, String address, String location, String description, BigDecimal pricePerNight, User owner, String image, String ownerName, String ownerPhone) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -48,9 +52,10 @@ public class Homestay {
         this.pricePerNight = pricePerNight;
         this.owner = owner;
         this.image = image;
+        this.ownerName = ownerName;
+        this.ownerPhone = ownerPhone;
     }
 
-    // Getters and Setters
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -63,6 +68,9 @@ public class Homestay {
 
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
+
+    public String getProvince() { return province; }
+    public void setProvince(String province) { this.province = province; }
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
@@ -84,4 +92,10 @@ public class Homestay {
     public double getPrice() {
         return pricePerNight.doubleValue();
     }
+
+    public String getOwnerName() { return ownerName; }
+    public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
+
+    public String getOwnerPhone() { return ownerPhone; }
+    public void setOwnerPhone(String ownerPhone) { this.ownerPhone = ownerPhone; }
 }

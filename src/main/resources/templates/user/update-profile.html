@@ -18,7 +18,7 @@
         <form th:action="@{/user/update-profile}" method="post" enctype="multipart/form-data">
             <!-- Avatar -->
             <div class="profile-avatar">
-                <img th:src="@{${user.avatar}}" alt="Avatar" width="150">
+                <img th:src="@{${user.avatar != null && !user.avatar.isEmpty() ? user.avatar : '/images/default.jpg'}}" alt="Avatar" width="150">
                 <input type="file" name="avatar">
             </div>
 

@@ -20,7 +20,7 @@ public class GuestController {
         } else {
             model.addAttribute("message", "Chào mừng bạn quay lại, " + authentication.getName());
         }
-        model.addAttribute("homestays", homestayService.getAllHomestays()); // Hiển thị tất cả homestay
+        model.addAttribute("homestays", homestayService.getAllHomestays()); 
         return "guest/guest_dashboard";
     }
 }

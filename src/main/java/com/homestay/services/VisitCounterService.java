@@ -18,14 +18,13 @@ public class VisitCounterService implements HttpSessionListener {
 
     @PostConstruct
     public void init() {
-        // Load số lượt truy cập từ file khi ứng dụng khởi chạy
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line = reader.readLine();
             if (line != null) {
                 totalVisits.set(Integer.parseInt(line.trim()));
             }
         } catch (IOException e) {
-            totalVisits.set(0); // Nếu file không tồn tại, bắt đầu từ 0
+            totalVisits.set(0); 
         }
     }
 

@@ -41,7 +41,6 @@ public class User {
     @Column(nullable = true)
     private String avatar;
 
-    // Constructor, getter và setter
 
     public User() {}
 
@@ -74,7 +73,6 @@ public class User {
     public String getAvatar() { return avatar; }
     public void setAvatar(String avatar) { this.avatar = avatar; }
 
-    // Phương thức hỗ trợ mã hóa mật khẩu nếu cần
     public void encodePassword(String encodedPassword) {
         this.password = encodedPassword;
     }

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý đơn đặt phòng</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+<div class="container mt-4">
+    <h2 class="mb-4">Quản lý Đơn Đặt Phòng</h2>
+
+    <!-- Hiển thị thông báo -->
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+        <tr>
+            <th>ID</th>
+            <th>Người dùng</th>
+            <th>Homestay</th>
+            <th>Ngày đặt</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="booking : ${bookings}">
+            <td th:text="${booking.id}">1</td>
+            <td th:text="${booking.user.fullName}">Nguyễn Văn A</td>
+            <td th:text="${booking.homestay.name}">Homestay Đà Lạt</td>
+            <td th:text="${#dates.format(booking.bookingDate, 'dd/MM/yyyy')}">01/04/2025</td>
+            <td th:text="${booking.status}">PENDING</td>
+            <td>
+                <a th:if="${booking.status.toString() == 'PENDING'}"
+                   th:href="@{/admin/booking/confirm/{id}(id=${booking.id})}"
+                   class="btn btn-success btn-sm">Xác nhận</a>
+
+                <a th:if="${booking.status.toString() == 'PENDING'}"
+                   th:href="@{/admin/booking/cancel/{id}(id=${booking.id})}"
+                   class="btn btn-danger btn-sm">Hủy</a>
+            </td>
+        </tr>
+        <tr th:if="${bookings.isEmpty()}">
+            <td colspan="6" class="text-center">Không có đơn đặt phòng nào.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -6,10 +6,14 @@ import com.homestay.models.User;
 import com.homestay.services.BookingService;
 import com.homestay.services.HomestayService;
 import com.homestay.services.UserService;
+
+import org.springframework.security.core.Authentication;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +26,7 @@ import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Controller
@@ -40,7 +45,6 @@ public class BookingController {
         this.userService = userService;
     }
 
-    // --- showBookingForm ---
     @GetMapping("/form")
     public String showBookingForm(@RequestParam("homestayId") Long homestayId,
                                   @AuthenticationPrincipal UserDetails userDetails, Model model, RedirectAttributes redirectAttributes) {
@@ -70,7 +74,6 @@ public class BookingController {
         booking.setHomestay(homestay);
         booking.setNumberOfGuests(1);
         booking.setTotalPrice(0);
-        // Không cần set appointmentDate ở đây nữa vì đã bỏ @NotNull
 
         model.addAttribute("booking", booking);
         model.addAttribute("homestay", homestay);
@@ -79,7 +82,6 @@ public class BookingController {
     }
 
 
-    // --- createBooking ---
     @PostMapping
     public String createBooking(@Valid @ModelAttribute("booking") Booking booking,
                                 BindingResult bindingResult,
@@ -101,12 +103,9 @@ public class BookingController {
         booking.setUser(user);
         logger.debug("User set for booking: {}", user.getId());
 
-        // *** Đặt AppointmentDate sau khi đã có User và trước khi vào try-catch hoặc validation ***
-        // Đảm bảo nó được set trước khi lưu vào DB
         booking.setAppointmentDate(LocalDate.now());
         logger.debug("Set appointmentDate to now: {}", booking.getAppointmentDate());
 
-        // Kiểm tra và lấy Homestay
         if (booking.getHomestay() == null || booking.getHomestay().getId() == null) {
             logger.error("Validation Error: Homestay ID is missing in the submitted booking object for user {}", username);
             model.addAttribute("booking", booking); // Giữ lại dữ liệu form
@@ -126,10 +125,7 @@ public class BookingController {
         logger.debug("Homestay found and set for booking: {}", homestay.getId());
 
 
-        // --- Bắt đầu khối try-catch ---
         try {
-            // --- Kiểm tra Validation (@Valid đã chạy, giờ kiểm tra thủ công) ---
-            // Kiểm tra ngày tháng (chỉ khi không null - @Valid đã xử lý null)
             if (booking.getCheckIn() != null && booking.getCheckOut() != null) {
                 LocalDate today = LocalDate.now();
                 if (booking.getCheckIn().isBefore(today)) {
@@ -139,9 +135,7 @@ public class BookingController {
                     bindingResult.rejectValue("checkOut", "After.booking.checkOut", "Ngày trả phòng phải sau ngày nhận phòng.");
                 }
             }
-            // (Các kiểm tra thủ công khác nếu cần)
 
-            // Nếu có lỗi từ @Valid hoặc kiểm tra thủ công -> quay lại form
             if (bindingResult.hasErrors()) {
                 logger.warn("Booking form validation failed for user {}:", username);
                 for (FieldError error : bindingResult.getFieldErrors()) {
@@ -153,7 +147,6 @@ public class BookingController {
             }
             logger.debug("Form validation passed for user: {}", username);
 
-            // --- Tính toán giá ---
             logger.debug("Calculating total price server-side...");
             if (homestay.getPricePerNight() != null && homestay.getPricePerNight().compareTo(BigDecimal.ZERO) > 0) {
                 long nights = ChronoUnit.DAYS.between(booking.getCheckIn(), booking.getCheckOut());
@@ -171,12 +164,10 @@ public class BookingController {
             }
             logger.debug("Total price set.");
 
-            // --- Lưu Booking và Payment ---
             logger.debug("Calling bookingService.createBooking...");
             Booking savedBooking = bookingService.createBooking(booking);
             logger.info("Booking saved successfully with ID: {} for user ID: {}", savedBooking.getId(), user.getId());
 
-            // --- Chuyển hướng ---
             if ("QR_CODE".equals(savedBooking.getPaymentMethod())) {
                 logger.info("Redirecting user {} to QR payment page for booking ID: {}", username, savedBooking.getId());
                 return "redirect:/payment/qr/" + savedBooking.getId();
@@ -187,7 +178,6 @@ public class BookingController {
             }
 
         } catch (Exception e) {
-            // --- Xử lý Exception tổng quát ---
             logger.error("!!! Exception occurred during booking process for user {}: {}", username, e.getMessage(), e);
             model.addAttribute("error", "Đã xảy ra lỗi không mong muốn khi đặt phòng. Vui lòng thử lại.");
             if (homestay != null) {
@@ -198,7 +188,6 @@ public class BookingController {
         }
     }
 
-    // --- cancelBooking giữ nguyên ---
     @PostMapping("/cancel/{id}")
     public String cancelBooking(@PathVariable Long id,
                                 @AuthenticationPrincipal UserDetails userDetails,
@@ -236,5 +225,91 @@ public class BookingController {
         }
         return "redirect:/user/booking";
     }
+
+    @GetMapping("/my-bookings")
+public String myBookings(Model model) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getName())) {
+        return "redirect:/auth/login";
+    }
+
+    String username = authentication.getName();
+    Optional<User> userOptional = userService.getUsername(username);
+    
+    if (userOptional.isEmpty()) {
+        return "redirect:/auth/login";
+    }
+    
+    User user = userOptional.get();
+    Long userId = user.getId();
+    
+    List<Booking> allBookings = bookingService.getBookingsByUser(userId);
+    
+    List<Booking> pendingBookings = new ArrayList<>();
+    List<Booking> confirmedBookings = new ArrayList<>();
+    List<Booking> completedBookings = new ArrayList<>();
+    List<Booking> cancelledBookings = new ArrayList<>();
+    
+    for (Booking booking : allBookings) {
+        switch (booking.getStatus()) {
+            case PENDING:
+                pendingBookings.add(booking);
+                break;
+            case CONFIRMED:
+                confirmedBookings.add(booking);
+                break;
+            case COMPLETED:
+                completedBookings.add(booking);
+                break;
+            case CANCELLED:
+                cancelledBookings.add(booking);
+                break;
+        }
+    }
+    
+    model.addAttribute("bookings", allBookings);
+    model.addAttribute("pendingBookings", pendingBookings);
+    model.addAttribute("confirmedBookings", confirmedBookings);
+    model.addAttribute("completedBookings", completedBookings);
+    model.addAttribute("cancelledBookings", cancelledBookings);
+    
+    return "user/booking/my-bookings";
+}
+
+@PostMapping("/booking/cancel")
+public String cancelBooking(@RequestParam("bookingId") Long bookingId, RedirectAttributes redirectAttributes) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getName())) {
+        return "redirect:/auth/login";
+    }
+    
+    try {
+        Optional<Booking> bookingOptional = bookingService.getBookingById(bookingId);
+        if (bookingOptional.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy đơn đặt phòng!");
+            return "redirect:/user/booking/my-bookings";
+        }
+        
+        Booking booking = bookingOptional.get();
+        String username = authentication.getName();
+        if (!booking.getUser().getUsername().equals(username)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền hủy đơn đặt phòng này!");
+            return "redirect:/user/booking/my-bookings";
+        }
+        
+        if (booking.getStatus() != Booking.BookingStatus.PENDING) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Chỉ có thể hủy đơn đặt phòng đang chờ xác nhận!");
+            return "redirect:/user/booking/my-bookings";
+        }
+        
+        bookingService.cancelBooking(bookingId);
+        redirectAttributes.addFlashAttribute("successMessage", "Đã hủy đơn đặt phòng thành công!");
+        
+    } catch (Exception e) {
+        redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi hủy đơn đặt phòng: " + e.getMessage());
+    }
+    
+    return "redirect:/user/booking/my-bookings";
+}
 
 }

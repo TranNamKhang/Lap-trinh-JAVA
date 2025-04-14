@@ -2,12 +2,12 @@ package com.homestay.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull; // Keep for other fields
+import jakarta.validation.constraints.NotNull; 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.math.BigDecimal; // Import BigDecimal
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "bookings")
@@ -17,52 +17,50 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY) // Thêm FetchType LAZY để tối ưu
+    @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name = "user_id", nullable = false)
-    // @NotNull // Remove this line
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY) // Thêm FetchType LAZY
+    @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name = "homestay_id", nullable = false)
-    @NotNull // Giữ NotNull cho homestay
+    @NotNull 
     private Homestay homestay;
 
-    @NotNull(message = "Ngày nhận phòng không được để trống") // Giữ NotNull
+    @NotNull(message = "Ngày nhận phòng không được để trống") 
     private LocalDate checkIn;
 
-    @NotNull(message = "Ngày trả phòng không được để trống") // Giữ NotNull
+    @NotNull(message = "Ngày trả phòng không được để trống") 
     private LocalDate checkOut;
 
-    @NotNull(message = "Tổng tiền không được null") // Giữ NotNull
-    @Min(value = 0, message="Tổng tiền không hợp lệ") // Có thể thêm Min = 0
-    private double totalPrice; // Hoặc dùng BigDecimal nếu muốn chính xác tuyệt đối
+    @NotNull(message = "Tổng tiền không được null") 
+    @Min(value = 0, message="Tổng tiền không hợp lệ") 
+    private double totalPrice; 
 
     @Enumerated(EnumType.STRING)
-    private BookingStatus status = BookingStatus.PENDING; // Trạng thái mặc định
+    private BookingStatus status = BookingStatus.PENDING; 
 
-    private LocalDateTime bookingDate; // Sẽ set trong @PrePersist hoặc Service
+    private LocalDateTime bookingDate; 
 
-    @NotNull(message = "Vui lòng chọn phương thức thanh toán") // Giữ NotNull
+    @NotNull(message = "Vui lòng chọn phương thức thanh toán") 
     private String paymentMethod;
 
-    @NotNull(message="Số lượng khách không được để trống") // Giữ NotNull
+    @NotNull(message="Số lượng khách không được để trống") 
     @Min(value = 1, message = "Số lượng khách phải ít nhất là 1")
     private int numberOfGuests;
 
-    private boolean deleted = false; // Mặc định là false
+    private boolean deleted = false; 
 
-    // Bỏ @NotNull ở đây vì sẽ set trong Controller/Service
     private LocalDate appointmentDate;
 
-    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) // Thêm FetchType LAZY
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) 
     private List<Payment> payments = new ArrayList<>();
 
     // --- Lifecycle Callback ---
     @PrePersist
     protected void onCreate() {
-        bookingDate = LocalDateTime.now(); // Tự động đặt thời gian tạo
+        bookingDate = LocalDateTime.now(); 
         if (status == null) {
-            status = BookingStatus.PENDING; // Đảm bảo có trạng thái mặc định
+            status = BookingStatus.PENDING; 
         }
     }
 
@@ -79,7 +77,6 @@ public class Booking {
         }
     }
 
-    // --- Enum BookingStatus ---
     public enum BookingStatus {
         PENDING("Đang chờ xác nhận"),
         CONFIRMED("Đã xác nhận"),
@@ -97,8 +94,6 @@ public class Booking {
         }
     }
 
-    // --- Getters and Setters ---
-    // (Giữ nguyên tất cả getters và setters)
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

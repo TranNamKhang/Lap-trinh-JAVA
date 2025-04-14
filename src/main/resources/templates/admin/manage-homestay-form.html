@@ -37,6 +37,18 @@
         </div>
 
         <div class="mb-3">
+            <label class="form-label">Tỉnh/Thành phố:</label>
+            <select name="province" class="form-select" required>
+                <option value="">-- Chọn tỉnh/thành phố --</option>
+                <option th:each="province : ${provinces}"
+                        th:value="${province}"
+                        th:text="${province}"
+                        th:selected="${homestay.province == province}">
+                </option>
+            </select>
+        </div>
+
+        <div class="mb-3">
             <label class="form-label">Mô tả:</label>
             <textarea name="description" class="form-control" required th:text="${homestay.description}"></textarea>
         </div>
@@ -44,6 +56,16 @@
         <div class="mb-3">
             <label class="form-label">Giá tiền mỗi đêm:</label>
             <input type="number" name="pricePerNight" class="form-control" required th:value="${homestay.pricePerNight}" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Tên chủ homestay:</label>
+            <input type="text" name="ownerName" th:value="${homestay.ownerName}" class="form-control" required/>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Số điện thoại chủ homestay:</label>
+            <input type="tel" name="ownerPhone" th:value="${homestay.ownerPhone}" class="form-control" required/>
         </div>
         
         <div class="mb-3">
