@@ -1,0 +1,205 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #fff;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navbar */
+header {
+    background-color: #000;  /* Black background */
+    padding: 15px 0;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;  /* Align logo to left, nav links to right */
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.navbar-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo-text {
+    color: #fff;
+    font-size: 28px;
+    font-weight: 600;
+    margin-left: 20px;  /* Align logo to the left */
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+}
+
+.nav-link {
+    color: #fff;
+    margin: 0 20px;
+    text-decoration: none;
+    font-size: 18px;
+    position: relative;
+}
+
+.nav-link:hover {
+    color: #bbb;  /* Light gray for hover effect */
+}
+
+.avatar-link {
+    margin-left: 20px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+/* Province Section */
+.province-section {
+    background-color: #fff;
+    padding: 25px;
+    margin-top: 80px;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.province-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.province-btn {
+    background-color: #333;  /* Dark gray */
+    color: white;
+    padding: 12px 25px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.province-btn:hover,
+.province-btn.active {
+    background-color: #444;  /* Slightly lighter gray */
+}
+
+/* Homestay List */
+.homestay-list {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 0 20px;
+    flex: 1;
+}
+
+.homestay-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.homestay-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+}
+
+.homestay-card:hover {
+    transform: translateY(-6px);
+}
+
+.homestay-image-container {
+    position: relative;
+}
+
+.homestay-image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+}
+
+.price-tag {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 8px 15px;
+    font-size: 18px;
+    border-radius: 20px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.card-text {
+    font-size: 16px;
+    color: #777;
+    margin-bottom: 25px;
+}
+
+.btn-detail {
+    background-color: #333;  /* Dark gray */
+    color: white;
+    padding: 12px 25px;
+    text-decoration: none;
+    border-radius: 30px;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.btn-detail:hover {
+    background-color: #444;  /* Slightly lighter gray */
+}
+
+/* Footer */
+.footer {
+    background-color: #000;
+    color: #fff;
+    padding: 25px 0;
+    text-align: center;
+    margin-top: auto;
+}
+
+.footer-content p {
+    font-size: 16px;
+    color: #bbb;
+}

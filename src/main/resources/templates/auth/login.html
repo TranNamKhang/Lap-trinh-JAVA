@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng nhập</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-yellow-200 to-orange-300 min-h-screen flex items-center justify-center">
+
+    <div class="bg-white/90 backdrop-blur-md shadow-2xl rounded-3xl px-10 py-12 w-full max-w-md">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-yellow-500">Chào mừng trở lại 👋</h1>
+            <p class="text-sm text-gray-700 mt-2">Vui lòng đăng nhập để tiếp tục</p>
+        </div>
+
+        <p th:if="${message}" 
+           th:text="${message}" 
+           class="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-sm text-center">
+        </p>
+
+        <form action="/auth/login" method="post" class="space-y-6">
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-700">Tên đăng nhập</label>
+                <input type="text" id="username" name="username" required
+                       class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 transition">
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Mật khẩu</label>
+                <input type="password" id="password" name="password" required
+                       class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 transition">
+            </div>
+
+            <button type="submit"
+                    class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-xl transition duration-300 shadow-lg">
+                Đăng nhập
+            </button>
+        </form>
+        
+        <a href="/oauth2/authorization/google">Đăng nhập bằng Google</a>
+
+        <p class="text-center text-sm text-gray-600 mt-6">
+            Chưa có tài khoản?
+            <a href="/auth/register" class="text-yellow-500 hover:underline font-medium">Đăng ký ngay</a>
+        </p>
+    </div>
+
+</body>
+</html>
