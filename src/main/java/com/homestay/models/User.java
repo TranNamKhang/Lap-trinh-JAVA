@@ -19,9 +19,7 @@ public class User {
     @Size(min = 3, max = 20, message = "Tên đăng nhập phải có từ 3 đến 20 ký tự.")
     private String username;
 
-    @Column(nullable = false)
-    @NotBlank(message = "Mật khẩu không được để trống.")
-    @Size(min = 6, message = "Mật khẩu phải có ít nhất 6 ký tự.")
+    @Column(nullable = true)
     private String password;
 
     @Column(nullable = false, unique = true)
@@ -29,8 +27,7 @@ public class User {
     @Email(message = "Email không hợp lệ.")
     private String email;
 
-    @Column(nullable = false, unique = true)
-    @NotBlank(message = "Số điện thoại không được để trống.")
+    @Column(nullable = true, unique = true)
     @Size(min = 10, max = 10, message = "Số điện thoại phải có đúng 10 chữ số.")
     @Pattern(regexp = "^[0-9]{10}$", message = "Số điện thoại chỉ được chứa các chữ số và có 10 ký tự.")
     private String phone;
@@ -41,6 +38,8 @@ public class User {
     @Column(nullable = true)
     private String avatar;
 
+    @Column(nullable = true)
+    private String oauthProvider;
 
     public User() {}
 
@@ -72,6 +71,9 @@ public class User {
 
     public String getAvatar() { return avatar; }
     public void setAvatar(String avatar) { this.avatar = avatar; }
+
+    public String getOauthProvider() { return oauthProvider; }
+    public void setOauthProvider(String oauthProvider) { this.oauthProvider = oauthProvider; }
 
     public void encodePassword(String encodedPassword) {
         this.password = encodedPassword;

@@ -1,210 +1,271 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
     <meta charset="UTF-8">
     <title>Chi tiết Homestay</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
         }
-
-        /* Đảm bảo các ảnh có kích thước đồng đều */
-        .homestay-details, .extra-image img {
-            width: 100%;
-            height: 250px; /* Cố định chiều cao cho tất cả ảnh */
-            object-fit: cover; /* Giữ tỷ lệ và không bị biến dạng */
-            border-radius: 8px;
-        }
-
-        .image-slider {
+        
+        /* Rating System Styles */
+        .rating {
             display: flex;
-            align-items: center;
-            margin: 15px 0;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
         }
-
-        .card-body {
-            padding: 20px;
-        }
-
-        .homestay-info h2 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-        }
-
-        .info-item {
-            margin-bottom: 10px;
-        }
-
-        .btn-book-now {
-            background-color: #f39c12;
-            color: white;
-            border-radius: 5px;
-            padding: 10px 20px;
-            text-align: center;
-        }
-
-        .btn-book-now:hover {
-            background-color: #e67e22;
-        }
-
-        /* Đảm bảo các ảnh trong phần hình ảnh phụ có chiều cao lớn hơn */
-        .extra-images-container .extra-image {
-            overflow: hidden;
-            border-radius: 8px;
-            height: 180px; /* Chiều cao lớn hơn một chút */
-        }
-
-        .extra-images-container .extra-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* Modal cho ảnh phóng to */
-        .modal {
+        
+        .rating input {
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1050;
-            overflow: hidden;
         }
-
-        .modal-dialog-centered {
-            max-width: 90%;
-            margin: auto;
-            text-align: center;
+        
+        .rating label {
+            font-size: 24px;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s;
         }
-
-        .img-fluid {
-            max-height: 80vh;
-        }
-
-        /* Cải thiện bố cục ảnh phụ với lưới */
-        .extra-images-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Đảm bảo các ảnh có kích thước hợp lý */
-            gap: 15px;
-            margin-top: 20px;
+        
+        .rating input:checked ~ label,
+        .rating input:hover ~ label,
+        .rating label:hover,
+        .rating label:hover ~ label {
+            color: #fbbf24;
         }
     </style>
 </head>
-<body>
-<header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" th:href="@{/user/guest}">Chỗ Tốt Travel</a>
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/user/home}">Trang chủ</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/homestays}">Danh sách Homestays</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/about}">Giới thiệu</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/contact}">Liên hệ</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- Header -->
+<header class="bg-gray-900 text-white">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+        <a class="text-xl font-bold" th:href="@{/user/home}">Chỗ Tốt Travel</a>
+        <nav class="flex space-x-6">
+            <a th:href="@{/user/home}" class="hover:text-yellow-400">Trang chủ</a>
+            <a th:href="@{/homestays}" class="hover:text-yellow-400">Danh sách Homestays</a>
+            <a th:href="@{/about}" class="hover:text-yellow-400">Giới thiệu</a>
+            <a th:href="@{/contact}" class="hover:text-yellow-400">Liên hệ</a>
+        </nav>
+    </div>
 </header>
 
-<main class="container py-5">
-    <div class="row">
+<!-- Main -->
+<main class="container mx-auto px-4 py-10">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
         <!-- Chi tiết Homestay -->
-        <section class="col-md-8">
-            <div class="card mb-4">
-                <div class="row g-0">
-                    <div class="col-md-12 mb-4">
-                        <img th:src="@{${homestay.image}}" class="img-fluid homestay-details" alt="Homestay Image">
+        <section class="md:col-span-2">
+            <div class="bg-white shadow rounded-lg overflow-hidden">
+                <div class="w-full h-[400px] overflow-hidden rounded-xl">
+                    <img th:src="@{${homestay.image}}" alt="Homestay Image"
+                         class="w-full h-full object-cover">
+                </div>                
+                <div class="p-6">
+                    <h2 class="text-2xl font-semibold mb-4" th:text="${homestay != null ? homestay.name : 'Chưa có tên'}">Tên Homestay</h2>
+
+                    <div class="mb-4">
+                        <strong>Mô tả:</strong>
+                        <p th:text="${homestay != null ? homestay.description : 'Chưa có mô tả'}"></p>
                     </div>
-                    <div class="col-md-12">
-                        <div class="card-body">
-                            <h2 class="card-title" th:text="${homestay != null ? homestay.name : 'Chưa có tên'}">Tên Homestay</h2>
 
-                            <div class="info-item">
-                                <strong>Mô tả:</strong>
-                                <p th:text="${homestay != null ? homestay.description : 'Chưa có mô tả'}"></p>
+                    <div class="mb-4">
+                        <strong>Giá:</strong>
+                        <p>
+                            <span th:text="${#numbers.formatDecimal(homestay.pricePerNight, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+                        </p>
+                    </div>
+
+                    <div class="mb-4">
+                        <strong>Địa chỉ:</strong>
+                        <p th:text="${homestay != null ? homestay.address : 'Chưa có địa chỉ'}"></p>
+                    </div>
+
+                    <div class="mb-4">
+                        <strong>Chủ homestay:</strong>
+                        <p th:text="${homestay != null ? homestay.ownerName : 'Chưa có thông tin'}"></p>
+                    </div>
+
+                    <div class="mb-6">
+                        <strong>Số điện thoại liên hệ:</strong>
+                        <p th:text="${homestay != null ? homestay.ownerPhone : 'Chưa có thông tin'}"></p>
+                    </div>
+
+                    <a th:href="@{/user/booking/form(homestayId=${homestay.id})}"
+                       class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded">
+                        Đặt ngay
+                    </a>
+                </div>
+            </div>
+
+            <!-- Review Section -->
+            <div class="mt-8 bg-white shadow rounded-lg p-6">
+                <h3 class="text-xl font-semibold mb-4">Đánh giá</h3>
+                
+                <!-- Review Form -->
+                <form th:action="@{/user/homestays/{id}/reviews(id=${homestay.id})}" method="post" class="mb-8">
+                    <input type="hidden" name="homestayId" th:value="${homestay.id}">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-medium mb-2">Đánh giá của bạn</label>
+                        <div class="flex items-center mb-2">
+                            <div class="rating">
+                                <input type="radio" name="rating" value="5" id="5" required><label for="5">☆</label>
+                                <input type="radio" name="rating" value="4" id="4"><label for="4">☆</label>
+                                <input type="radio" name="rating" value="3" id="3"><label for="3">☆</label>
+                                <input type="radio" name="rating" value="2" id="2"><label for="2">☆</label>
+                                <input type="radio" name="rating" value="1" id="1"><label for="1">☆</label>
                             </div>
-
-                            <div class="info-item">
-                                <strong>Giá:</strong>
-                                <p>
-                                    <span class="price-tag" th:text="${#numbers.formatDecimal(homestay.pricePerNight, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
-                                </p>
-                            </div>
-
-                            <div class="info-item">
-                                <strong>Địa chỉ:</strong>
-                                <p th:text="${homestay != null ? homestay.address : 'Chưa có địa chỉ'}"></p>
-                            </div>
-
-                            <div class="info-item">
-                                <strong>Chủ homestay:</strong>
-                                <p th:text="${homestay != null ? homestay.ownerName : 'Chưa có thông tin'}"></p>
-                            </div>
-
-                            <div class="info-item">
-                                <strong>Số điện thoại liên hệ:</strong>
-                                <p th:text="${homestay != null ? homestay.ownerPhone : 'Chưa có thông tin'}"></p>
-                            </div>
-
-                            <a th:href="@{/user/booking/form(homestayId=${homestay.id})}" class="btn btn-warning btn-book-now">Đặt ngay</a>
                         </div>
+                        <textarea name="comment" rows="4" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="Viết đánh giá của bạn..." required></textarea>
+                    </div>
+                    <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded">
+                        Gửi đánh giá
+                    </button>
+                </form>
+
+                <!-- Reviews List -->
+                <div class="space-y-6">
+                    <div th:if="${reviews != null and !reviews.empty}" th:each="review : ${reviews}" class="border-b pb-4">
+                        <div class="flex items-center mb-2 justify-between">
+                            <div class="flex items-center">
+                                <span th:text="${review.user.username}" class="font-medium mr-2"></span>
+                                <div class="flex">
+                                    <span th:each="i : ${#numbers.sequence(1, 5)}">
+                                        <span th:if="${i <= review.rating}" class="text-yellow-500">★</span>
+                                        <span th:if="${i > review.rating}" class="text-gray-300">★</span>
+                                    </span>
+                                </div>
+                                <span class="text-gray-500 text-sm ml-2" th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}"></span>
+                            </div>
+                            <!-- Thêm nút sửa và xóa cho người dùng đã đăng nhập và là người viết bình luận -->
+                            <div th:if="${currentUser != null && currentUser.username == review.user.username}" class="flex space-x-2">
+                                <button th:data-id="${review.id}" 
+                                        th:data-comment="${review.comment}" 
+                                        th:data-rating="${review.rating}"
+                                        onclick="openEditModal(this.getAttribute('data-id'), this.getAttribute('data-comment'), this.getAttribute('data-rating'))" 
+                                        class="text-blue-500 hover:text-blue-700">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                </button>
+                                <form th:action="@{/user/homestays/reviews/{id}/delete(id=${review.id})}" method="post" class="inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bình luận này?');">
+                                    <button type="submit" class="text-red-500 hover:text-red-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <p class="text-gray-700" th:text="${review.comment}"></p>
+                    </div>
+                    <div th:if="${reviews == null or reviews.empty}" class="text-center text-gray-500 py-4">
+                        Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá!
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Ảnh phụ -->
-        <section class="col-md-4" th:if="${homestay.extraImages != null and !homestay.extraImages.isEmpty()}">
-            <h3 class="mb-3">Hình ảnh khác</h3>
-            <div class="extra-images-container">
-                <div th:each="img : ${homestay.extraImages}" class="extra-image">
-                    <img th:src="@{${img}}" class="zoomable-image" alt="Ảnh phụ Homestay" onclick="openImageModal(this)">
+        <section th:if="${homestay.extraImages != null and !homestay.extraImages.isEmpty()}">
+            <h3 class="text-xl font-semibold mb-4">Hình ảnh khác</h3>
+            <div class="grid grid-cols-2 gap-4">
+                <div th:each="img : ${homestay.extraImages}" class="rounded overflow-hidden h-[180px] cursor-pointer">
+                    <img th:src="@{${img}}" class="w-full h-full object-cover zoomable-image"
+                         onclick="openImageModal(this)" alt="Ảnh phụ Homestay">
                 </div>
             </div>
         </section>
     </div>
 </main>
 
-<!-- Modal for Enlarged Image -->
-<div id="imageModal" class="modal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body text-center">
-                <img id="modalImage" class="img-fluid" alt="Enlarged Image">
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeImageModal()">Đóng</button>
-            </div>
+<!-- Modal -->
+<div id="imageModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden items-center justify-center">
+    <div class="max-w-4xl w-full px-4">
+        <div class="bg-white p-4 rounded shadow text-center">
+            <img id="modalImage" class="mx-auto max-h-[80vh] w-auto" alt="Enlarged Image">
+            <button onclick="closeImageModal()"
+                    class="mt-4 bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded">
+                Đóng
+            </button>
         </div>
     </div>
 </div>
 
+<!-- Edit Review Modal -->
+<div id="editReviewModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center">
+    <div class="max-w-lg w-full px-4">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="text-xl font-semibold mb-4">Chỉnh sửa đánh giá</h3>
+            <form id="editReviewForm" th:action="@{/user/homestays/reviews/0/edit}" method="post">
+                <input type="hidden" id="editReviewId" name="reviewId" value="">
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2">Đánh giá của bạn</label>
+                    <div class="flex items-center mb-2">
+                        <div class="rating edit-rating">
+                            <input type="radio" name="editRating" value="5" id="edit5"><label for="edit5">☆</label>
+                            <input type="radio" name="editRating" value="4" id="edit4"><label for="edit4">☆</label>
+                            <input type="radio" name="editRating" value="3" id="edit3"><label for="edit3">☆</label>
+                            <input type="radio" name="editRating" value="2" id="edit2"><label for="edit2">☆</label>
+                            <input type="radio" name="editRating" value="1" id="edit1"><label for="edit1">☆</label>
+                        </div>
+                    </div>
+                    <textarea id="editComment" name="editComment" rows="4" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="Viết đánh giá của bạn..." required></textarea>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeEditModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded">
+                        Hủy
+                    </button>
+                    <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded">
+                        Cập nhật
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
 <script>
     function openImageModal(imageElement) {
-        const modalImage = document.getElementById('modalImage');
-        const modal = document.getElementById('imageModal');
-        modalImage.src = imageElement.src;
-        modal.style.display = 'block';
+        document.getElementById('modalImage').src = imageElement.src;
+        document.getElementById('imageModal').classList.remove('hidden');
+        document.getElementById('imageModal').classList.add('flex');
     }
 
     function closeImageModal() {
-        const modal = document.getElementById('imageModal');
-        modal.style.display = 'none';
+        document.getElementById('imageModal').classList.add('hidden');
+        document.getElementById('imageModal').classList.remove('flex');
+    }
+    
+    function openEditModal(reviewId, comment, rating) {
+        // Cập nhật action URL với ID của bình luận
+        const form = document.getElementById('editReviewForm');
+        form.action = form.action.replace('/0/', '/' + reviewId + '/');
+        
+        // Cập nhật giá trị trong form
+        document.getElementById('editComment').value = comment;
+        
+        // Cập nhật đánh giá sao
+        const ratingInputs = document.querySelectorAll('input[name="editRating"]');
+        for (let input of ratingInputs) {
+            if (parseInt(input.value) === parseInt(rating)) {
+                input.checked = true;
+                break;
+            }
+        }
+        
+        // Hiển thị modal
+        document.getElementById('editReviewModal').classList.remove('hidden');
+        document.getElementById('editReviewModal').classList.add('flex');
+    }
+    
+    function closeEditModal() {
+        document.getElementById('editReviewModal').classList.add('hidden');
+        document.getElementById('editReviewModal').classList.remove('flex');
     }
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
 </body>
 </html>

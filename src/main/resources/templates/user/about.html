@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chỗ Tốt Travel - Giới thiệu</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    .card-img-top {
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen bg-gray-50">
+
+  <!-- Navbar -->
+  <header>
+    <nav class="bg-gray-900 text-white fixed w-full z-10 top-0 shadow">
+      <div class="container mx-auto flex flex-wrap items-center justify-between p-4">
+        <span class="text-xl font-bold">Chỗ Tốt Travel</span>
+        <button class="block lg:hidden text-white focus:outline-none" onclick="document.getElementById('navbarNav').classList.toggle('hidden')">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        <div class="w-full lg:flex lg:items-center lg:w-auto hidden" id="navbarNav">
+          <ul class="flex flex-col lg:flex-row gap-4 mt-4 lg:mt-0 lg:ml-auto">
+            <li><a href="/user/home" class="hover:text-yellow-400">Trang chủ</a></li>
+            <li><a href="/user/about" class="hover:text-yellow-400 text-yellow-400">Giới thiệu</a></li>
+            <li><a href="/user/contact" class="hover:text-yellow-400">Liên hệ</a></li>
+            <li><a href="/user/booking/my-bookings" class="hover:text-yellow-400">Đơn đặt phòng</a></li>
+            <li>
+              <a href="/user/profile">
+                <img th:src="@{${avatarUrl != null ? avatarUrl : '/images/default.jpg'}}" alt="Avatar" class="rounded-full w-10 h-10 object-cover" />
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- About Section -->
+  <section class="pt-24 pb-10">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6 text-center">Về Chỗ Tốt Travel</h1>
+        <div class="bg-white rounded-lg shadow-lg p-8">
+          <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-yellow-600">Sứ mệnh của chúng tôi</h2>
+            <p class="text-gray-700 leading-relaxed">
+              Chỗ Tốt Travel cam kết mang đến cho du khách những trải nghiệm nghỉ dưỡng tuyệt vời nhất tại Việt Nam. 
+              Chúng tôi kết nối du khách với những homestay chất lượng, đảm bảo sự thoải mái và an toàn trong mỗi chuyến đi.
+            </p>
+          </div>
+          
+          <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-yellow-600">Giá trị cốt lõi</h2>
+            <ul class="list-disc list-inside text-gray-700 space-y-2">
+              <li>Chất lượng dịch vụ hàng đầu</li>
+              <li>Đảm bảo sự hài lòng của khách hàng</li>
+              <li>Phát triển bền vững cùng cộng đồng</li>
+              <li>Đổi mới và sáng tạo không ngừng</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 class="text-2xl font-semibold mb-4 text-yellow-600">Đội ngũ của chúng tôi</h2>
+            <p class="text-gray-700 leading-relaxed">
+              Với đội ngũ nhân viên chuyên nghiệp và nhiệt huyết, Chỗ Tốt Travel luôn sẵn sàng hỗ trợ và tư vấn 
+              để mang đến cho bạn những kỳ nghỉ đáng nhớ nhất. Chúng tôi tự hào là cầu nối giữa du khách và 
+              những điểm đến tuyệt vời trên khắp Việt Nam.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white text-center py-4 mt-auto">
+    <p>&copy; 2024 Chỗ Tốt Travel. All rights reserved.</p>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html> 

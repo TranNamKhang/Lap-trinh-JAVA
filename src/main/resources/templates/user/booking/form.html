@@ -2,206 +2,144 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Đặt phòng - [[${homestay?.name ?: 'Homestay'}]]</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
-    .is-invalid {
-      border-color: #dc3545 !important;
-      padding-right: calc(1.5em + 0.75rem);
-      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
-      background-repeat: no-repeat;
-      background-position: right calc(0.375em + 0.1875rem) center;
-      background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    body {
+      background-color: #f8f9fa;
+    }
+    .card-header {
+      background-color: #e9ecef;
+    }
+    .form-section {
+      background: white;
+      padding: 2rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 0.2rem 0.5rem rgba(0,0,0,0.1);
     }
     .invalid-feedback {
-      display: none;
-      width: 100%;
-      margin-top: 0.25rem;
-      font-size: .875em;
-      color: #dc3545;
-    }
-    .is-invalid ~ .invalid-feedback,
-    .form-select.is-invalid ~ .invalid-feedback {
       display: block;
-    }
-    .alert ul {
-      margin-bottom: 0;
-      padding-left: 20px;
-    }
-    label {
-      font-weight: 500;
-    }
-    .bg-light-warning {
-      background-color: #fff3cd;
-    }
-    .bg-light-danger {
-      background-color: #f8d7da;
     }
   </style>
 </head>
 <body>
 <div class="container mt-5 mb-5">
+  <h2 class="text-center mb-4"><i class="fas fa-calendar-check me-2"></i>Đặt phòng Homestay</h2>
+
+  <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i><span th:text="${errorMessage}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+
   <div class="row justify-content-center">
-    <div class="col-lg-9 col-xl-8">
-      <h2 class="mb-4 text-center"><i class="fas fa-calendar-alt me-2"></i>Đặt phòng Homestay</h2>
+    <div class="col-lg-8">
 
-      <div th:if="${errorMessage != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fas fa-exclamation-triangle me-2"></i>
-        <span th:text="${errorMessage}">Lỗi không xác định.</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-
+      <!-- Thông tin Homestay -->
       <div class="card mb-4 shadow-sm" th:if="${homestay != null}">
-        <div class="card-header bg-light">
-          <h5 class="mb-0"><i class="fas fa-home me-2"></i>Thông tin Homestay</h5>
-        </div>
+        <div class="card-header"><strong><i class="fas fa-house me-1"></i>Thông tin Homestay</strong></div>
         <div class="card-body">
-          <h6 class="card-title fw-bold" th:text="${homestay.name}">Tên Homestay</h6>
-          <p class="card-text mb-1">
-            <i class="fas fa-map-marker-alt me-1 text-secondary fa-fw"></i>
-            <strong>Địa chỉ:</strong> <span th:text="${homestay.address}">Địa chỉ</span>
+          <h5 th:text="${homestay.name}">Tên Homestay</h5>
+          <p><i class="fas fa-location-dot text-secondary me-1"></i><strong>Địa chỉ:</strong> <span th:text="${homestay.address}">Địa chỉ</span></p>
+          <p><i class="fas fa-dollar-sign text-success me-1"></i><strong>Giá:</strong>
+            <span th:if="${homestay.pricePerNight > 0}" th:text="${#numbers.formatDecimal(homestay.pricePerNight, 0, 'COMMA', 0, 'POINT')} + ' VNĐ/đêm'"></span>
+            <span th:unless="${homestay.pricePerNight > 0}" class="text-danger">(Không xác định)</span>
           </p>
-          <p class="card-text mb-1">
-            <i class="fas fa-dollar-sign me-1 text-success fa-fw"></i>
-            <strong>Giá:</strong>
-            <span th:if="${homestay.pricePerNight != null and homestay.pricePerNight.doubleValue() > 0}"
-                  th:text="${#numbers.formatDecimal(homestay.pricePerNight, 0, 'COMMA', 0, 'POINT')} + ' VNĐ/đêm'">Giá</span>
-            <span th:unless="${homestay.pricePerNight != null and homestay.pricePerNight.doubleValue() > 0}"
-                  class="text-danger fst-italic">(Giá không hợp lệ)</span>
-          </p>
-          <p class="card-text">
-            <i class="fas fa-info-circle me-1 text-info fa-fw"></i>
-            <strong>Mô tả:</strong> <span th:text="${homestay.description}">Mô tả</span>
-          </p>
+          <p><i class="fas fa-align-left text-info me-1"></i><strong>Mô tả:</strong> <span th:text="${homestay.description}"></span></p>
         </div>
       </div>
 
-      <div class="alert alert-warning" th:unless="${homestay != null}">
-        <i class="fas fa-exclamation-triangle me-2"></i> Không thể tải thông tin Homestay để đặt phòng.
+      <!-- Form đặt phòng -->
+      <div class="form-section" th:if="${homestay != null}">
+        <form th:action="@{/user/booking}" method="post" th:object="${booking}" novalidate>
+
+          <input type="hidden" th:field="*{homestay.id}">
+
+          <div class="mb-3">
+            <label for="checkIn" class="form-label">Ngày nhận phòng *</label>
+            <input type="date" class="form-control" th:classappend="${#fields.hasErrors('checkIn')} ? 'is-invalid'" id="checkIn" th:field="*{checkIn}">
+            <div class="invalid-feedback" th:errors="*{checkIn}"></div>
+          </div>
+
+          <div class="mb-3">
+            <label for="checkOut" class="form-label">Ngày trả phòng *</label>
+            <input type="date" class="form-control" th:classappend="${#fields.hasErrors('checkOut')} ? 'is-invalid'" id="checkOut" th:field="*{checkOut}">
+            <div class="invalid-feedback" th:errors="*{checkOut}"></div>
+          </div>
+
+          <div class="mb-3">
+            <label for="numberOfGuests" class="form-label">Số lượng khách *</label>
+            <input type="number" class="form-control" min="1" th:classappend="${#fields.hasErrors('numberOfGuests')} ? 'is-invalid'" id="numberOfGuests" th:field="*{numberOfGuests}">
+            <div class="invalid-feedback" th:errors="*{numberOfGuests}"></div>
+          </div>
+
+          <div class="mb-3">
+            <label for="paymentMethod" class="form-label">Phương thức thanh toán *</label>
+            <select class="form-select" th:field="*{paymentMethod}" th:classappend="${#fields.hasErrors('paymentMethod')} ? 'is-invalid'">
+              <option value="">-- Chọn phương thức --</option>
+              <option value="CASH">Tiền mặt</option>
+              <option value="QR_CODE">QR Code</option>
+              <option value="BANK_TRANSFER">Chuyển khoản</option>
+            </select>
+            <div class="invalid-feedback" th:errors="*{paymentMethod}"></div>
+          </div>
+
+          <div class="mb-3">
+            <label for="totalPriceDisplay" class="form-label">Tổng tiền (tạm tính)</label>
+            <input type="text" id="totalPriceDisplay" class="form-control bg-light" readonly placeholder="Chọn ngày để tính giá">
+            <input type="hidden" th:field="*{totalPrice}" id="totalPrice">
+          </div>
+
+          <div class="d-flex justify-content-between mt-4">
+            <a th:href="@{/user/homestays/{id}(id=${homestay.id})}" class="btn btn-secondary"><i class="fas fa-arrow-left me-1"></i>Quay lại</a>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-check me-1"></i>Đặt phòng</button>
+          </div>
+
+        </form>
       </div>
 
-      <form th:if="${homestay != null}" th:action="@{/user/booking}" method="post" th:object="${booking}" class="card p-4 shadow-sm needs-validation" novalidate>
-
-        <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
-          <i class="fas fa-exclamation-triangle me-2"></i> <strong>Vui lòng kiểm tra lại thông tin:</strong>
-          <ul class="mb-0"> <li th:each="err : ${#fields.globalErrors()}" th:text="${err}">Lỗi chung</li>
-          </ul>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        <input type="hidden" name="homestay.id" th:value="${homestay.id}" /> <div class="row g-3">
-        <div class="col-md-6 mb-3">
-          <label for="checkIn" class="form-label">Ngày nhận phòng <span class="text-danger">*</span></label>
-          <input type="date" class="form-control" th:classappend="${#fields.hasErrors('checkIn')} ? 'is-invalid'" id="checkIn" th:field="*{checkIn}" required>
-          <div class="invalid-feedback" th:if="${#fields.hasErrors('checkIn')}" th:errors="*{checkIn}">Lỗi ngày nhận</div>
-        </div>
-
-        <div class="col-md-6 mb-3">
-          <label for="checkOut" class="form-label">Ngày trả phòng <span class="text-danger">*</span></label>
-          <input type="date" class="form-control" th:classappend="${#fields.hasErrors('checkOut')} ? 'is-invalid'" id="checkOut" th:field="*{checkOut}" required>
-          <div class="invalid-feedback" th:if="${#fields.hasErrors('checkOut')}" th:errors="*{checkOut}">Lỗi ngày trả</div>
-        </div>
-
-        <div class="col-md-6 mb-3">
-          <label for="numberOfGuests" class="form-label">Số lượng khách <span class="text-danger">*</span></label>
-          <input type="number" class="form-control" th:classappend="${#fields.hasErrors('numberOfGuests')} ? 'is-invalid'" id="numberOfGuests" th:field="*{numberOfGuests}" min="1" required>
-          <div class="invalid-feedback" th:if="${#fields.hasErrors('numberOfGuests')}" th:errors="*{numberOfGuests}">Lỗi số khách</div>
-        </div>
-
-        <div class="col-md-6 mb-3">
-          <label for="paymentMethod" class="form-label">Phương thức thanh toán <span class="text-danger">*</span></label>
-          <select class="form-select" th:classappend="${#fields.hasErrors('paymentMethod')} ? 'is-invalid'" id="paymentMethod" th:field="*{paymentMethod}" required>
-            <option value="">-- Chọn phương thức --</option>
-            <option value="CASH">Tiền mặt (Thanh toán tại quầy)</option>
-            <option value="QR_CODE">Thanh toán QR (VietQR)</option>
-            <option value="BANK_TRANSFER">Chuyển khoản ngân hàng (Thủ công)</option>
-          </select>
-          <div class="invalid-feedback" th:if="${#fields.hasErrors('paymentMethod')}" th:errors="*{paymentMethod}">Lỗi PTTT</div>
-        </div>
-
-        <div class="col-12 mb-3">
-          <label for="totalPriceDisplay" class="form-label">Tổng tiền (dự kiến)</label>
-          <input type="text" class="form-control bg-light" id="totalPriceDisplay" placeholder="Chọn ngày để tính giá" readonly>
-          <input type="hidden" id="totalPrice" th:field="*{totalPrice}">
-          <div class="invalid-feedback" th:if="${#fields.hasErrors('totalPrice')}" th:errors="*{totalPrice}">Lỗi tổng tiền</div>
+      <!-- Nếu không có thông tin homestay -->
+      <div class="alert alert-warning text-center mt-4" th:unless="${homestay != null}">
+        <i class="fas fa-triangle-exclamation me-2"></i>Không thể hiển thị thông tin Homestay.
+        <div class="mt-3">
+          <a th:href="@{/user/home}" class="btn btn-outline-secondary"><i class="fas fa-house"></i> Trang chủ</a>
         </div>
       </div>
 
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-          <button type="submit" class="btn btn-primary px-4" th:disabled="${homestay == null or homestay.pricePerNight == null or homestay.pricePerNight.doubleValue() <= 0}">
-            <i class="fas fa-check-circle me-1"></i> Đặt phòng ngay
-          </button>
-          <a th:href="@{/user/homestays/{id}(id=${homestay.id})}" class="btn btn-secondary px-4">
-            <i class="fas fa-times me-1"></i> Hủy
-          </a>
-        </div>
-      </form>
-
-      <div th:unless="${homestay != null}" class="text-center mt-4">
-        <a th:href="@{/user/home}" class="btn btn-secondary">
-          <i class="fas fa-arrow-left"></i> Quay lại trang chủ
-        </a>
-      </div>
     </div>
   </div>
 </div>
 
 <script th:inline="javascript">
-  document.addEventListener('DOMContentLoaded', function () {
-    const checkInInput = document.getElementById('checkIn');
-    const checkOutInput = document.getElementById('checkOut');
-    const totalPriceInput = document.getElementById('totalPrice'); // Hidden input for actual value
-    const totalPriceDisplayInput = document.getElementById('totalPriceDisplay'); // Display input (readonly)
-    const submitButton = document.querySelector('button[type="submit"]');
+  document.addEventListener("DOMContentLoaded", function () {
+    const price = /*[[${homestay?.pricePerNight}]]*/ 0;
+    const checkIn = document.getElementById("checkIn");
+    const checkOut = document.getElementById("checkOut");
+    const totalInput = document.getElementById("totalPrice");
+    const totalDisplay = document.getElementById("totalPriceDisplay");
 
-    // Chỉ inline giá trị pricePerNight, sử dụng safe navigation (?.) và giá trị mặc định 0.0
-    const pricePerNight = /*[[${homestay?.pricePerNight}]]*/ 0.0;
-    const isPriceValid = !isNaN(pricePerNight) && pricePerNight > 0;
-
-    function calculateTotalPrice() {
-      // Chỉ tính toán nếu giá hợp lệ và cả hai ngày đã được chọn
-      if (isPriceValid && checkInInput.value && checkOutInput.value) {
-        const checkInDate = new Date(checkInInput.value);
-        const checkOutDate = new Date(checkOutInput.value);
-
-        // Đảm bảo ngày trả phòng phải sau ngày nhận phòng
-        if (checkOutDate > checkInDate) {
-          // Tính số đêm
-          const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
-          const nights = Math.round(timeDiff / (1000 * 60 * 60 * 24));
-
-          if (nights > 0) {
-            const total = nights * pricePerNight;
-            totalPriceInput.value = total; // Cập nhật giá trị ẩn
-            // Định dạng tiền tệ Việt Nam
-            totalPriceDisplayInput.value = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(total);
-          } else {
-            totalPriceDisplayInput.value = 'Vui lòng chọn lại ngày';
-            totalPriceInput.value = ''; // Xóa giá trị ẩn
-          }
-
+    function updateTotal() {
+      if (checkIn.value && checkOut.value && price > 0) {
+        const d1 = new Date(checkIn.value);
+        const d2 = new Date(checkOut.value);
+        const diff = (d2 - d1) / (1000 * 3600 * 24);
+        if (diff > 0) {
+          const total = diff * price;
+          totalInput.value = total;
+          totalDisplay.value = total.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
         } else {
-          totalPriceDisplayInput.value = 'Ngày trả phải sau ngày nhận';
-          totalPriceInput.value = ''; // Xóa giá trị ẩn
+          totalInput.value = "";
+          totalDisplay.value = "Ngày trả phải sau ngày nhận";
         }
-      } else if (!isPriceValid && checkInInput.value && checkOutInput.value) {
-        totalPriceDisplayInput.value = 'Giá homestay không hợp lệ';
-        totalPriceInput.value = ''; // Xóa giá trị ẩn
-      }
-      else {
-        // Nếu chưa đủ thông tin ngày hoặc giá không hợp lệ
-        totalPriceDisplayInput.value = 'Chọn ngày để tính giá';
-        totalPriceInput.value = ''; // Xóa giá trị ẩn
+      } else {
+        totalInput.value = "";
+        totalDisplay.value = "Chọn ngày để tính giá";
       }
     }
 
-    // Tính giá ban đầu nếu cả hai ngày đã được điền sẵn
-    calculateTotalPrice();
-
-    // Thêm sự kiện lắng nghe khi người dùng thay đổi ngày
-    checkInInput.addEventListener('change', calculateTotalPrice);
-    checkOutInput.addEventListener('change', calculateTotalPrice);
+    checkIn.addEventListener("change", updateTotal);
+    checkOut.addEventListener("change", updateTotal);
   });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

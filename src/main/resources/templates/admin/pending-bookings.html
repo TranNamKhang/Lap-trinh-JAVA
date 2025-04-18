@@ -1,78 +1,112 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Quản lý đặt phòng</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title>Đặt phòng chờ duyệt</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body>
-    <div class="container mt-4">
-        <h2 class="mb-4">Danh sách đặt phòng đang chờ duyệt</h2>
+<body class="bg-gray-100 font-sans">
 
-        <!-- Flash Messages -->
-        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
-            <span th:text="${successMessage}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<!-- Sidebar and Content Container -->
+<div class="flex flex-col md:flex-row">
+    <!-- Sidebar -->
+    <div class="w-full md:w-64 h-auto md:h-screen bg-gray-800 text-white fixed md:relative">
+        <div class="h-16 bg-gray-900 flex items-center justify-center text-xl font-bold">
+            Homestay Admin
         </div>
-        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
-            <span th:text="${errorMessage}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+        <nav class="mt-4 flex flex-col">
+            <a href="/admin/dashboard" class="py-3 px-6 hover:bg-gray-700 transition"> Dashboard</a>
+            <a href="/admin/users" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Người dùng</a>
+            <a href="/admin/homestays" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Homestay</a>
+            <a href="/admin/bookings/pending" class="py-3 px-6 hover:bg-gray-700 transition bg-gray-700"> Đặt phòng chờ duyệt</a>
+            <a href="/admin/tickets" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Vé</a>
+            <a href="/admin/tickets/unprinted" class="py-3 px-6 hover:bg-gray-700 transition"> Vé chưa in</a>
+            <a href="/" class="py-3 px-6 hover:bg-gray-700 transition"> Về Trang chủ</a>
+            <a href="/logout" class="py-3 px-6 hover:bg-gray-700 transition"> Đăng xuất</a>
+        </nav>
+    </div>
 
-        <!-- Bookings Table -->
-        <div class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Người đặt</th>
-                        <th>Homestay</th>
-                        <th>Ngày nhận phòng</th>
-                        <th>Ngày trả phòng</th>
-                        <th>Số khách</th>
-                        <th>Tổng tiền</th>
-                        <th>Phương thức thanh toán</th>
-                        <th>Ngày đặt</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:if="${bookings != null}" th:each="booking : ${bookings}">
-                        <td th:text="${booking.id}">1</td>
-                        <td th:text="${booking.user != null ? booking.user.username : ''}">username</td>
-                        <td th:text="${booking.homestay != null ? booking.homestay.name : ''}">Homestay</td>
-                        <td th:text="${booking.checkIn != null ? #temporals.format(booking.checkIn, 'dd/MM/yyyy') : ''}">01/01/2023</td>
-                        <td th:text="${booking.checkOut != null ? #temporals.format(booking.checkOut, 'dd/MM/yyyy') : ''}">05/01/2023</td>
-                        <td th:text="${booking.numberOfGuests}">2</td>
-                        <td th:text="${booking.totalPrice != null ? #numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ' : '0 VNĐ'}">1,000,000 VNĐ</td>
-                        <td th:text="${booking.paymentMethod}">Chuyển khoản</td>
-                        <td th:text="${booking.bookingDate != null ? #temporals.format(booking.bookingDate, 'dd/MM/yyyy HH:mm') : ''}">01/01/2023 12:00</td>
-                        <td>
-                            <div class="btn-group">
-                                <form th:action="@{/admin/bookings/{id}/approve(id=${booking.id})}" method="post" class="d-inline">
-                                    <button type="submit" class="btn btn-success btn-sm">
-                                        <i class="bi bi-check-circle"></i> Duyệt
-                                    </button>
-                                </form>
-                                <form th:action="@{/admin/bookings/{id}/reject(id=${booking.id})}" method="post" class="d-inline ms-2">
-                                    <button type="submit" class="btn btn-danger btn-sm">
-                                        <i class="bi bi-x-circle"></i> Từ chối
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    
-        <!-- Empty State -->
-        <div th:if="${bookings == null || #lists.isEmpty(bookings)}" class="text-center mt-4">
-            <p class="text-muted">Không có đặt phòng nào đang chờ duyệt.</p>
+    <!-- Main Content -->
+    <div class="flex-1 ml-0 md:ml-64 p-8">
+        <div class="container mx-auto">
+            <h1 class="text-3xl font-bold mb-6 text-gray-800">Danh sách đặt phòng đang chờ duyệt</h1>
+
+            <!-- Flash Messages -->
+            <div th:if="${successMessage}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.style.display='none'">
+                    <span class="sr-only">Close</span>
+                    <svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div th:if="${errorMessage}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.style.display='none'">
+                    <span class="sr-only">Close</span>
+                    <svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Bookings Table -->
+            <div class="overflow-x-auto bg-white rounded-lg shadow">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Người đặt</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Homestay</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày nhận phòng</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày trả phòng</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số khách</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tổng tiền</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phương thức thanh toán</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày đặt</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr th:if="${bookings != null}" th:each="booking : ${bookings}">
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${booking.id}">1</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${booking.user != null ? booking.user.username : ''}">username</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${booking.homestay != null ? booking.homestay.name : ''}">Homestay</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${booking.checkIn != null ? #temporals.format(booking.checkIn, 'dd/MM/yyyy') : ''}">01/01/2023</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${booking.checkOut != null ? #temporals.format(booking.checkOut, 'dd/MM/yyyy') : ''}">05/01/2023</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${booking.numberOfGuests}">2</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${booking.totalPrice != null ? #numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ' : '0 VNĐ'}">1,000,000 VNĐ</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${booking.paymentMethod}">Chuyển khoản</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${booking.bookingDate != null ? #temporals.format(booking.bookingDate, 'dd/MM/yyyy HH:mm') : ''}">01/01/2023 12:00</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex space-x-2">
+                                    <form th:action="@{/admin/bookings/{id}/approve(id=${booking.id})}" method="post" class="inline">
+                                        <button type="submit" class="bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600 flex items-center">
+                                            <i class="bi bi-check-circle mr-1"></i> Duyệt
+                                        </button>
+                                    </form>
+                                    <form th:action="@{/admin/bookings/{id}/reject(id=${booking.id})}" method="post" class="inline">
+                                        <button type="submit" class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 flex items-center">
+                                            <i class="bi bi-x-circle mr-1"></i> Từ chối
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${bookings == null || #lists.isEmpty(bookings)}" class="text-center mt-4 p-10 bg-white rounded-lg shadow">
+                <p class="text-gray-500">Không có đặt phòng nào đang chờ duyệt.</p>
+            </div>
         </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
-    </html>
+</div>
+
+</body>
+</html>

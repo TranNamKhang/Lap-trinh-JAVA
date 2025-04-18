@@ -3,79 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Quản lý vé đặt phòng</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 250px;
-            height: 100%;
-            background-color: #343a40;
-            padding-top: 60px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 15px 20px;
-            color: #f8f9fa;
-            text-decoration: none;
-            font-size: 1.1rem;
-            transition: 0.3s;
-        }
-
-        .sidebar a:hover {
-            background-color: #495057;
-        }
-
-        .sidebar .logo {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 250px;
-            height: 60px;
-            background-color: #212529;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: white;
-            letter-spacing: 1px;
-        }
-
-        .main-content {
-            margin-left: 250px;
-            padding: 40px;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-            }
-
-            .sidebar .logo {
-                position: relative;
-                width: 100%;
-            }
-        }
-        
         .ticket-status {
             font-weight: bold;
             padding: 5px 10px;
@@ -84,106 +15,128 @@
         }
         
         .status-printed {
-            background-color: #28a745;
+            background-color: #10B981;
             color: white;
         }
         
         .status-unprinted {
-            background-color: #ffc107;
-            color: #212529;
+            background-color: #F59E0B;
+            color: #1F2937;
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 font-sans">
 
-<!-- Sidebar -->
-<div class="sidebar">
-    <div class="logo">Homestay Admin</div>
-    <a href="/admin/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
-    <a href="/admin/users"><i class="bi bi-people"></i> Quản lý Người dùng</a>
-    <a href="/admin/homestays"><i class="bi bi-house"></i> Quản lý Homestay</a>
-    <a href="/admin/bookings/pending"><i class="bi bi-calendar-check"></i> Đặt phòng chờ duyệt</a>
-    <a href="/admin/tickets" class="active"><i class="bi bi-ticket-perforated"></i> Quản lý Vé</a>
-    <a href="/admin/tickets/unprinted"><i class="bi bi-printer"></i> Vé chưa in</a>
-    <a href="/"><i class="bi bi-house-door"></i> Về Trang chủ</a>
-    <a href="/logout"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a>
+<!-- Sidebar and Content Container -->
+<div class="flex flex-col md:flex-row">
+    <!-- Sidebar -->
+    <div class="w-full md:w-64 h-auto md:h-screen bg-gray-800 text-white fixed md:relative">
+        <div class="h-16 bg-gray-900 flex items-center justify-center text-xl font-bold">
+            Homestay Admin
+        </div>
+        <nav class="mt-4 flex flex-col">
+            <a href="/admin/dashboard" class="py-3 px-6 hover:bg-gray-700 transition"> Dashboard</a>
+            <a href="/admin/users" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Người dùng</a>
+            <a href="/admin/homestays" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Homestay</a>
+            <a href="/admin/bookings/pending" class="py-3 px-6 hover:bg-gray-700 transition"> Đặt phòng chờ duyệt</a>
+            <a href="/admin/tickets" class="py-3 px-6 hover:bg-gray-700 transition bg-gray-700"> Quản lý Vé</a>
+            <a href="/admin/tickets/unprinted" class="py-3 px-6 hover:bg-gray-700 transition"> Vé chưa in</a>
+            <a href="/" class="py-3 px-6 hover:bg-gray-700 transition"> Về Trang chủ</a>
+            <a href="/logout" class="py-3 px-6 hover:bg-gray-700 transition"> Đăng xuất</a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 ml-0 md:ml-64 p-8">
+        <div class="container mx-auto">
+            <h1 class="text-3xl font-bold mb-6 text-gray-800">Quản lý vé đặt phòng</h1>
+
+            <!-- Flash Messages -->
+            <div th:if="${successMessage}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.style.display='none'">
+                    <span class="sr-only">Close</span>
+                    <svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div th:if="${errorMessage}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.style.display='none'">
+                    <span class="sr-only">Close</span>
+                    <svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="mb-4">
+                <a href="/admin/tickets" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 inline-flex items-center mr-2">
+                    <i class="bi bi-list mr-1"></i> Tất cả Vé
+                </a>
+                <a href="/admin/tickets/unprinted" class="bg-yellow-500 text-gray-900 px-4 py-2 rounded-lg hover:bg-yellow-600 inline-flex items-center">
+                    <i class="bi bi-printer mr-1"></i> Vé chưa in
+                </a>
+            </div>
+
+            <!-- Tickets Table -->
+            <div class="overflow-x-auto bg-white rounded-lg shadow">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mã vé</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mã đặt phòng</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khách hàng</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Homestay</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày nhận phòng</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày trả phòng</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày tạo</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr th:if="${tickets != null}" th:each="ticket : ${tickets}">
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${ticket.ticketNumber}">TK-12345678</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${ticket.booking.id}">1</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${ticket.booking.user != null ? ticket.booking.user.username : ''}">username</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${ticket.booking.homestay != null ? ticket.booking.homestay.name : ''}">Homestay</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${ticket.booking.checkIn != null ? #temporals.format(ticket.booking.checkIn, 'dd/MM/yyyy') : ''}">01/01/2023</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${ticket.booking.checkOut != null ? #temporals.format(ticket.booking.checkOut, 'dd/MM/yyyy') : ''}">05/01/2023</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span th:if="${ticket.printed}" class="ticket-status status-printed">Đã in</span>
+                                <span th:unless="${ticket.printed}" class="ticket-status status-unprinted">Chưa in</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${ticket.createdAt != null ? #temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm') : ''}">01/01/2023 12:00</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex space-x-2">
+                                    <a th:href="@{/admin/tickets/{id}(id=${ticket.id})}" class="text-blue-600 hover:text-blue-900">
+                                        <i class="bi bi-eye"></i> Xem
+                                    </a>
+                                    <a th:href="@{/admin/tickets/{id}/pdf(id=${ticket.id})}" class="text-gray-600 hover:text-gray-900" target="_blank">
+                                        <i class="bi bi-file-pdf"></i> PDF
+                                    </a>
+                                    <form th:if="${!ticket.printed}" th:action="@{/admin/tickets/{id}/print(id=${ticket.id})}" method="post" class="inline">
+                                        <button type="submit" class="text-green-600 hover:text-green-900">
+                                            <i class="bi bi-printer"></i> In vé
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${tickets == null || #lists.isEmpty(tickets)}" class="text-center mt-4 p-10 bg-white rounded-lg shadow">
+                <p class="text-gray-500">Không có vé nào.</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Main Content -->
-<div class="main-content">
-    <h2 class="mb-4">Quản lý vé đặt phòng</h2>
-
-    <!-- Flash Messages -->
-    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
-        <span th:text="${successMessage}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <span th:text="${errorMessage}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-
-    <!-- Filter Buttons -->
-    <div class="mb-4">
-        <a href="/admin/tickets" class="btn btn-primary me-2"><i class="bi bi-list"></i> Tất cả Vé</a>
-        <a href="/admin/tickets/unprinted" class="btn btn-warning"><i class="bi bi-printer"></i> Vé chưa in</a>
-    </div>
-
-    <!-- Tickets Table -->
-    <div class="table-responsive">
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Mã vé</th>
-                    <th>Mã đặt phòng</th>
-                    <th>Khách hàng</th>
-                    <th>Homestay</th>
-                    <th>Ngày nhận phòng</th>
-                    <th>Ngày trả phòng</th>
-                    <th>Trạng thái</th>
-                    <th>Ngày tạo</th>
-                    <th>Thao tác</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:if="${tickets != null}" th:each="ticket : ${tickets}">
-                    <td th:text="${ticket.ticketNumber}">TK-12345678</td>
-                    <td th:text="${ticket.booking.id}">1</td>
-                    <td th:text="${ticket.booking.user != null ? ticket.booking.user.username : ''}">username</td>
-                    <td th:text="${ticket.booking.homestay != null ? ticket.booking.homestay.name : ''}">Homestay</td>
-                    <td th:text="${ticket.booking.checkIn != null ? #temporals.format(ticket.booking.checkIn, 'dd/MM/yyyy') : ''}">01/01/2023</td>
-                    <td th:text="${ticket.booking.checkOut != null ? #temporals.format(ticket.booking.checkOut, 'dd/MM/yyyy') : ''}">05/01/2023</td>
-                    <td>
-                        <span th:if="${ticket.printed}" class="ticket-status status-printed">Đã in</span>
-                        <span th:unless="${ticket.printed}" class="ticket-status status-unprinted">Chưa in</span>
-                    </td>
-                    <td th:text="${ticket.createdAt != null ? #temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm') : ''}">01/01/2023 12:00</td>
-                    <td>
-                        <div class="btn-group">
-                            <a th:href="@{/admin/tickets/{id}(id=${ticket.id})}" class="btn btn-info btn-sm">
-                                <i class="bi bi-eye"></i> Xem
-                            </a>
-                            <a th:href="@{/admin/tickets/{id}/pdf(id=${ticket.id})}" class="btn btn-secondary btn-sm ms-1" target="_blank">
-                                <i class="bi bi-file-pdf"></i> PDF
-                            </a>
-                            <form th:if="${!ticket.printed}" th:action="@{/admin/tickets/{id}/print(id=${ticket.id})}" method="post" class="d-inline ms-1">
-                                <button type="submit" class="btn btn-primary btn-sm">
-                                    <i class="bi bi-printer"></i> In vé
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Empty State -->
-    <div th:if="${tickets == null || #lists.isEmpty(tickets)}" class="text-center mt-4">
-        <p class="text-muted">Không có vé nào.</p>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

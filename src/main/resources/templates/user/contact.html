@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chỗ Tốt Travel - Liên hệ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    .card-img-top {
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen bg-gray-50">
+
+  <!-- Navbar -->
+  <header>
+    <nav class="bg-gray-900 text-white fixed w-full z-10 top-0 shadow">
+      <div class="container mx-auto flex flex-wrap items-center justify-between p-4">
+        <span class="text-xl font-bold">Chỗ Tốt Travel</span>
+        <button class="block lg:hidden text-white focus:outline-none" onclick="document.getElementById('navbarNav').classList.toggle('hidden')">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        <div class="w-full lg:flex lg:items-center lg:w-auto hidden" id="navbarNav">
+          <ul class="flex flex-col lg:flex-row gap-4 mt-4 lg:mt-0 lg:ml-auto">
+            <li><a href="/user/home" class="hover:text-yellow-400">Trang chủ</a></li>
+            <li><a href="/about" class="hover:text-yellow-400">Giới thiệu</a></li>
+            <li><a href="/contact" class="hover:text-yellow-400 text-yellow-400">Liên hệ</a></li>
+            <li><a href="/user/booking/my-bookings" class="hover:text-yellow-400">Đơn đặt phòng</a></li>
+            <li>
+              <a href="/user/profile">
+                <img th:src="@{${avatarUrl != null ? avatarUrl : '/images/default.jpg'}}" alt="Avatar" class="rounded-full w-10 h-10 object-cover" />
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Contact Section -->
+  <section class="pt-24 pb-10">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6 text-center">Liên hệ với chúng tôi</h1>
+        <div class="bg-white rounded-lg shadow-lg p-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Contact Information -->
+            <div>
+              <h2 class="text-2xl font-semibold mb-4 text-yellow-600">Thông tin liên hệ</h2>
+              <div class="space-y-4">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="map-pin" class="w-5 h-5 text-yellow-500"></i>
+                  <p class="text-gray-700">123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="phone" class="w-5 h-5 text-yellow-500"></i>
+                  <p class="text-gray-700">+84 123 456 789</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="mail" class="w-5 h-5 text-yellow-500"></i>
+                  <p class="text-gray-700">info@chotottravel.com</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="clock" class="w-5 h-5 text-yellow-500"></i>
+                  <p class="text-gray-700">Thứ 2 - Chủ nhật: 8:00 - 20:00</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div>
+              <h2 class="text-2xl font-semibold mb-4 text-yellow-600">Gửi tin nhắn</h2>
+              <form class="space-y-4">
+                <div>
+                  <label for="name" class="block text-gray-700 mb-1">Họ và tên</label>
+                  <input type="text" id="name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                </div>
+                <div>
+                  <label for="email" class="block text-gray-700 mb-1">Email</label>
+                  <input type="email" id="email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                </div>
+                <div>
+                  <label for="message" class="block text-gray-700 mb-1">Nội dung</label>
+                  <textarea id="message" rows="4" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-medium px-4 py-2 rounded-lg transition-colors">
+                  Gửi tin nhắn
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white text-center py-4 mt-auto">
+    <p>&copy; 2024 Chỗ Tốt Travel. All rights reserved.</p>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html> 

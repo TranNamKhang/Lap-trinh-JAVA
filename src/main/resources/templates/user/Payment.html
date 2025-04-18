@@ -1,86 +1,83 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thông tin thanh toán</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
-<body>
-<div class="container mt-5">
-    <h2 class="mb-4">Thông tin thanh toán</h2>
+<body class="bg-gray-100 text-gray-800">
+
+<div class="container mx-auto mt-12 px-4">
+    <h2 class="text-3xl font-semibold mb-6">Thông tin thanh toán</h2>
 
     <!-- Hướng dẫn thanh toán -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5><i class="fas fa-info-circle"></i> Hướng dẫn thanh toán</h5>
+    <div class="bg-white shadow-md rounded-lg mb-6 p-6">
+        <div class="border-b pb-4 mb-4">
+            <h5 class="text-xl font-semibold text-gray-800"><i class="fas fa-info-circle"></i> Hướng dẫn thanh toán</h5>
         </div>
-        <div class="card-body">
-            <h6><i class="fas fa-wallet"></i> Thanh toán bằng tiền mặt (CASH)</h6>
-            <p>Quý khách vui lòng thanh toán trực tiếp tại quầy lễ tân khi nhận phòng.</p>
+        <div>
+            <h6 class="text-lg font-medium text-gray-700"><i class="fas fa-wallet"></i> Thanh toán bằng tiền mặt (CASH)</h6>
+            <p class="text-gray-600">Quý khách vui lòng thanh toán trực tiếp tại quầy lễ tân khi nhận phòng.</p>
 
-            <h6 class="mt-4"><i class="fas fa-university"></i> Thanh toán chuyển khoản ngân hàng (BANK_TRANSFER)</h6>
-            <p>Quý khách vui lòng chuyển khoản theo thông tin sau:</p>
-            <ul>
-                <li><strong>Tên tài khoản:</strong> <span class="text-primary">CÔNG TY TNHH HOMESTAY</span></li>
-                <li><strong>Số tài khoản:</strong> <span class="text-primary">1234567890</span></li>
-                <li><strong>Ngân hàng:</strong> <span class="text-primary">Vietcombank - Chi nhánh Hà Nội</span></li>
-                <li><strong>Nội dung chuyển khoản:</strong> <span class="text-danger">[Mã đặt phòng] - [Họ tên]</span></li>
+            <h6 class="text-lg font-medium text-gray-700 mt-4"><i class="fas fa-university"></i> Thanh toán chuyển khoản ngân hàng (BANK_TRANSFER)</h6>
+            <p class="text-gray-600">Quý khách vui lòng chuyển khoản theo thông tin sau:</p>
+            <ul class="list-disc ml-6">
+                <li><strong class="text-gray-800">Tên tài khoản:</strong> <span class="text-blue-600">CÔNG TY TNHH HOMESTAY</span></li>
+                <li><strong class="text-gray-800">Số tài khoản:</strong> <span class="text-blue-600">1234567890</span></li>
+                <li><strong class="text-gray-800">Ngân hàng:</strong> <span class="text-blue-600">Vietcombank - Chi nhánh Hà Nội</span></li>
+                <li><strong class="text-gray-800">Nội dung chuyển khoản:</strong> <span class="text-red-600">[Mã đặt phòng] - [Họ tên]</span></li>
             </ul>
-            <p><strong>Lưu ý:</strong> Sau khi chuyển khoản, vui lòng giữ lại biên lai để đối chiếu khi cần thiết.</p>
+            <p class="text-gray-600 mt-4"><strong class="text-gray-800">Lưu ý:</strong> Sau khi chuyển khoản, vui lòng giữ lại biên lai để đối chiếu khi cần thiết.</p>
 
-            <h6 class="mt-4"><i class="fas fa-credit-card"></i> Thanh toán bằng thẻ tín dụng (CREDIT_CARD)</h6>
-            <p>Hiện tại chúng tôi chưa hỗ trợ thanh toán trực tuyến bằng thẻ tín dụng. Quý khách có thể thanh toán bằng thẻ tín dụng trực tiếp tại quầy lễ tân khi nhận phòng.</p>
+            <h6 class="text-lg font-medium text-gray-700 mt-4"><i class="fas fa-credit-card"></i> Thanh toán bằng thẻ tín dụng (CREDIT_CARD)</h6>
+            <p class="text-gray-600">Hiện tại chúng tôi chưa hỗ trợ thanh toán trực tuyến bằng thẻ tín dụng. Quý khách có thể thanh toán bằng thẻ tín dụng trực tiếp tại quầy lễ tân khi nhận phòng.</p>
         </div>
     </div>
 
     <!-- Chính sách thanh toán -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5><i class="fas fa-file-alt"></i> Chính sách thanh toán</h5>
+    <div class="bg-white shadow-md rounded-lg mb-6 p-6">
+        <div class="border-b pb-4 mb-4">
+            <h5 class="text-xl font-semibold text-gray-800"><i class="fas fa-file-alt"></i> Chính sách thanh toán</h5>
         </div>
-        <div class="card-body">
-            <h6><i class="fas fa-hand-holding-usd"></i> Đặt cọc</h6>
-            <p>Để xác nhận đặt phòng, quý khách cần thanh toán trước <strong>50%</strong> tổng giá trị đặt phòng.</p>
+        <div>
+            <h6 class="text-lg font-medium text-gray-700"><i class="fas fa-hand-holding-usd"></i> Đặt cọc</h6>
+            <p class="text-gray-600">Để xác nhận đặt phòng, quý khách cần thanh toán trước <strong class="text-gray-800">50%</strong> tổng giá trị đặt phòng.</p>
 
-            <h6 class="mt-4"><i class="fas fa-money-check-alt"></i> Thanh toán đầy đủ</h6>
-            <p>Quý khách cần thanh toán đầy đủ số tiền còn lại khi nhận phòng.</p>
+            <h6 class="text-lg font-medium text-gray-700 mt-4"><i class="fas fa-money-check-alt"></i> Thanh toán đầy đủ</h6>
+            <p class="text-gray-600">Quý khách cần thanh toán đầy đủ số tiền còn lại khi nhận phòng.</p>
 
-            <h6 class="mt-4"><i class="fas fa-calendar-times"></i> Chính sách hủy đặt phòng</h6>
-            <ul>
-                <li>Hủy trước 7 ngày: <strong class="text-success">Hoàn trả 100%</strong> tiền cọc</li>
-                <li>Hủy từ 3-7 ngày: <strong class="text-warning">Hoàn trả 50%</strong> tiền cọc</li>
-                <li>Hủy dưới 3 ngày: <strong class="text-danger">Không hoàn trả</strong> tiền cọc</li>
+            <h6 class="text-lg font-medium text-gray-700 mt-4"><i class="fas fa-calendar-times"></i> Chính sách hủy đặt phòng</h6>
+            <ul class="list-disc ml-6 text-gray-600">
+                <li>Hủy trước 7 ngày: <strong class="text-green-600">Hoàn trả 100%</strong> tiền cọc</li>
+                <li>Hủy từ 3-7 ngày: <strong class="text-yellow-600">Hoàn trả 50%</strong> tiền cọc</li>
+                <li>Hủy dưới 3 ngày: <strong class="text-red-600">Không hoàn trả</strong> tiền cọc</li>
             </ul>
         </div>
     </div>
 
     <!-- Liên hệ hỗ trợ -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5><i class="fas fa-headset"></i> Hỗ trợ khách hàng</h5>
+    <div class="bg-white shadow-md rounded-lg mb-6 p-6">
+        <div class="border-b pb-4 mb-4">
+            <h5 class="text-xl font-semibold text-gray-800"><i class="fas fa-headset"></i> Hỗ trợ khách hàng</h5>
         </div>
-        <div class="card-body">
-            <p>Quý khách cần hỗ trợ? Vui lòng liên hệ với chúng tôi qua:</p>
-            <ul>
-                <li><strong>Hotline:</strong> <a href="tel:19001000" class="text-primary">1900 1000</a></li>
-                <li><strong>Email:</strong> <a href="mailto:support@homestay.com" class="text-primary">support@homestay.com</a></li>
+        <div>
+            <p class="text-gray-600">Quý khách cần hỗ trợ? Vui lòng liên hệ với chúng tôi qua:</p>
+            <ul class="text-gray-600">
+                <li><strong class="text-gray-800">Hotline:</strong> <a href="tel:19001000" class="text-blue-600">1900 1000</a></li>
+                <li><strong class="text-gray-800">Email:</strong> <a href="mailto:support@homestay.com" class="text-blue-600">support@homestay.com</a></li>
             </ul>
         </div>
     </div>
 
     <!-- Nút quay lại -->
     <div class="mt-4">
-        <a th:href="@{/user/booking}" class="btn btn-secondary">
+        <a th:href="@{/user/booking}" class="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700 transition">
             <i class="fas fa-arrow-left"></i> Quay lại danh sách đặt phòng
         </a>
     </div>
 </div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

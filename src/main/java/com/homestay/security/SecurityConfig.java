@@ -22,10 +22,10 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.IOException;
-import java.nio.file.Paths; // Import Paths để xử lý đường dẫn nếu cần
+import java.nio.file.Paths;
 
 @Configuration
-@EnableMethodSecurity // Enable method-level security annotations
+@EnableMethodSecurity
 public class SecurityConfig implements WebMvcConfigurer {
 
     @Bean
@@ -34,46 +34,58 @@ public class SecurityConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService) {
+    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
-        // ProviderManager chỉ cần một provider hoặc một danh sách
+        provider.setPasswordEncoder(passwordEncoder);
         return new ProviderManager(provider);
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomOAuth2UserService customOAuth2UserService) throws Exception {
         http.csrf(csrf -> csrf.disable()) 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/guest/**", "/auth/login", "/auth/register").permitAll()
-                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() 
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/oauth2/**").permitAll() 
                         .requestMatchers("/uploads/images/**", "/uploads/avatars/**").permitAll() 
                         .requestMatchers("/homestays/**").permitAll() 
                         .requestMatchers("/user/homestays/api/**").permitAll() 
                         .requestMatchers("/error").permitAll() 
-
+                        .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/payment/manage", "/payment/confirm/**", "/payment/cancel/**").hasRole("ADMIN")
-
-                        .requestMatchers("/user/home", "/user/profile/**", "/user/update-profile/**").authenticated()
+                        .requestMatchers("/user/home", "/user/profile/**", "/user/update-profile/,'/user/about/,'/user/contact/**").authenticated()
                         .requestMatchers("/user/booking/**").authenticated() 
                         .requestMatchers("/payment/history/**", "/payment/info").authenticated() 
                         .requestMatchers("/payment/qr/**").authenticated() 
-
                         .anyRequest().authenticated() 
+                )
+                .oauth2Login(oauth -> oauth
+                    .loginPage("/auth/login")
+                    .defaultSuccessUrl("/user/home", true)
+                    .failureUrl("/auth/login?error=true")
+                    .userInfoEndpoint(userInfo -> userInfo
+                        .userService(customOAuth2UserService)
+                    )
+                    .authorizationEndpoint(authorization -> authorization
+                        .baseUri("/oauth2/authorization"))
+                    .redirectionEndpoint(redirection -> redirection
+                        .baseUri("/oauth2/code/*"))
+                    .successHandler(new CustomAuthenticationSuccessHandler())
+                .permitAll()
                 )
                 .formLogin(login -> login
                         .loginPage("/auth/login") 
                         .successHandler(new CustomAuthenticationSuccessHandler()) 
                         .failureHandler(new SimpleUrlAuthenticationFailureHandler("/auth/login?error=true")) 
-                        .permitAll()               )
+                        .permitAll()               
+                )
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout") 
-                        .logoutSuccessUrl("/auth/login?logout") 
+                        .logoutSuccessUrl("/") 
                         .invalidateHttpSession(true) 
                         .deleteCookies("JSESSIONID") 
-                        .permitAll() // Cho phép tất cả thực hiện logout
+                        .permitAll() 
                 )
                 .sessionManagement(session -> session
                         .sessionFixation().migrateSession() 
@@ -87,13 +99,12 @@ public class SecurityConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/css/**").addResourceLocations("classpath:/static/css/");
         registry.addResourceHandler("/js/**").addResourceLocations("classpath:/static/js/");
         registry.addResourceHandler("/images/**").addResourceLocations("classpath:/static/images/");
+        registry.addResourceHandler("/oauth2/**").addResourceLocations("classpath:/static/oauth2/");
 
-       
         String userDir = System.getProperty("user.dir"); 
         String imageUploadPath = Paths.get(userDir, "uploads", "images").toUri().toString();
         String avatarUploadPath = Paths.get(userDir, "uploads", "avatars").toUri().toString();
 
-       
         System.out.println("Serving images from: " + imageUploadPath); 
         System.out.println("Serving avatars from: " + avatarUploadPath); 
 
@@ -128,7 +139,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 return "/admin/dashboard"; 
             } else {
                 return "/user/home"; 
+            }
         }
-    }
     }
 }

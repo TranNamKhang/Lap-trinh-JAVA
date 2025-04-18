@@ -29,12 +29,10 @@ public class PaymentController {
     private final PaymentService paymentService;
     private final BookingService bookingService;
 
-    // --- Thông tin tài khoản nhận tiền cố định ---
-    private static final String BANK_BIN = "970436"; // Ví dụ: Vietcombank
-    private static final String BANK_ACCOUNT_NUMBER = "1024888888"; // Số tài khoản nhận tiền
-    private static final String BANK_ACCOUNT_NAME = "NGUYEN MINH SANG"; // Tên chủ TK (VIẾT HOA, KHÔNG DẤU)
-    private static final String BANK_QUICKLINK_NAME = "Vietcombank"; // Tên ngân hàng để hiển thị
-    // --------------------------------------------
+    private static final String BANK_BIN = "970436"; 
+    private static final String BANK_ACCOUNT_NUMBER = "1024888888"; 
+    private static final String BANK_ACCOUNT_NAME = "NGUYEN MINH SANG"; 
+    private static final String BANK_QUICKLINK_NAME = "Vietcombank"; 
 
     @Autowired
     public PaymentController(PaymentService paymentService, BookingService bookingService) {
@@ -47,33 +45,30 @@ public class PaymentController {
         return Booking.BookingStatus.class;
     }
 
-    // Hiển thị lịch sử thanh toán cho booking
     @GetMapping("/history/{bookingId}")
     public String paymentHistoryForBooking(@PathVariable Long bookingId, Model model, RedirectAttributes redirectAttributes) {
         Optional<Booking> bookingOpt = bookingService.getBookingById(bookingId);
         if (bookingOpt.isEmpty()) {
             logger.warn("Payment history requested for non-existent booking ID: {}", bookingId);
             redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy đơn đặt phòng.");
-            return "redirect:/user/booking"; // Về danh sách booking của user
+            return "redirect:/user/booking"; 
         }
 
         List<Payment> payments = paymentService.getPaymentsForBooking(bookingOpt.get());
         model.addAttribute("payments", payments);
         model.addAttribute("booking", bookingOpt.get());
         logger.info("Displaying payment history for booking ID: {}", bookingId);
-        return "user/Payment-history"; // Trả về đúng tên template Payment-history.html
+        return "user/Payment-history"; 
     }
 
-    // Trang quản lý thanh toán cho Admin
     @GetMapping("/manage")
     public String managePayments(Model model) {
         List<Payment> payments = paymentService.getAllPayments();
         model.addAttribute("payments", payments);
         logger.info("Admin accessed payment management page.");
-        return "admin/Manage-Payment"; // Trả về đúng tên template Manage-Payment.html
+        return "admin/Manage-Payment"; 
     }
 
-    // Xác nhận thanh toán thủ công (Admin)
     @PostMapping("/confirm/{id}")
     public String confirmManualPayment(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         logger.info("Admin attempting to confirm payment ID: {}", id);
@@ -118,19 +113,17 @@ public class PaymentController {
         if (bookingOpt.isEmpty()) {
             logger.warn("QR page requested for non-existent booking ID: {}", bookingId);
             redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy đơn đặt phòng.");
-            return "redirect:/user/booking"; // Về danh sách booking
+            return "redirect:/user/booking"; 
         }
 
         Booking booking = bookingOpt.get();
 
-        // 2. Kiểm tra phương thức thanh toán
         if (!"QR_CODE".equalsIgnoreCase(booking.getPaymentMethod())) {
             logger.warn("Access denied to QR page for booking ID: {}. Payment method is not QR_CODE (it's {})", bookingId, booking.getPaymentMethod());
             redirectAttributes.addFlashAttribute("errorMessage", "Phương thức thanh toán của đơn này không phải là QR Code.");
-            return "redirect:/payment/history/" + bookingId; // Về lịch sử để xem PTTT đúng
+            return "redirect:/payment/history/" + bookingId; 
         }
 
-        // 3. Kiểm tra trạng thái booking
         if (booking.getStatus() != Booking.BookingStatus.PENDING) {
             logger.warn("Access denied to QR page for booking ID: {}. Booking status is not PENDING (it's {})", bookingId, booking.getStatus());
             String message = switch (booking.getStatus()) {
@@ -140,60 +133,52 @@ public class PaymentController {
                 default -> "Trạng thái đơn đặt phòng không hợp lệ để thanh toán QR.";
             };
             redirectAttributes.addFlashAttribute("infoMessage", message);
-            return "redirect:/payment/history/" + bookingId; // Về lịch sử
+            return "redirect:/payment/history/" + bookingId; 
         }
 
-        // 4. Kiểm tra giá trị tổng tiền
         if (booking.getTotalPrice() <= 0) {
             logger.error("Cannot generate QR for booking ID {} because total price is invalid: {}", bookingId, booking.getTotalPrice());
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: Đơn đặt phòng không có tổng tiền hợp lệ để tạo mã QR.");
-            return "redirect:/payment/history/" + bookingId; // Về lịch sử
+            return "redirect:/payment/history/" + bookingId; 
         }
-        // --- Kết thúc kiểm tra ---
 
         try {
-            // Tạo nội dung chuyển khoản (đảm bảo đủ thông tin và cố gắng duy nhất)
             String usernamePart = booking.getUser() != null ? booking.getUser().getUsername().replaceAll("[^a-zA-Z0-9]", "").toUpperCase() : "GUEST";
             String purpose = "TT BK" + booking.getId() + " " + usernamePart;
-            purpose = purpose.substring(0, Math.min(purpose.length(), 50)); // Giới hạn 50 ký tự
+            purpose = purpose.substring(0, Math.min(purpose.length(), 50)); 
 
-            // Encode các thành phần URL
             String encodedPurpose = URLEncoder.encode(purpose, StandardCharsets.UTF_8.toString());
             String encodedAccountName = URLEncoder.encode(BANK_ACCOUNT_NAME, StandardCharsets.UTF_8.toString());
 
-            // Tạo URL ảnh QR từ VietQR API
             String qrCodeImageUrl = String.format(
                     "https://img.vietqr.io/image/%s-%s-compact.png?amount=%d&addInfo=%s&accountName=%s",
                     BANK_BIN,
                     BANK_ACCOUNT_NUMBER,
-                    (long) booking.getTotalPrice(), // Số tiền dạng long
+                    (long) booking.getTotalPrice(), 
                     encodedPurpose,
                     encodedAccountName
             );
             logger.info("Generated QR Code URL for booking ID {}: {}", bookingId, qrCodeImageUrl);
 
-            // Đưa dữ liệu vào Model để hiển thị
             model.addAttribute("booking", booking);
             model.addAttribute("qrCodeImageUrl", qrCodeImageUrl);
             model.addAttribute("bankName", BANK_QUICKLINK_NAME);
             model.addAttribute("bankAccountNumber", BANK_ACCOUNT_NUMBER);
-            model.addAttribute("bankAccountName", BANK_ACCOUNT_NAME); // Tên hiển thị trên web
+            model.addAttribute("bankAccountName", BANK_ACCOUNT_NAME); 
             model.addAttribute("paymentAmount", booking.getTotalPrice());
-            model.addAttribute("paymentContent", purpose); // Nội dung để copy
-
-            return "user/Payment-QR"; // Trả về đúng tên template Payment-QR.html
+            model.addAttribute("paymentContent", purpose); 
+            return "user/Payment-QR"; 
 
         } catch (Exception e) {
             logger.error("Error generating QR content or URL for booking ID {}: {}", bookingId, e.getMessage(), e);
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi hệ thống khi tạo mã QR. Vui lòng thử lại hoặc chọn phương thức khác.");
-            return "redirect:/payment/history/" + bookingId; // Về lịch sử khi lỗi
+            return "redirect:/payment/history/" + bookingId; 
         }
     }
 
-    // Endpoint hiển thị trang thông tin thanh toán tĩnh (Nếu có)
     @GetMapping("/info")
     public String showPaymentInfo(Model model) {
         logger.info("Displaying static payment information page.");
-        return "user/Payment"; // Trả về đúng tên template Payment.html
+        return "user/Payment"; 
     }
 }

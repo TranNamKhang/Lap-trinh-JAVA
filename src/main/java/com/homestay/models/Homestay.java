@@ -41,6 +41,9 @@ public class Homestay {
     private String ownerName;
     private String ownerPhone;
 
+    @OneToMany(mappedBy = "homestay", cascade = CascadeType.ALL)
+    private List<Review> reviews = new ArrayList<>();
+
     public Homestay() {}
 
     public Homestay(Long id, String name, String address, String location, String description, BigDecimal pricePerNight, User owner, String image, String ownerName, String ownerPhone) {
@@ -98,4 +101,7 @@ public class Homestay {
 
     public String getOwnerPhone() { return ownerPhone; }
     public void setOwnerPhone(String ownerPhone) { this.ownerPhone = ownerPhone; }
+
+    public List<Review> getReviews() { return reviews; }
+    public void setReviews(List<Review> reviews) { this.reviews = reviews; }
 }

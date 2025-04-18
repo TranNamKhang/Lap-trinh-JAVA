@@ -4,9 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đơn đặt phòng của tôi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
+        .card-img-top {
+            object-fit: cover;
+        }
         .booking-card {
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -115,14 +120,136 @@
         .empty-state p {
             color: #adb5bd;
         }
+        
+        /* Add new styles for layout */
+        body {
+            padding-top: 4rem;
+        }
+        
+        .main-content {
+            min-height: calc(100vh - 8rem);
+            padding-bottom: 2rem;
+        }
+        
+        .booking-list {
+            margin-top: 1rem;
+        }
+        
+        .modal {
+            z-index: 1050;
+        }
+
+        /* New styles for better organization */
+        .nav-tabs {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-content {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+        }
+
+        .booking-card {
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state {
+            padding: 3rem 1rem;
+        }
+
+        .toggle-button {
+            position: fixed;
+            right: 2rem;
+            bottom: 2rem;
+            z-index: 1000;
+            background-color: #1a202c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .toggle-button:hover {
+            background-color: #2d3748;
+            transform: scale(1.1);
+        }
+
+        .booking-list {
+            transition: all 0.3s ease;
+        }
+
+        .booking-list.hidden {
+            display: none;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon.rotated {
+            transform: rotate(180deg);
+        }
+
+        .delete-btn {
+            color: #dc3545;
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .delete-btn:hover {
+            color: #c82333;
+            transform: scale(1.1);
+        }
     </style>
 </head>
-<body>
-   
-<div class="container mt-5">
+<body class="flex flex-col min-h-screen bg-gray-50">
+
+  <!-- Navbar -->
+  <header>
+    <nav class="bg-gray-900 text-white fixed w-full z-10 top-0 shadow">
+      <div class="container mx-auto flex flex-wrap items-center justify-between p-4">
+        <span class="text-xl font-bold">Chỗ Tốt Travel</span>
+        <button class="block lg:hidden text-white focus:outline-none" onclick="document.getElementById('navbarNav').classList.toggle('hidden')">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        <div class="w-full lg:flex lg:items-center lg:w-auto hidden" id="navbarNav">
+          <ul class="flex flex-col lg:flex-row gap-4 mt-4 lg:mt-0 lg:ml-auto">
+            <li><a href="/user/home" class="hover:text-yellow-400">Trang chủ</a></li>
+            <li><a href="/user/about" class="hover:text-yellow-400">Giới thiệu</a></li>
+            <li><a href="/user/contact" class="hover:text-yellow-400">Liên hệ</a></li>
+            <li><a href="/user/booking/my-bookings" class="hover:text-yellow-400 text-yellow-400">Đơn đặt phòng</a></li>
+            <li>
+              <a href="/user/profile">
+                <img th:src="@{${avatarUrl != null ? avatarUrl : '/images/default.jpg'}}" alt="Avatar" class="rounded-full w-10 h-10 object-cover" />
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container mx-auto px-4 main-content">
     <h2 class="mb-4">Đơn đặt phòng của tôi</h2>
     
-    <ul class="nav nav-tabs mb-4" id="bookingTabs" role="tablist">
+    <ul class="nav nav-tabs" id="bookingTabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab" aria-controls="all" aria-selected="true">
                 <i class="bi bi-collection"></i> Tất cả đơn đặt
@@ -395,6 +522,9 @@
                             <button class="btn btn-outline-success ms-2">
                                 <i class="bi bi-star"></i> Đánh giá
                             </button>
+                            <button class="delete-btn ms-2" th:data-bs-id="${booking.id}" data-bs-toggle="modal" data-bs-target="#deleteBookingModal">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -502,34 +632,89 @@
         </div>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const cancelModal = document.getElementById('cancelBookingModal');
-            if (cancelModal) {
-                cancelModal.addEventListener('show.bs.modal', function(event) {
-                    const button = event.relatedTarget;
-                    const bookingId = button.getAttribute('data-bs-id');
-                    document.getElementById('bookingIdToCancel').value = bookingId;
-                });
-            }
-            
-            const triggerTabList = [].slice.call(document.querySelectorAll('#bookingTabs button'));
-            triggerTabList.forEach(function(triggerEl) {
-                triggerEl.addEventListener('click', function() {
-                    localStorage.setItem('activeBookingTab', this.getAttribute('id'));
-                });
+    <!-- Delete Booking Modal -->
+    <div class="modal fade" id="deleteBookingModal" tabindex="-1" aria-labelledby="deleteBookingModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteBookingModalLabel">Xác nhận xóa đơn đặt phòng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn xóa đơn đặt phòng này không?</p>
+                    <p class="text-danger"><small>Lưu ý: Hành động này không thể hoàn tác.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <form id="deleteBookingForm" th:action="@{/user/booking/delete}" method="post">
+                        <input type="hidden" id="bookingIdToDelete" name="bookingId" value="">
+                        <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    </div>
+
+  <!-- Toggle Button -->
+  <button class="toggle-button" onclick="toggleBookingList()">
+    <i data-lucide="chevron-up" class="toggle-icon"></i>
+  </button>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white text-center py-4 mt-auto">
+    <p>&copy; 2024 Chỗ Tốt Travel. All rights reserved.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    lucide.createIcons();
+    document.addEventListener('DOMContentLoaded', function() {
+        const cancelModal = document.getElementById('cancelBookingModal');
+        if (cancelModal) {
+            cancelModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const bookingId = button.getAttribute('data-bs-id');
+                document.getElementById('bookingIdToCancel').value = bookingId;
             });
-            
-            const activeTabId = localStorage.getItem('activeBookingTab');
-            if (activeTabId) {
-                const activeTab = document.querySelector('#' + activeTabId);
-                if (activeTab) {
-                    const tab = new bootstrap.Tab(activeTab);
-                    tab.show();
-                }
-            }
+        }
+        
+        const triggerTabList = [].slice.call(document.querySelectorAll('#bookingTabs button'));
+        triggerTabList.forEach(function(triggerEl) {
+            triggerEl.addEventListener('click', function() {
+                localStorage.setItem('activeBookingTab', this.getAttribute('id'));
+            });
         });
-    </script>
-    </body>
-    </html>
+        
+        const activeTabId = localStorage.getItem('activeBookingTab');
+        if (activeTabId) {
+            const activeTab = document.querySelector('#' + activeTabId);
+            if (activeTab) {
+                const tab = new bootstrap.Tab(activeTab);
+                tab.show();
+            }
+        }
+
+        const deleteModal = document.getElementById('deleteBookingModal');
+        if (deleteModal) {
+            deleteModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const bookingId = button.getAttribute('data-bs-id');
+                document.getElementById('bookingIdToDelete').value = bookingId;
+            });
+        }
+    });
+
+    function toggleBookingList() {
+        const bookingList = document.querySelector('.booking-list');
+        const toggleIcon = document.querySelector('.toggle-icon');
+        
+        if (bookingList) {
+            bookingList.classList.toggle('hidden');
+            toggleIcon.classList.toggle('rotated');
+        }
+    }
+  </script>
+</body>
+</html>

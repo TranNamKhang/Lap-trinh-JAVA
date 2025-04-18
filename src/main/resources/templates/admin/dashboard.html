@@ -3,120 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 250px;
-            height: 100%;
-            background-color: #343a40;
-            padding-top: 60px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 15px 20px;
-            color: #f8f9fa;
-            text-decoration: none;
-            font-size: 1.1rem;
-            transition: 0.3s;
-        }
-
-        .sidebar a:hover {
-            background-color: #495057;
-        }
-
-        .sidebar .logo {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 250px;
-            height: 60px;
-            background-color: #212529;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: white;
-            letter-spacing: 1px;
-        }
-
-        .main-content {
-            margin-left: 250px;
-            padding: 40px;
-        }
-
-        .visitor-count {
-            font-size: 2rem;
-            color: #17a2b8;
-            font-weight: bold;
-        }
-
-        .footer {
-            margin-top: 50px;
-            padding: 20px 0;
-            background-color: #e9ecef;
-            text-align: center;
-            color: #6c757d;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-            }
-
-            .sidebar .logo {
-                position: relative;
-                width: 100%;
-            }
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body>
+<body class="bg-gray-100 font-sans">
 
 <!-- Sidebar -->
-<div class="sidebar">
-    <div class="logo">Homestay Admin</div>
-    <a href="/admin/users">👤 Quản lý Người dùng</a>
-    <a href="/admin/homestays">🏠 Quản lý Homestay</a>
-    <a href="/admin/bookings/pending">📅 Quản lý Đặt phòng</a>
-    <a href="/admin/tickets">🎫 Quản lý Vé</a>
-    <a href="/admin/tickets/unprinted">🖨️ Vé chưa in</a>
-    <a href="/">🏠 Về Trang chủ</a>
-    <a href="/logout">🚪 Đăng xuất</a>
-</div>
-
-<!-- Main Content -->
-<div class="main-content">
-    <div class="container-fluid">
-        <h1 class="mb-4">Bảng Điều Khiển</h1>
-        <p>
-            Tổng số lượt truy cập: <span class="visitor-count" th:text="${visitorCount}">0</span>
-        </p>
+<div class="flex flex-col md:flex-row">
+    <div class="w-full md:w-64 h-auto md:h-screen bg-gray-800 text-white fixed md:relative">
+        <div class="h-16 bg-gray-900 flex items-center justify-center text-xl font-bold">
+            Homestay Admin
+        </div>
+        <nav class="mt-4 flex flex-col">
+            <a href="/admin/dashboard" class="py-3 px-6 hover:bg-gray-700 transition"> Dashboard</a>
+            <a href="/admin/users" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Người dùng</a>
+            <a href="/admin/homestays" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Homestay</a>
+            <a href="/admin/bookings/pending" class="py-3 px-6 hover:bg-gray-700 transition"> Đặt phòng chờ duyệt</a>
+            <a href="/admin/tickets" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Vé</a>
+            <a href="/admin/tickets/unprinted" class="py-3 px-6 hover:bg-gray-700 transition"> Vé chưa in</a>
+            <a href="/" class="py-3 px-6 hover:bg-gray-700 transition"> Về Trang chủ</a>
+            <a href="/logout" class="py-3 px-6 hover:bg-gray-700 transition"> Đăng xuất</a>
+        </nav>
     </div>
 
-    <div class="footer">
-        &copy; 2025 Homestay Admin. All rights reserved.
+    <!-- Main Content -->
+    <div class="flex-1 ml-0 md:ml-64 p-8">
+        <div class="container mx-auto">
+            <h1 class="text-3xl font-bold mb-6 text-gray-800">Bảng Điều Khiển</h1>
+
+            <div class="bg-white rounded-lg shadow p-6">
+                <p class="text-lg text-gray-700">
+                    Tổng số lượt truy cập:
+                    <span class="visitor-count text-cyan-600 font-extrabold text-4xl" th:text="${visitorCount}">0</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center text-gray-500 text-sm mt-12">
+            &copy; 2025 Homestay Admin. All rights reserved.
+        </div>
     </div>
 </div>
+
+<!-- Counter Animation Script -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const counterElement = document.querySelector(".visitor-count");
+        const target = parseInt(counterElement.textContent.replace(/\./g, '')) || 0;
+        let count = 0;
+        const speed = 30;
+        const increment = Math.ceil(target / 100);
+
+        function updateCounter() {
+            if (count < target) {
+                count += increment;
+                if (count > target) count = target;
+                counterElement.textContent = count.toLocaleString("vi-VN");
+                setTimeout(updateCounter, speed);
+            } else {
+                counterElement.textContent = target.toLocaleString("vi-VN");
+            }
+        }
+
+        updateCounter();
+    });
+</script>
 
 </body>
 </html>

@@ -5,6 +5,7 @@ import com.homestay.models.Homestay;
 import com.homestay.repositories.HomestayRepository;
 import com.homestay.repositories.BookingRepository;
 import com.homestay.repositories.TicketRepository;
+import com.homestay.services.ReviewService;
 
 import jakarta.transaction.Transactional;
 
@@ -24,14 +25,17 @@ public class HomestayService {
     private final HomestayRepository homestayRepository;
     private final BookingRepository bookingRepository;
     private final TicketRepository ticketRepository;
+    private final ReviewService reviewService;
 
     @Autowired
     public HomestayService(HomestayRepository homestayRepository, 
                           BookingRepository bookingRepository,
-                          TicketRepository ticketRepository) {
+                          TicketRepository ticketRepository,
+                          ReviewService reviewService) {
         this.homestayRepository = homestayRepository;
         this.bookingRepository = bookingRepository;
         this.ticketRepository = ticketRepository;
+        this.reviewService = reviewService;
     }
 
     private static final String IMAGE_UPLOAD_DIR = "C:/Users/tdanh/Documents/chotottravel/uploads/images";
@@ -121,5 +125,9 @@ public class HomestayService {
             }
         }
         return savedPaths;
+    }
+
+    public double getAverageRating(Homestay homestay) {
+        return reviewService.getAverageRating(homestay);
     }
 }
