@@ -9,18 +9,14 @@ ChototTravel là một ứng dụng Spring Boot được thiết kế để qu�
 - [Cấu Trúc Dự Án](#cấu-trúc-dự-án)
 - [Tính Năng](#tính-năng)
 - [Sử Dụng](#sử-dụng)
-<<<<<<< HEAD
 - [API Endpoints](#api-endpoints)
 - [Bảo Mật](#bảo-mật)
-=======
->>>>>>> 92ce0f536cee6cfcb08f24e0823f5fcb7e91ec3b
 - [Liên Hệ](#liên-hệ)
 
 ---
 
 ## Giới Thiệu
 
-<<<<<<< HEAD
 ChototTravel là một nền tảng quản lý homestay hiện đại, cung cấp các tính năng:
 - Quản lý homestay với đầy đủ thông tin và hình ảnh
 - Theo dõi tổng số lượt truy cập bằng cách sử dụng `VisitCounterService`
@@ -32,14 +28,12 @@ ChototTravel là một nền tảng quản lý homestay hiện đại, cung cấ
 - Quản lý homestay.
 - Theo dõi tổng số lượt truy cập bằng cách sử dụng `VisitCounterService`.
 - Hỗ trợ xác thực người dùng bằng JWT (JSON Web Token).
->>>>>>> 92ce0f536cee6cfcb08f24e0823f5fcb7e91ec3b
 
 ---
 
 ## Cài Đặt
 
 ### Yêu Cầu Hệ Thống
-<<<<<<< HEAD
 - **Java**: Phiên bản 17 hoặc mới hơn
 - **Maven**: Phiên bản 3.8 hoặc mới hơn
 - **Cơ sở dữ liệu**: MySQL hoặc H2 (tùy chỉnh trong `application.properties`)
@@ -96,7 +90,7 @@ src/
 - Lịch sử đặt phòng
 
 ### Đặt Phòng
-- Tìm kiếm và lọc homestay
+- Phân loại homstay theo từng khu vực
 - Đặt phòng trực tuyến
 - Thanh toán an toàn
 - Hủy đặt phòng
@@ -112,9 +106,9 @@ src/
 ## API Endpoints
 
 ### Authentication
-- `POST /api/auth/register` - Đăng ký tài khoản
-- `POST /api/auth/login` - Đăng nhập
-- `POST /api/auth/refresh-token` - Làm mới token
+- `POST /auth/register` - Đăng ký tài khoản
+- `POST /auth/login` - Đăng nhập
+- `POST /auth/refresh-token` - Làm mới token
 
 ### Homestay
 - `GET /api/homestays` - Lấy danh sách homestay
@@ -124,9 +118,9 @@ src/
 - `DELETE /api/homestays/{id}` - Xóa homestay
 
 ### Booking
-- `POST /api/bookings` - Tạo đặt phòng mới
-- `GET /api/bookings/{id}` - Lấy thông tin đặt phòng
-- `PUT /api/bookings/{id}/cancel` - Hủy đặt phòng
+- `POST /bookings` - Tạo đặt phòng mới
+- `GET /bookings/{id}` - Lấy thông tin đặt phòng
+- `PUT /bookings/{id}/cancel` - Hủy đặt phòng
 
 ---
 
@@ -142,12 +136,11 @@ src/
 
 ## Liên Hệ
 
-- Email: support@chotottravel.com
-- Website: https://chotottravel.com
+- Email: tdanh589@gmail.com
+- Website: http://localhost:8080
 - Hotline: 1900-xxxx
 =======
 - **Java**: Phiên bản 17 hoặc mới hơn.
 - **Maven**: Phiên bản 3.8 hoặc mới hơn.
 - **Cơ sở dữ liệu**: MySQL hoặc H2 (tùy chỉnh trong `application.properties`).
->>>>>>> 92ce0f536cee6cfcb08f24e0823f5fcb7e91ec3b
 
