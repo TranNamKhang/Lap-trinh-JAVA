@@ -9,26 +9,37 @@ ChototTravel là một ứng dụng Spring Boot được thiết kế để qu�
 - [Cấu Trúc Dự Án](#cấu-trúc-dự-án)
 - [Tính Năng](#tính-năng)
 - [Sử Dụng](#sử-dụng)
+<<<<<<< HEAD
 - [API Endpoints](#api-endpoints)
 - [Bảo Mật](#bảo-mật)
+=======
+>>>>>>> 92ce0f536cee6cfcb08f24e0823f5fcb7e91ec3b
 - [Liên Hệ](#liên-hệ)
 
 ---
 
 ## Giới Thiệu
 
+<<<<<<< HEAD
 ChototTravel là một nền tảng quản lý homestay hiện đại, cung cấp các tính năng:
 - Quản lý homestay với đầy đủ thông tin và hình ảnh
 - Theo dõi tổng số lượt truy cập bằng cách sử dụng `VisitCounterService`
 - Hỗ trợ xác thực người dùng bằng JWT (JSON Web Token)
 - Quản lý đặt phòng và thanh toán
 - Đánh giá và phản hồi từ khách hàng
+=======
+Ứng dụng này cung cấp các tính năng như:
+- Quản lý homestay.
+- Theo dõi tổng số lượt truy cập bằng cách sử dụng `VisitCounterService`.
+- Hỗ trợ xác thực người dùng bằng JWT (JSON Web Token).
+>>>>>>> 92ce0f536cee6cfcb08f24e0823f5fcb7e91ec3b
 
 ---
 
 ## Cài Đặt
 
 ### Yêu Cầu Hệ Thống
+<<<<<<< HEAD
 - **Java**: Phiên bản 17 hoặc mới hơn
 - **Maven**: Phiên bản 3.8 hoặc mới hơn
 - **Cơ sở dữ liệu**: MySQL hoặc H2 (tùy chỉnh trong `application.properties`)
@@ -134,4 +145,9 @@ src/
 - Email: support@chotottravel.com
 - Website: https://chotottravel.com
 - Hotline: 1900-xxxx
+=======
+- **Java**: Phiên bản 17 hoặc mới hơn.
+- **Maven**: Phiên bản 3.8 hoặc mới hơn.
+- **Cơ sở dữ liệu**: MySQL hoặc H2 (tùy chỉnh trong `application.properties`).
+>>>>>>> 92ce0f536cee6cfcb08f24e0823f5fcb7e91ec3b
 
