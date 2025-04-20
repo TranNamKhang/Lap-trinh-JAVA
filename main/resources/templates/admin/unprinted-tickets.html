@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Vé chưa in</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .ticket-status {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        .status-unprinted {
+            background-color: #F59E0B;
+            color: #1F2937;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+<!-- Sidebar and Content Container -->
+<div class="flex flex-col md:flex-row">
+    <!-- Sidebar -->
+    <div class="w-full md:w-64 h-auto md:h-screen bg-gray-800 text-white fixed md:relative">
+        <div class="h-16 bg-gray-900 flex items-center justify-center text-xl font-bold">
+            Homestay Admin
+        </div>
+        <nav class="mt-4 flex flex-col">
+            <a href="/admin/dashboard" class="py-3 px-6 hover:bg-gray-700 transition"> Dashboard</a>
+            <a href="/admin/users" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Người dùng</a>
+            <a href="/admin/homestays" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Homestay</a>
+            <a href="/admin/bookings/pending" class="py-3 px-6 hover:bg-gray-700 transition"> Đặt phòng chờ duyệt</a>
+            <a href="/admin/tickets" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Vé</a>
+            <a href="/admin/tickets/unprinted" class="py-3 px-6 hover:bg-gray-700 transition bg-gray-700"> Vé chưa in</a>
+            <a href="/" class="py-3 px-6 hover:bg-gray-700 transition"> Về Trang chủ</a>
+            <a href="/logout" class="py-3 px-6 hover:bg-gray-700 transition"> Đăng xuất</a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 ml-0 md:ml-64 p-8">
+        <div class="container mx-auto">
+            <h1 class="text-3xl font-bold mb-6 text-gray-800">Vé chưa in</h1>
+
+            <!-- Flash Messages -->
+            <div th:if="${successMessage}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.style.display='none'">
+                    <span class="sr-only">Close</span>
+                    <svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div th:if="${errorMessage}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.style.display='none'">
+                    <span class="sr-only">Close</span>
+                    <svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="mb-4">
+                <a href="/admin/tickets" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 inline-flex items-center mr-2">
+                    <i class="bi bi-list mr-1"></i> Tất cả Vé
+                </a>
+                <a href="/admin/tickets/unprinted" class="bg-yellow-500 text-gray-900 px-4 py-2 rounded-lg hover:bg-yellow-600 inline-flex items-center">
+                    <i class="bi bi-printer mr-1"></i> Vé chưa in
+                </a>
+            </div>
+
+            <!-- Tickets Table -->
+            <div class="overflow-x-auto bg-white rounded-lg shadow">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mã vé</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mã đặt phòng</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khách hàng</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Homestay</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày nhận phòng</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày trả phòng</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày tạo</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr th:if="${tickets != null}" th:each="ticket : ${tickets}">
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${ticket.ticketNumber}">TK-12345678</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${ticket.booking.id}">1</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${ticket.booking.user != null ? ticket.booking.user.username : ''}">username</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${ticket.booking.homestay != null ? ticket.booking.homestay.name : ''}">Homestay</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${ticket.booking.checkIn != null ? #temporals.format(ticket.booking.checkIn, 'dd/MM/yyyy') : ''}">01/01/2023</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${ticket.booking.checkOut != null ? #temporals.format(ticket.booking.checkOut, 'dd/MM/yyyy') : ''}">05/01/2023</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="ticket-status status-unprinted">Chưa in</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${ticket.createdAt != null ? #temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm') : ''}">01/01/2023 12:00</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex space-x-2">
+                                    <a th:href="@{/admin/tickets/{id}(id=${ticket.id})}" class="text-blue-600 hover:text-blue-900">
+                                        <i class="bi bi-eye"></i> Xem
+                                    </a>
+                                    <a th:href="@{/admin/tickets/{id}/pdf(id=${ticket.id})}" class="text-gray-600 hover:text-gray-900" target="_blank">
+                                        <i class="bi bi-file-pdf"></i> PDF
+                                    </a>
+                                    <form th:action="@{/admin/tickets/{id}/print(id=${ticket.id})}" method="post" class="inline">
+                                        <button type="submit" class="text-green-600 hover:text-green-900">
+                                            <i class="bi bi-printer"></i> In vé
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${tickets == null || #lists.isEmpty(tickets)}" class="text-center mt-4 p-10 bg-white rounded-lg shadow">
+                <p class="text-gray-500">Không có vé nào chưa in.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

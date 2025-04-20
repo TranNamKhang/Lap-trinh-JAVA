@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Cập nhật hồ sơ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md space-y-6">
+        <h2 class="text-2xl font-bold text-center">Cập nhật hồ sơ</h2>
+
+        <!-- Hiển thị thông báo lỗi -->
+        <div th:if="${errorMessage}" class="bg-red-100 text-red-700 border border-red-400 rounded p-4">
+            <p th:text="${errorMessage}"></p>
+        </div>
+
+        <form th:action="@{/user/update-profile}" method="post" enctype="multipart/form-data" class="space-y-4">
+            <!-- Avatar -->
+            <div class="flex items-center gap-4">
+                <img th:src="@{${user.avatar != null && !user.avatar.isEmpty() ? user.avatar : '/images/default.jpg'}}"
+                     alt="Avatar" class="w-24 h-24 rounded-full border object-cover">
+                <input type="file" name="avatar"
+                       class="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0
+                              file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+            </div>
+
+            <!-- Tên đăng nhập -->
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-700">Tên đăng nhập:</label>
+                <input type="text" id="username" name="username" th:value="${user.username}" required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Email:</label>
+                <input type="email" id="email" name="email" th:value="${user.email}" required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
+            </div>
+
+            <!-- Số điện thoại -->
+            <div>
+                <label for="phone" class="block text-sm font-medium text-gray-700">Số điện thoại:</label>
+                <input type="text" id="phone" name="phone" th:value="${user.phone}" required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
+            </div>
+
+            <!-- Nút cập nhật và hủy -->
+            <div class="flex gap-4">
+                <button type="submit"
+                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition w-full">
+                    Cập nhật
+                </button>
+                <a href="/user/profile"
+                   class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 transition w-full text-center">
+                    Hủy
+                </a>
+            </div>
+        </form>
+
+        <!-- Button hiển thị form đổi mật khẩu -->
+        <div class="text-center">
+            <button id="changePasswordBtn"
+                    class="mt-4 bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition">
+                Đổi mật khẩu
+            </button>
+        </div>
+
+        <!-- Form đổi mật khẩu (ẩn mặc định) -->
+        <form id="changePasswordForm" th:action="@{/user/change-password}" method="post"
+              class="space-y-4 mt-4 hidden bg-gray-100 p-4 rounded-lg">
+            <div>
+                <label for="currentPassword" class="block text-sm font-medium text-gray-700">Mật khẩu hiện tại:</label>
+                <input type="password" id="currentPassword" name="currentPassword" required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
+            </div>
+            <div>
+                <label for="newPassword" class="block text-sm font-medium text-gray-700">Mật khẩu mới:</label>
+                <input type="password" id="newPassword" name="newPassword" required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
+            </div>
+            <div>
+                <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Xác nhận mật khẩu:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
+            </div>
+            <button type="submit"
+                    class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition w-full">
+                Cập nhật mật khẩu
+            </button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("changePasswordBtn").addEventListener("click", function () {
+            const form = document.getElementById("changePasswordForm");
+            form.classList.toggle("hidden");
+        });
+    </script>
+
+</body>
+</html>

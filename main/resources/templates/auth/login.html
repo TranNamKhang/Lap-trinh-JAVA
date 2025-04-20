@@ -1,24 +1,67 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
     <meta charset="UTF-8">
     <title>Đăng nhập</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
 </head>
-<body>
-<div class="container">
-    <h2>Đăng nhập</h2>
-    <p th:if="${message}" class="message" th:text="${message}"></p>
-    <form action="/auth/login" method="post">
-        <label for="username">Tên đăng nhập</label>
-        <input type="text" id="username" name="username" required>
+<body class="bg-gradient-to-br from-yellow-200 to-orange-300 min-h-screen flex items-center justify-center">
 
-        <label for="password">Mật khẩu</label>
-        <input type="password" id="password" name="password" required>
+    <div class="bg-white/90 backdrop-blur-md shadow-2xl rounded-3xl px-10 py-12 w-full max-w-md fade-in">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-yellow-500">Chào mừng trở lại 👋</h1>
+            <p class="text-sm text-gray-700 mt-2">Vui lòng đăng nhập để tiếp tục</p>
+        </div>
 
-        <button type="submit">Đăng nhập</button>
-    </form>
-    <p>Chưa có tài khoản? <a href="/auth/register">Đăng ký ngay</a></p>
-</div>
+        <p th:if="${message}" 
+           th:text="${message}" 
+           class="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-sm text-center">
+        </p>
+
+        <form action="/auth/login" method="post" class="space-y-6">
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-700">Tên đăng nhập</label>
+                <input type="text" id="username" name="username" required
+                       class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 transition">
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Mật khẩu</label>
+                <input type="password" id="password" name="password" required
+                       class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 transition">
+            </div>
+
+            <button type="submit"
+                    class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-xl transition duration-300 shadow-lg">
+                Đăng nhập
+            </button>
+        </form>
+        <a href="/oauth2/authorization/google"
+        class="mt-4 flex items-center justify-center w-full bg-white border border-gray-300 rounded-xl shadow-md hover:shadow-lg transition duration-300 py-2 px-4 text-sm font-medium text-gray-700 hover:bg-gray-100">
+         <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" class="w-5 h-5 mr-2">
+         Đăng nhập bằng Google
+     </a>
+        <p class="text-center text-sm text-gray-600 mt-6">
+            Chưa có tài khoản?
+            <a href="/auth/register" class="text-yellow-500 hover:underline font-medium">Đăng ký ngay</a>
+        </p>
+    </div>
+
 </body>
 </html>

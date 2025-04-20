@@ -1,10 +1,102 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>home</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chỗ Tốt Travel - Trang chủ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    .card-img-top {
+      object-fit: cover;
+    }
+  </style>
 </head>
-<body>
-    <h2>hello</h2>
+<body class="flex flex-col min-h-screen bg-gray-50">
+
+  <!-- Navbar -->
+  <header>
+    <nav class="bg-gray-900 text-white fixed w-full z-10 top-0 shadow">
+      <div class="container mx-auto flex flex-wrap items-center justify-between p-4">
+        <span class="text-xl font-bold">Chỗ Tốt Travel</span>
+        <button class="block lg:hidden text-white focus:outline-none" onclick="document.getElementById('navbarNav').classList.toggle('hidden')">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        <div class="w-full lg:flex lg:items-center lg:w-auto hidden" id="navbarNav">
+          <ul class="flex flex-col lg:flex-row gap-4 mt-4 lg:mt-0 lg:ml-auto">
+            <li><a href="/user/home" class="hover:text-yellow-400">Trang chủ</a></li>
+            <li><a href="/about" class="hover:text-yellow-400">Giới thiệu</a></li>
+            <li><a href="/contact" class="hover:text-yellow-400">Liên hệ</a></li>
+            <li><a href="/user/booking/my-bookings" class="hover:text-yellow-400">Đơn đặt phòng</a></li>
+            <li>
+              <a href="/user/profile">
+                <img th:src="@{${avatarUrl != null ? avatarUrl : '/images/default.jpg'}}" alt="Avatar" class="rounded-full w-10 h-10 object-cover" />
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Section Province Filter -->
+  <section class="pt-24 pb-10">
+    <div class="container mx-auto px-4">
+      <h3 class="text-2xl font-semibold mb-4">Chọn điểm đến của bạn</h3>
+      <div class="flex flex-wrap gap-2">
+        <a th:href="@{/user/home}" class="bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-500"
+           th:classappend="${currentProvince == null} ? ' ring-2 ring-yellow-600'">Tất cả</a>
+        <a th:each="province : ${provinces}" th:href="@{/user/province/{province}(province=${province})}"
+           class="bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-500"
+           th:classappend="${currentProvince == province} ? ' ring-2 ring-yellow-600'">
+          <span th:text="${province}"></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Homestay List -->
+  <section class="pb-10">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div th:each="homestay : ${homestays}" class="bg-white rounded-lg shadow hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden">
+          <img th:src="@{${homestay.image}}" alt="Homestay Image" class="w-full h-52 object-cover">
+          <div class="p-4 flex flex-col flex-grow">
+            <h5 class="text-lg font-bold mb-2" th:text="${homestay.name}"></h5>
+            <p class="text-gray-600 mb-2 flex items-center gap-1">
+              <i data-lucide="map-pin" class="w-4 h-4 text-yellow-500"></i>
+              <span th:text="${homestay.province}"></span>
+            </p>
+            <div class="flex items-center mb-4">
+              <div class="flex">
+                <span th:each="i : ${#numbers.sequence(1, 5)}">
+                  <span th:if="${i <= averageRatings.get(homestay.id)}" class="text-yellow-500">★</span>
+                  <span th:if="${i > averageRatings.get(homestay.id)}" class="text-gray-300">★</span>
+                </span>
+              </div>
+              <span class="text-gray-600 text-sm ml-2" th:text="${#numbers.formatDecimal(averageRatings.get(homestay.id), 1, 'POINT', 1, 'COMMA')}"></span>
+            </div>
+            <div class="mt-auto flex justify-between items-center">
+              <span class="text-yellow-600 font-semibold"
+                    th:text="${#numbers.formatDecimal(homestay.pricePerNight, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+              <a th:href="@{/user/homestays/{id}(id=${homestay.id})}"
+                 class="bg-yellow-400 hover:bg-yellow-500 text-black font-medium px-4 py-2 rounded">
+                Xem chi tiết
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white text-center py-4 mt-auto">
+    <p>&copy; 2024 Chỗ Tốt Travel. All rights reserved.</p>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
 </body>
 </html>

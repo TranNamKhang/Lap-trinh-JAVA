@@ -3,46 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <title>Quản lý Người dùng</title>
-    <link rel="stylesheet" href="/css/admin.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body>
-<div class="container">
-    <h1>Danh sách Người dùng</h1>
+<body class="bg-gray-100 font-sans">
+    <div class="flex flex-col md:flex-row">
+        <!-- Sidebar -->
+        <div class="w-full md:w-64 h-auto md:h-screen bg-gray-800 text-white fixed md:relative">
+            <div class="h-16 bg-gray-900 flex items-center justify-center text-xl font-bold">
+                Homestay Admin
+            </div>
+            <nav class="mt-4 flex flex-col">
+                <a href="/admin/dashboard" class="py-3 px-6 hover:bg-gray-700 transition"> Dashboard</a>
+                <a href="/admin/users" class="py-3 px-6 hover:bg-gray-700 transition bg-gray-700"> Quản lý Người dùng</a>
+                <a href="/admin/homestays" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Homestay</a>
+                <a href="/admin/bookings/pending" class="py-3 px-6 hover:bg-gray-700 transition"> Đặt phòng chờ duyệt</a>
+                <a href="/admin/tickets" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Vé</a>
+                <a href="/admin/tickets/unprinted" class="py-3 px-6 hover:bg-gray-700 transition"> Vé chưa in</a>
+                <a href="/" class="py-3 px-6 hover:bg-gray-700 transition"> Về Trang chủ</a>
+                <a href="/logout" class="py-3 px-6 hover:bg-gray-700 transition"> Đăng xuất</a>
+            </nav>
+        </div>
+
+<div class="container mx-auto mt-8 px-4">
+    <h1 class="text-3xl font-bold text-center mb-6">Danh sách Người dùng</h1>
 
     <!-- Hiển thị thông báo nếu không có người dùng -->
-    <div th:if="${#lists.isEmpty(users)}">
+    <div th:if="${#lists.isEmpty(users)}" class="text-center text-red-500">
         <p>Không có người dùng nào.</p>
     </div>
 
     <!-- Table hiển thị người dùng -->
-    <table class="table" th:if="${!#lists.isEmpty(users)}">
-        <thead>
+    <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md" th:if="${!#lists.isEmpty(users)}">
+        <thead class="bg-gray-200">
         <tr>
-            <th>ID</th>
-            <th>Tên</th>
-            <th>Email</th>
-            <th>Số điện thoại</th>
-            <th>Role</th>
-            <th>Hành động</th>
+            <th class="py-3 px-4 text-left">ID</th>
+            <th class="py-3 px-4 text-left">Tên</th>
+            <th class="py-3 px-4 text-left">Email</th>
+            <th class="py-3 px-4 text-left">Số điện thoại</th>
+            <th class="py-3 px-4 text-left">Role</th>
+            <th class="py-3 px-4 text-left">Hành động</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="user : ${users}">
-            <td th:text="${user.id}"></td>
-            <td th:text="${user.username}"></td>
-            <td th:text="${user.email}"></td>
-            <td th:text="${user.phone}"></td>
-            <td th:text="${user.role}"></td>
-            <td>
-                <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="btn-edit">Chỉnh sửa</a>
-                <a th:href="@{/admin/users/delete/{id}(id=${user.id})}"
-                   onclick="return confirm('Bạn có chắc chắn muốn xóa?')" class="btn-delete">Xóa</a>
+        <tr th:each="user : ${users}" class="border-b border-gray-200">
+            <td class="py-3 px-4" th:text="${user.id}"></td>
+            <td class="py-3 px-4" th:text="${user.username}"></td>
+            <td class="py-3 px-4" th:text="${user.email}"></td>
+            <td class="py-3 px-4" th:text="${user.phone}"></td>
+            <td class="py-3 px-4" th:text="${user.role}"></td>
+            <td class="py-3 px-4 text-center">
+                <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600">Chỉnh sửa</a>
+                <a th:href="@{/admin/users/delete/{id}(id=${user.id})}" 
+                   onclick="return confirm('Bạn có chắc chắn muốn xóa?')" 
+                   class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 ml-2">Xóa</a>
             </td>
         </tr>
         </tbody>
     </table>
 
-    <a href="/admin" class="btn-back">Quay lại Dashboard</a>
+    <div class="mt-4 text-center">
+        <a href="/admin/dashboard" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600">Quay lại Dashboard</a>
+    </div>
 </div>
+
 </body>
 </html>

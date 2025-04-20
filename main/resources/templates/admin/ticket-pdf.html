@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Vé đặt phòng - In</title>
+    <style>
+        @media print {
+            body {
+                width: 210mm;
+                height: 297mm;
+                margin: 0;
+                padding: 0;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .ticket-container {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+            margin-bottom: 30px;
+        }
+        
+        .ticket-header {
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .ticket-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+            color: #2c3e50;
+        }
+        
+        .ticket-number {
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .ticket-section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 5px;
+        }
+        
+        .info-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            width: 40%;
+            color: #7f8c8d;
+        }
+        
+        .info-value {
+            width: 60%;
+        }
+        
+        .qr-section {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .qr-image {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        
+        .print-notice {
+            font-style: italic;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        
+        .print-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+        
+        .print-button:hover {
+            background-color: #2980b9;
+        }
+        
+        .ticket-validation {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            border: 2px solid #2ecc71;
+            color: #2ecc71;
+            padding: 5px 15px;
+            font-weight: bold;
+            transform: rotate(15deg);
+            font-size: 18px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <button onclick="window.print();" class="print-button">In vé</button>
+    </div>
+    
+    <div class="ticket-container">
+        <div class="ticket-validation">XÁC NHẬN</div>
+        
+        <div class="ticket-header">
+            <h1 class="ticket-title">VÉ ĐẶT PHÒNG HOMESTAY</h1>
+            <div class="ticket-number" th:text="'Mã vé: ' + ${ticket.ticketNumber}">Mã vé: TK-12345678</div>
+        </div>
+        
+        <div class="ticket-section">
+            <div class="section-title">THÔNG TIN KHÁCH HÀNG</div>
+            <div class="info-row">
+                <div class="info-label">Tên người dùng:</div>
+                <div class="info-value" th:text="${ticket.booking.user != null ? ticket.booking.user.username : ''}">username</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Email:</div>
+                <div class="info-value" th:text="${ticket.booking.user != null ? ticket.booking.user.email : ''}">email@example.com</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Số điện thoại:</div>
+                <div class="info-value" th:text="${ticket.booking.user != null ? ticket.booking.user.phone : ''}">0123456789</div>
+            </div>
+        </div>
+        
+        <div class="ticket-section">
+            <div class="section-title">THÔNG TIN ĐẶT PHÒNG</div>
+            <div class="info-row">
+                <div class="info-label">Mã đặt phòng:</div>
+                <div class="info-value" th:text="${ticket.booking.id}">123</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Homestay:</div>
+                <div class="info-value" th:text="${ticket.booking.homestay != null ? ticket.booking.homestay.name : ''}">Homestay Name</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Địa chỉ:</div>
+                <div class="info-value" th:text="${ticket.booking.homestay != null ? ticket.booking.homestay.address : ''}">Address</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Ngày nhận phòng:</div>
+                <div class="info-value" th:text="${ticket.booking.checkIn != null ? #temporals.format(ticket.booking.checkIn, 'dd/MM/yyyy') : ''}">01/01/2023</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Ngày trả phòng:</div>
+                <div class="info-value" th:text="${ticket.booking.checkOut != null ? #temporals.format(ticket.booking.checkOut, 'dd/MM/yyyy') : ''}">05/01/2023</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Số khách:</div>
+                <div class="info-value" th:text="${ticket.booking.numberOfGuests}">2</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Tổng tiền:</div>
+                <div class="info-value" th:text="${ticket.booking.totalPrice != null ? #numbers.formatDecimal(ticket.booking.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ' : '0 VNĐ'}">1,000,000 VNĐ</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Phương thức thanh toán:</div>
+                <div class="info-value" th:text="${ticket.booking.paymentMethod}">Chuyển khoản</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Ngày đặt:</div>
+                <div class="info-value" th:text="${ticket.booking.bookingDate != null ? #temporals.format(ticket.booking.bookingDate, 'dd/MM/yyyy HH:mm') : ''}">01/01/2023 12:00</div>
+            </div>
+        </div>
+        
+        <div class="qr-section">
+            <img th:if="${ticket.qrCodeUrl != null}" th:src="${ticket.qrCodeUrl}" alt="QR Code" class="qr-image">
+            <div>Quét mã QR để xác nhận vé</div>
+        </div>
+        
+        <div class="print-notice">
+            Vé này là bằng chứng xác nhận đặt phòng của bạn. Vui lòng xuất trình vé này khi nhận phòng.
+        </div>
+        
+        <div class="footer">
+            <p>Ngày tạo vé: <span th:text="${ticket.createdAt != null ? #temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm') : ''}">01/01/2023 12:00</span></p>
+            <p>© 2023 Homestay - Mọi quyền được bảo lưu</p>
+        </div>
+    </div>
+    
+    <script>
+        window.onload = function() {
+            // Auto-print khi trang đã tải xong (tùy chọn)
+            // window.print();
+        }
+    </script>
+</body>
+</html>

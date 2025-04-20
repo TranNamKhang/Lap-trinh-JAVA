@@ -33,7 +33,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public String loginRedirect() {
-        return "redirect:/user/home";
+        return "redirect:/user/dashboard";
     }
 
     @GetMapping("/register")
@@ -45,7 +45,7 @@ public class AuthController {
     @GetMapping("/dashboard")
     public String guestLogin(Model model) {
         model.addAttribute("message", "Chào mừng bạn đến Homestay!");
-        return "user/home";
+        return "user/dashboard";
     }
 
     @PostMapping("/register")
@@ -66,13 +66,11 @@ public class AuthController {
                 return "redirect:/auth/register";
             }
 
-            // Kiểm tra độ dài mật khẩu
             if (user.getPassword().length() < 8) {
                 redirectAttributes.addFlashAttribute("message", "Mật khẩu quá ngắn, vui lòng nhập lại (ít nhất 8 ký tự).");
                 return "redirect:/auth/register";
             }
 
-            // Đăng ký người dùng mới
             userService.registerUser(user);
             redirectAttributes.addFlashAttribute("message", "Đăng ký thành công! Vui lòng đăng nhập.");
             return "redirect:/auth/login";
@@ -84,4 +82,10 @@ public class AuthController {
         }
         return "redirect:/auth/register";
     }
+
+    @GetMapping("/logout")
+    public String logout() {
+        return "redirect:/";
+    }
 }
+

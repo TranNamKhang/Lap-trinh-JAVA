@@ -3,28 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <title>Quản lý Homestay</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function validateImageCount(input) {
+            const maxFiles = 5;
+            if (input.files.length > maxFiles) {
+                alert("Chỉ được tải lên tối đa 5 hình ảnh phụ!");
+                input.value = ""; // reset input
+            }
+        }
+    </script>
 </head>
-<body>
-<div class="container mt-4">
-    <h1 class="text-center" th:text="${homestay.id == null ? 'Thêm Homestay' : 'Chỉnh sửa Homestay'}"></h1>
-    
-    <form th:action="@{/admin/homestays/save}" method="post" enctype="multipart/form-data" class="card p-4 shadow">
+<body class="bg-gray-100 font-sans">
+
+<div class="container mx-auto mt-8 px-4">
+    <h1 class="text-3xl font-bold text-center mb-6" th:text="${homestay.id == null ? 'Thêm Homestay' : 'Chỉnh sửa Homestay'}"></h1>
+
+    <form th:action="@{/admin/homestays/save}" method="post" enctype="multipart/form-data" class="bg-white p-6 rounded-lg shadow-lg space-y-4">
         <input type="hidden" th:if="${homestay.id != null}" th:value="${homestay.id}" name="id"/>
         
-        <div class="mb-3">
-            <label class="form-label">Tên:</label>
-            <input type="text" name="name" th:value="${homestay.name}" class="form-control" required/>
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Tên:</label>
+            <input type="text" name="name" th:value="${homestay.name}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required/>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Địa chỉ:</label>
+            <input type="text" name="address" th:value="${homestay.address}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required/>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Vị trí:</label>
+            <input type="text" name="location" th:value="${homestay.location}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"/>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Tỉnh/Thành phố:</label>
+            <select name="province" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                <option value="">-- Chọn tỉnh/thành phố --</option>
+                <option th:each="province : ${provinces}" th:value="${province}" th:text="${province}" th:selected="${homestay.province == province}"></option>
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Mô tả:</label>
+            <textarea name="description" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required th:text="${homestay.description}"></textarea>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Giá tiền mỗi đêm:</label>
+            <input type="number" name="pricePerNight" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required th:value="${homestay.pricePerNight}" />
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Tên chủ homestay:</label>
+            <input type="text" name="ownerName" th:value="${homestay.ownerName}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required/>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Số điện thoại chủ homestay:</label>
+            <input type="tel" name="ownerPhone" th:value="${homestay.ownerPhone}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required/>
         </div>
         
-        <div class="mb-3">
-            <label class="form-label">Hình ảnh:</label>
-            <input type="file" name="imageFile" accept="image/*" class="form-control"/>
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Hình ảnh chính:</label>
+            <input type="file" name="imageFile" accept="image/*" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"/>
+            <div class="mt-2" th:if="${homestay.image}">
+                <img th:src="@{${homestay.image}}" alt="Homestay Image" width="150" class="border rounded">
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Hình ảnh phụ (tối đa 5):</label>
+            <input type="file" name="extraImageFiles" accept="image/*" multiple class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" onchange="validateImageCount(this)"/>
+            <div class="mt-2 flex gap-2 flex-wrap" th:if="${homestay.extraImages != null}">
+                <div th:each="imgPath : ${homestay.extraImages}">
+                    <img th:src="@{${imgPath}}" alt="Extra Image" width="100" class="rounded border">
+                </div>
+            </div>
         </div>
         
-        <button type="submit" class="btn btn-success">Lưu</button>
-        <a href="/admin/homestays" class="btn btn-secondary">Quay lại</a>
+        <button type="submit" class="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition duration-300">Lưu</button>
+        <a href="/admin/homestays" class="w-full text-center py-3 mt-4 block bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition duration-300">Quay lại</a>
     </form>
 </div>
+
 </body>
 </html>

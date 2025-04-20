@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hồ sơ cá nhân</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <header>
+        <nav class="bg-gray-900 text-white fixed w-full z-10 top-0 shadow">
+            <div class="container mx-auto flex flex-wrap items-center justify-between p-4">
+                <span class="text-xl font-bold">Chỗ Tốt Travel</span>
+                <button class="block lg:hidden text-white focus:outline-none" onclick="document.getElementById('navbarNav').classList.toggle('hidden')">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+                <div class="w-full lg:flex lg:items-center lg:w-auto hidden" id="navbarNav">
+                    <ul class="flex flex-col lg:flex-row gap-4 mt-4 lg:mt-0 lg:ml-auto">
+                        <li><a href="/user/home" class="hover:text-yellow-400">Trang chủ</a></li>
+                        <li><a href="/about" class="hover:text-yellow-400">Giới thiệu</a></li>
+                        <li><a href="/contact" class="hover:text-yellow-400">Liên hệ</a></li>
+                        <li><a href="/user/booking/my-bookings" class="hover:text-yellow-400">Đơn đặt phòng</a></li>
+                        <li>
+                            <a href="/user/profile" class="block">
+                                <img th:src="@{${avatarUrl != null ? avatarUrl : '/images/default.jpg'}}"
+                                     alt="Avatar"
+                                     class="rounded-full w-10 h-10 object-cover">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+    <!-- Nội dung chính -->
+    <main class="pt-32 container mx-auto px-4 flex-grow">
+        <h2 class="text-3xl font-bold mb-6 text-center">Hồ sơ cá nhân</h2>
+
+        <!-- Thông báo thành công -->
+        <div th:if="${successMessage}" class="bg-green-100 text-green-800 px-4 py-3 rounded mb-4 text-center">
+            <p th:text="${successMessage}"></p>
+        </div>
+
+        <!-- Ảnh đại diện -->
+        <div class="flex justify-center mb-6">
+            <img th:src="@{${avatarUrl != null ? avatarUrl : '/images/default.jpg'}}" alt="Avatar" class="w-36 h-36 rounded-full object-cover shadow-md">
+        </div>
+
+        <!-- Thông tin cá nhân -->
+        <div class="bg-white p-6 rounded-lg shadow-md max-w-xl mx-auto space-y-4 text-gray-800">
+            <p><strong>Tên đăng nhập:</strong> <span th:text="${user.username}"></span></p>
+            <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+            <p><strong>Số điện thoại:</strong> <span th:text="${user.phone}"></span></p>
+        </div>
+
+        <!-- Nút hành động -->
+        <div class="flex justify-center gap-4 mt-6">
+            <a href="/user/update-profile" class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-6 rounded-lg transition">Chỉnh sửa hồ sơ</a>
+            <form th:action="@{/auth/logout}" method="post">
+                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white py-2 px-6 rounded-lg transition">Đăng xuất</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white text-center py-4 mt-auto">
+        <p>&copy; 2024 Chỗ Tốt Travel. All rights reserved.</p>
+    </footer>
+</body>
+</html>

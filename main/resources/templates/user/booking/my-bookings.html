@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đơn đặt phòng của tôi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        .booking-card {
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .booking-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .booking-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .booking-body {
+            padding: 20px;
+        }
+        
+        .booking-info {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .booking-info-label {
+            width: 150px;
+            font-weight: 600;
+            color: #6c757d;
+        }
+        
+        .booking-info-value {
+            flex: 1;
+        }
+        
+        .booking-footer {
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-tabs .nav-link {
+            font-weight: 500;
+            color: #495057;
+            padding: 12px 20px;
+            border: none;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-confirmed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-completed {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+        
+        .status-cancelled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        .empty-state i {
+            font-size: 60px;
+            color: #dee2e6;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h5 {
+            font-weight: 500;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        
+        .empty-state p {
+            color: #adb5bd;
+        }
+    </style>
+</head>
+<body>
+   
+<div class="container mt-5">
+    <h2 class="mb-4">Đơn đặt phòng của tôi</h2>
+    
+    <ul class="nav nav-tabs mb-4" id="bookingTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab" aria-controls="all" aria-selected="true">
+                <i class="bi bi-collection"></i> Tất cả đơn đặt
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="false">
+                <i class="bi bi-hourglass-split"></i> Đang chờ duyệt
+                <span class="badge bg-warning text-dark ms-1" th:text="${pendingBookings != null ? pendingBookings.size() : 0}">0</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="confirmed-tab" data-bs-toggle="tab" data-bs-target="#confirmed" type="button" role="tab" aria-controls="confirmed" aria-selected="false">
+                <i class="bi bi-check-circle"></i> Đã xác nhận
+                <span class="badge bg-success text-white ms-1" th:text="${confirmedBookings != null ? confirmedBookings.size() : 0}">0</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab" aria-controls="completed" aria-selected="false">
+                <i class="bi bi-flag"></i> Đã hoàn thành
+                <span class="badge bg-primary text-white ms-1" th:text="${completedBookings != null ? completedBookings.size() : 0}">0</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="cancelled-tab" data-bs-toggle="tab" data-bs-target="#cancelled" type="button" role="tab" aria-controls="cancelled" aria-selected="false">
+                <i class="bi bi-x-circle"></i> Đã hủy
+                <span class="badge bg-danger text-white ms-1" th:text="${cancelledBookings != null ? cancelledBookings.size() : 0}">0</span>
+            </button>
+        </li>
+    </ul>
+    
+    <div class="tab-content" id="bookingTabsContent">
+        <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
+            <div th:if="${bookings != null && !bookings.isEmpty()}" class="booking-list">
+                <div th:each="booking : ${bookings}" class="booking-card">
+                    <div class="booking-header">
+                        <div>
+                            <h5 class="mb-0" th:text="${booking.homestay.name}">Tên Homestay</h5>
+                            <small class="text-muted" th:text="${'Mã đặt phòng: ' + booking.id}">Mã đặt phòng: #123</small>
+                        </div>
+                        <div>
+                            <span th:if="${booking.status.name() == 'PENDING'}" class="status-badge status-pending">
+                                <i class="bi bi-hourglass-split"></i> Đang chờ duyệt
+                            </span>
+                            <span th:if="${booking.status.name() == 'CONFIRMED'}" class="status-badge status-confirmed">
+                                <i class="bi bi-check-circle"></i> Đã xác nhận
+                            </span>
+                            <span th:if="${booking.status.name() == 'COMPLETED'}" class="status-badge status-completed">
+                                <i class="bi bi-flag"></i> Đã hoàn thành
+                            </span>
+                            <span th:if="${booking.status.name() == 'CANCELLED'}" class="status-badge status-cancelled">
+                                <i class="bi bi-x-circle"></i> Đã hủy
+                            </span>
+                        </div>
+                    </div>
+                    <div class="booking-body">
+                        <div class="booking-info">
+                            <div class="booking-info-label">Ngày nhận phòng:</div>
+                            <div class="booking-info-value" th:text="${#temporals.format(booking.checkIn, 'dd/MM/yyyy')}">01/01/2023</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Ngày trả phòng:</div>
+                            <div class="booking-info-value" th:text="${#temporals.format(booking.checkOut, 'dd/MM/yyyy')}">05/01/2023</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Số khách:</div>
+                            <div class="booking-info-value" th:text="${booking.numberOfGuests} + ' người'">2 người</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Phương thức thanh toán:</div>
+                            <div class="booking-info-value" th:text="${booking.paymentMethod}">Chuyển khoản</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Ngày đặt:</div>
+                            <div class="booking-info-value" th:text="${#temporals.format(booking.bookingDate, 'dd/MM/yyyy HH:mm')}">01/01/2023 12:00</div>
+                        </div>
+                    </div>
+                    <div class="booking-footer">
+                        <div>
+                            <span class="fw-bold">Tổng tiền:</span>
+                            <span class="text-primary fw-bold" th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">1,000,000 VNĐ</span>
+                        </div>
+                        <div>
+                            <a th:href="@{/user/booking/detail/{id}(id=${booking.id})}" class="btn btn-outline-primary">
+                                <i class="bi bi-eye"></i> Xem chi tiết
+                            </a>
+                            <a th:if="${booking.status.name() == 'CONFIRMED'}" th:href="@{/payment/qr/{id}(id=${booking.id})}" class="btn btn-success ms-2">
+                                <i class="bi bi-credit-card"></i> Xem hóa đơn
+                            </a>
+                            <button th:if="${booking.status.name() == 'PENDING'}" class="btn btn-danger ms-2" th:data-bs-id="${booking.id}" data-bs-toggle="modal" data-bs-target="#cancelBookingModal">
+                                <i class="bi bi-x-circle"></i> Hủy đặt phòng
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${bookings == null || bookings.isEmpty()}" class="empty-state">
+                <i class="bi bi-inbox"></i>
+                <h5>Không có đơn đặt phòng nào</h5>
+                <p>Bạn chưa có đơn đặt phòng nào. Hãy khám phá và đặt một homestay ngay!</p>
+                <a href="/" class="btn btn-primary mt-3">Tìm Homestay</a>
+            </div>
+        </div>
+        
+        <div class="tab-pane fade" id="pending" role="tabpanel" aria-labelledby="pending-tab">
+            <div th:if="${pendingBookings != null && !pendingBookings.isEmpty()}" class="booking-list">
+                <div th:each="booking : ${pendingBookings}" class="booking-card">
+                    <div class="booking-header">
+                        <div>
+                            <h5 class="mb-0" th:text="${booking.homestay.name}">Tên Homestay</h5>
+                            <small class="text-muted" th:text="${'Mã đặt phòng: ' + booking.id}">Mã đặt phòng: #123</small>
+                        </div>
+                        <div>
+                            <span class="status-badge status-pending">
+                                <i class="bi bi-hourglass-split"></i> Đang chờ duyệt
+                            </span>
+                        </div>
+                    </div>
+                    <div class="booking-body">
+                        <div class="booking-info">
+                            <div class="booking-info-label">Ngày nhận phòng:</div>
+                            <div class="booking-info-value" th:text="${#temporals.format(booking.checkIn, 'dd/MM/yyyy')}">01/01/2023</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Ngày trả phòng:</div>
+                            <div class="booking-info-value" th:text="${#temporals.format(booking.checkOut, 'dd/MM/yyyy')}">05/01/2023</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Số khách:</div>
+                            <div class="booking-info-value" th:text="${booking.numberOfGuests} + ' người'">2 người</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Phương thức thanh toán:</div>
+                            <div class="booking-info-value" th:text="${booking.paymentMethod}">Chuyển khoản</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Ngày đặt:</div>
+                            <div class="booking-info-value" th:text="${#temporals.format(booking.bookingDate, 'dd/MM/yyyy HH:mm')}">01/01/2023 12:00</div>
+                        </div>
+                    </div>
+                    <div class="booking-footer">
+                        <div>
+                            <span class="fw-bold">Tổng tiền:</span>
+                            <span class="text-primary fw-bold" th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">1,000,000 VNĐ</span>
+                        </div>
+                        <div>
+                            <a th:href="@{/user/booking/detail/{id}(id=${booking.id})}" class="btn btn-outline-primary">
+                                <i class="bi bi-eye"></i> Xem chi tiết
+                            </a>
+                            <button class="btn btn-danger ms-2" th:data-bs-id="${booking.id}" data-bs-toggle="modal" data-bs-target="#cancelBookingModal">
+                                <i class="bi bi-x-circle"></i> Hủy đặt phòng
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${pendingBookings == null || pendingBookings.isEmpty()}" class="empty-state">
+                <i class="bi bi-hourglass"></i>
+                <h5>Không có đơn đặt phòng nào đang chờ duyệt</h5>
+                <p>Hiện tại bạn không có đơn đặt phòng nào đang chờ duyệt.</p>
+                <a href="/" class="btn btn-primary mt-3">Tìm Homestay</a>
+            </div>
+        </div>
+        
+        <div class="tab-pane fade" id="confirmed" role="tabpanel" aria-labelledby="confirmed-tab">
+            <div th:if="${confirmedBookings != null && !confirmedBookings.isEmpty()}" class="booking-list">
+                <div th:each="booking : ${confirmedBookings}" class="booking-card">
+                    <div class="booking-header">
+                        <div>
+                            <h5 class="mb-0" th:text="${booking.homestay.name}">Tên Homestay</h5>
+                            <small class="text-muted" th:text="${'Mã đặt phòng: ' + booking.id}">Mã đặt phòng: #123</small>
+                        </div>
+                        <div>
+                            <span class="status-badge status-confirmed">
+                                <i class="bi bi-check-circle"></i> Đã xác nhận
+                            </span>
+                        </div>
+                    </div>
+                    <div class="booking-body">
+                        <div class="booking-info">
+                            <div class="booking-info-label">Ngày nhận phòng:</div>
+                            <div class="booking-info-value" th:text="${#temporals.format(booking.checkIn, 'dd/MM/yyyy')}">01/01/2023</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Ngày trả phòng:</div>
+                            <div class="booking-info-value" th:text="${#temporals.format(booking.checkOut, 'dd/MM/yyyy')}">05/01/2023</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Số khách:</div>
+                            <div class="booking-info-value" th:text="${booking.numberOfGuests} + ' người'">2 người</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Phương thức thanh toán:</div>
+                            <div class="booking-info-value" th:text="${booking.paymentMethod}">Chuyển khoản</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Ngày đặt:</div>
+                            <div class="booking-info-value" th:text="${#temporals.format(booking.bookingDate, 'dd/MM/yyyy HH:mm')}">01/01/2023 12:00</div>
+                        </div>
+                    </div>
+                    <div class="booking-footer">
+                        <div>
+                            <span class="fw-bold">Tổng tiền:</span>
+                            <span class="text-primary fw-bold" th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">1,000,000 VNĐ</span>
+                        </div>
+                        <div>
+                            <a th:href="@{/user/booking/detail/{id}(id=${booking.id})}" class="btn btn-outline-primary">
+                                <i class="bi bi-eye"></i> Xem chi tiết
+                            </a>
+                            <a th:href="@{/payment/qr/{id}(id=${booking.id})}" class="btn btn-success ms-2">
+                                <i class="bi bi-credit-card"></i> Xem hóa đơn
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${confirmedBookings == null || confirmedBookings.isEmpty()}" class="empty-state">
+                <i class="bi bi-check2-circle"></i>
+                <h5>Không có đơn đặt phòng nào đã xác nhận</h5>
+                <p>Hiện tại bạn không có đơn đặt phòng nào đã được xác nhận.</p>
+                <a href="/" class="btn btn-primary mt-3">Tìm Homestay</a>
+            </div>
+        </div>
+        
+        <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
+            <div th:if="${completedBookings != null && !completedBookings.isEmpty()}" class="booking-list">
+                <div th:each="booking : ${completedBookings}" class="booking-card">
+                    <div class="booking-header">
+                        <div>
+                            <h5 class="mb-0" th:text="${booking.homestay.name}">Tên Homestay</h5>
+                            <small class="text-muted" th:text="${'Mã đặt phòng: ' + booking.id}">Mã đặt phòng: #123</small>
+                        </div>
+                        <div>
+                            <span class="status-badge status-completed">
+                                <i class="bi bi-flag"></i> Đã hoàn thành
+                            </span>
+                        </div>
+                    </div>
+                    <div class="booking-body">
+                        <div class="booking-info">
+                            <div class="booking-info-label">Ngày nhận phòng:</div>
+                            <div class="booking-info-value" th:text="${#temporals.format(booking.checkIn, 'dd/MM/yyyy')}">01/01/2023</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Ngày trả phòng:</div>
+                            <div class="booking-info-value" th:text="${#temporals.format(booking.checkOut, 'dd/MM/yyyy')}">05/01/2023</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Số khách:</div>
+                            <div class="booking-info-value" th:text="${booking.numberOfGuests} + ' người'">2 người</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Phương thức thanh toán:</div>
+                            <div class="booking-info-value" th:text="${booking.paymentMethod}">Chuyển khoản</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Ngày đặt:</div>
+                            <div class="booking-info-value" th:text="${#temporals.format(booking.bookingDate, 'dd/MM/yyyy HH:mm')}">01/01/2023 12:00</div>
+                        </div>
+                    </div>
+                    <div class="booking-footer">
+                        <div>
+                            <span class="fw-bold">Tổng tiền:</span>
+                            <span class="text-primary fw-bold" th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">1,000,000 VNĐ</span>
+                        </div>
+                        <div>
+                            <a th:href="@{/user/booking/detail/{id}(id=${booking.id})}" class="btn btn-outline-primary">
+                                <i class="bi bi-eye"></i> Xem chi tiết
+                            </a>
+                            <button class="btn btn-outline-success ms-2">
+                                <i class="bi bi-star"></i> Đánh giá
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${completedBookings == null || completedBookings.isEmpty()}" class="empty-state">
+                <i class="bi bi-flag"></i>
+                <h5>Không có đơn đặt phòng nào đã hoàn thành</h5>
+                <p>Hiện tại bạn không có đơn đặt phòng nào đã hoàn thành.</p>
+                <a href="/" class="btn btn-primary mt-3">Tìm Homestay</a>
+            </div>
+        </div>
+        
+        <div class="tab-pane fade" id="cancelled" role="tabpanel" aria-labelledby="cancelled-tab">
+            <div th:if="${cancelledBookings != null && !cancelledBookings.isEmpty()}" class="booking-list">
+                <div th:each="booking : ${cancelledBookings}" class="booking-card">
+                    <div class="booking-header">
+                        <div>
+                            <h5 class="mb-0" th:text="${booking.homestay.name}">Tên Homestay</h5>
+                            <small class="text-muted" th:text="${'Mã đặt phòng: ' + booking.id}">Mã đặt phòng: #123</small>
+                        </div>
+                        <div>
+                            <span class="status-badge status-cancelled">
+                                <i class="bi bi-x-circle"></i> Đã hủy
+                            </span>
+                        </div>
+                    </div>
+                    <div class="booking-body">
+                        <div class="booking-info">
+                            <div class="booking-info-label">Ngày nhận phòng:</div>
+                            <div class="booking-info-value" th:text="${#temporals.format(booking.checkIn, 'dd/MM/yyyy')}">01/01/2023</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Ngày trả phòng:</div>
+                            <div class="booking-info-value" th:text="${#temporals.format(booking.checkOut, 'dd/MM/yyyy')}">05/01/2023</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Số khách:</div>
+                            <div class="booking-info-value" th:text="${booking.numberOfGuests} + ' người'">2 người</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Phương thức thanh toán:</div>
+                            <div class="booking-info-value" th:text="${booking.paymentMethod}">Chuyển khoản</div>
+                        </div>
+                        <div class="booking-info">
+                            <div class="booking-info-label">Ngày đặt:</div>
+                            <div class="booking-info-value" th:text="${#temporals.format(booking.bookingDate, 'dd/MM/yyyy HH:mm')}">01/01/2023 12:00</div>
+                        </div>
+                    </div>
+                    <div class="booking-footer">
+                        <div>
+                            <span class="fw-bold">Tổng tiền:</span>
+                            <span class="text-primary fw-bold" th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">1,000,000 VNĐ</span>
+                        </div>
+                        <div>
+                            <a th:href="@{/user/booking/detail/{id}(id=${booking.id})}" class="btn btn-outline-primary">
+                                <i class="bi bi-eye"></i> Xem chi tiết
+                            </a>
+                            <a href="/" class="btn btn-outline-secondary ms-2">
+                                <i class="bi bi-house"></i> Đặt phòng mới
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${cancelledBookings == null || cancelledBookings.isEmpty()}" class="empty-state">
+                <i class="bi bi-x-circle"></i>
+                <h5>Không có đơn đặt phòng nào đã hủy</h5>
+                <p>Hiện tại bạn không có đơn đặt phòng nào đã hủy.</p>
+                <a href="/" class="btn btn-primary mt-3">Tìm Homestay</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="cancelBookingModal" tabindex="-1" aria-labelledby="cancelBookingModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelBookingModalLabel">Xác nhận hủy đặt phòng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn hủy đơn đặt phòng này không?</p>
+                    <p class="text-danger"><small>Lưu ý: Hành động này không thể hoàn tác.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <form id="cancelBookingForm" th:action="@{/user/booking/cancel}" method="post">
+                            <input type="hidden" id="bookingIdToCancel" name="bookingId" value="">
+                            <button type="submit" class="btn btn-danger">Xác nhận hủy</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <a th:href="@{/user/home}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Quay lại
+            </a>
+            <a href="/" class="btn btn-primary ms-2">
+                <i class="bi bi-house"></i> Đặt phòng mới
+            </a>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cancelModal = document.getElementById('cancelBookingModal');
+            if (cancelModal) {
+                cancelModal.addEventListener('show.bs.modal', function(event) {
+                    const button = event.relatedTarget;
+                    const bookingId = button.getAttribute('data-bs-id');
+                    document.getElementById('bookingIdToCancel').value = bookingId;
+                });
+            }
+            
+            const triggerTabList = [].slice.call(document.querySelectorAll('#bookingTabs button'));
+            triggerTabList.forEach(function(triggerEl) {
+                triggerEl.addEventListener('click', function() {
+                    localStorage.setItem('activeBookingTab', this.getAttribute('id'));
+                });
+            });
+            
+            const activeTabId = localStorage.getItem('activeBookingTab');
+            if (activeTabId) {
+                const activeTab = document.querySelector('#' + activeTabId);
+                if (activeTab) {
+                    const tab = new bootstrap.Tab(activeTab);
+                    tab.show();
+                }
+            }
+        });
+    </script>
+    </body>
+    </html>

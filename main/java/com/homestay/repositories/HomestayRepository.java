@@ -12,9 +12,9 @@ public interface HomestayRepository extends JpaRepository<Homestay, Long> {
 
     List<Homestay> findByPricePerNightBetween(Double minPrice, Double maxPrice);
 
-    // Tìm homestay theo địa điểm
     List<Homestay> findByLocationContainingIgnoreCase(String location);
 
-    // Tìm homestay theo tên
+    List<Homestay> findByProvinceContainingIgnoreCase(String province);
+
     List<Homestay> findByNameContainingIgnoreCase(String name);
 }

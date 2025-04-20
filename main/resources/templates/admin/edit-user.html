@@ -1,37 +1,69 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Chỉnh sửa Người dùng</title>
-    <link rel="stylesheet" href="/css/admin.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body>
-<div class="container">
-    <h1>Chỉnh sửa Người dùng</h1>
+<body class="bg-gray-100 font-sans">
 
-    <!-- Form chỉnh sửa người dùng -->
-    <form th:action="@{/admin/users/edit/{id}(id=${user.id})}" th:object="${user}" method="post">
-        <div class="form-group">
-            <label for="username">Tên người dùng</label>
-            <input type="text" id="username" th:field="*{username}" class="form-control" />
+<!-- Sidebar and Content Container -->
+<div class="flex flex-col md:flex-row">
+    <!-- Sidebar -->
+    <div class="w-full md:w-64 h-auto md:h-screen bg-gray-800 text-white fixed md:relative">
+        <div class="h-16 bg-gray-900 flex items-center justify-center text-xl font-bold">
+            Homestay Admin
         </div>
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" th:field="*{email}" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label for="phone">Số điện thoại</label>
-            <input type="text" id="phone" th:field="*{phone}" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label for="role">Vai trò</label>
-            <input type="text" id="role" th:field="*{role}" class="form-control" />
-        </div>
+        <nav class="mt-4 flex flex-col">
+            <a href="/admin/dashboard" class="py-3 px-6 hover:bg-gray-700 transition"> Dashboard</a>
+            <a href="/admin/users" class="py-3 px-6 hover:bg-gray-700 transition bg-gray-700"> Quản lý Người dùng</a>
+            <a href="/admin/homestays" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Homestay</a>
+            <a href="/admin/bookings/pending" class="py-3 px-6 hover:bg-gray-700 transition"> Đặt phòng chờ duyệt</a>
+            <a href="/admin/tickets" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Vé</a>
+            <a href="/admin/tickets/unprinted" class="py-3 px-6 hover:bg-gray-700 transition"> Vé chưa in</a>
+            <a href="/" class="py-3 px-6 hover:bg-gray-700 transition"> Về Trang chủ</a>
+            <a href="/logout" class="py-3 px-6 hover:bg-gray-700 transition"> Đăng xuất</a>
+        </nav>
+    </div>
 
-        <button type="submit" class="btn-submit">Cập nhật</button>
-    </form>
+    <!-- Main Content -->
+    <div class="flex-1 ml-0 md:ml-64 p-8">
+        <div class="container mx-auto max-w-lg">
+            <h1 class="text-3xl font-bold mb-6 text-gray-800">Chỉnh sửa Người dùng</h1>
 
-    <a href="/admin/users" class="btn-back">Quay lại danh sách người dùng</a>
+            <!-- Form chỉnh sửa người dùng -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <form th:action="@{/admin/users/edit/{id}(id=${user.id})}" th:object="${user}" method="post">
+                    <div class="mb-4">
+                        <label for="username" class="block text-gray-700 font-medium mb-2">Tên người dùng</label>
+                        <input type="text" id="username" th:field="*{username}" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    </div>
+                    <div class="mb-4">
+                        <label for="email" class="block text-gray-700 font-medium mb-2">Email</label>
+                        <input type="email" id="email" th:field="*{email}" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    </div>
+                    <div class="mb-4">
+                        <label for="phone" class="block text-gray-700 font-medium mb-2">Số điện thoại</label>
+                        <input type="text" id="phone" th:field="*{phone}" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    </div>
+                    <div class="mb-4">
+                        <label for="role" class="block text-gray-700 font-medium mb-2">Vai trò</label>
+                        <select id="role" th:field="*{role}" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="USER">Người dùng</option>
+                            <option value="ADMIN">Quản trị viên</option>
+                        </select>
+                    </div>
+
+                    <div class="mt-6 flex items-center justify-between">
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Cập nhật</button>
+                        <a href="/admin/users" class="text-blue-600 hover:underline">Quay lại danh sách người dùng</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+
 </body>
 </html>
