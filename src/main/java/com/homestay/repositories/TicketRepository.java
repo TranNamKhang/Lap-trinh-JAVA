@@ -9,10 +9,10 @@ import java.util.Optional;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
-    Optional<Ticket> findByBookingId(Long bookingId);
+    List<Ticket> findByBookingId(Long bookingId);
     List<Ticket> findByPrinted(boolean printed);
     Optional<Ticket> findByTicketNumber(String ticketNumber);
+    List<Ticket> findByBookingIdAndPrintedFalse(Long bookingId);
     void deleteByBookingId(Long bookingId);
     void deleteByTicketNumber(String ticketNumber);
-
 }

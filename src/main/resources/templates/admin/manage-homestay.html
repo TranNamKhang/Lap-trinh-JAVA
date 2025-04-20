@@ -9,21 +9,21 @@
 <body class="bg-gray-100 font-sans">
 
 <!-- Sidebar and Content Container -->
-<div class="flex flex-col md:flex-row">
+<div class="flex flex-col md:flex-row min-h-screen">
     <!-- Sidebar -->
     <div class="w-full md:w-64 h-auto md:h-screen bg-gray-800 text-white fixed md:relative">
         <div class="h-16 bg-gray-900 flex items-center justify-center text-xl font-bold">
             Homestay Admin
         </div>
-        <nav class="mt-6 flex flex-col">
+        <nav class="mt-4 flex flex-col">
             <a href="/admin/dashboard" class="py-3 px-6 hover:bg-gray-700 transition">Dashboard</a>
             <a href="/admin/users" class="py-3 px-6 hover:bg-gray-700 transition">Quản lý Người dùng</a>
             <a href="/admin/homestays" class="py-3 px-6 hover:bg-gray-700 transition bg-gray-700">Quản lý Homestay</a>
             <a href="/admin/bookings/pending" class="py-3 px-6 hover:bg-gray-700 transition">Đặt phòng chờ duyệt</a>
             <a href="/admin/tickets" class="py-3 px-6 hover:bg-gray-700 transition">Quản lý Vé</a>
             <a href="/admin/tickets/unprinted" class="py-3 px-6 hover:bg-gray-700 transition">Vé chưa in</a>
-            <a href="/" class="py-3 px-6 hover:bg-gray-700 transition">Về Trang chủ</a>
-            <a href="/logout" class="py-3 px-6 hover:bg-gray-700 transition">Đăng xuất</a>
+            <a href="/user/home" class="py-3 px-6 hover:bg-gray-700 transition">Về Trang chủ</a>
+            <a href="/auth/logout" class="py-3 px-6 hover:bg-gray-700 transition">Đăng xuất</a>
         </nav>
     </div>
 
@@ -31,41 +31,47 @@
     <div class="flex-1 ml-0 md:ml-64 p-6 md:p-8">
         <div class="container mx-auto">
             <h1 class="text-3xl font-bold mb-6 text-gray-800">Danh sách Homestay</h1>
-            
-            <div class="flex justify-between items-center mb-4">
-                <a href="/admin/homestays/add" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition">Thêm Homestay</a>
-                <div class="flex flex-wrap gap-4">
-                    <a th:href="@{/admin/homestays}" 
+
+            <!-- Top controls -->
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+                <a href="/admin/homestays/add"
+                   class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition shadow-md">
+                    + Thêm Homestay
+                </a>
+
+                <div class="flex flex-wrap gap-2">
+                    <a th:href="@{/admin/homestays}"
                        class="px-4 py-2 border border-gray-300 rounded-full hover:bg-gray-200 transition"
-                       th:classappend="${currentProvince == null} ? 'bg-blue-500 text-white'">
+                       th:classappend="${currentProvince == null} ? 'bg-blue-500 text-white font-semibold'">
                         Tất cả
                     </a>
                     <a th:each="province : ${provinces}"
                        th:href="@{/admin/homestays/province/{province}(province=${province})}"
                        class="px-4 py-2 border border-gray-300 rounded-full hover:bg-gray-200 transition"
-                       th:classappend="${currentProvince == province} ? 'bg-blue-500 text-white'"
+                       th:classappend="${currentProvince == province} ? 'bg-blue-500 text-white font-semibold'"
                        th:text="${province}">
                     </a>
                 </div>
             </div>
 
+            <!-- Table -->
             <div class="overflow-auto bg-white rounded-lg shadow">
                 <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                    <thead class="bg-gray-100">
                         <tr>
-                            <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                            <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên</th>
-                            <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Địa chỉ</th>
-                            <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vị trí</th>
-                            <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tỉnh/Thành phố</th>
-                            <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mô tả</th>
-                            <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Giá tiền</th>
-                            <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hình ảnh</th>
-                            <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hành động</th>
+                            <th class="py-2 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">ID</th>
+                            <th class="py-2 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Tên</th>
+                            <th class="py-2 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Địa chỉ</th>
+                            <th class="py-2 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Vị trí</th>
+                            <th class="py-2 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Tỉnh/Thành phố</th>
+                            <th class="py-2 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Mô tả</th>
+                            <th class="py-2 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Giá tiền</th>
+                            <th class="py-2 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Hình ảnh</th>
+                            <th class="py-2 px-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="homestay : ${homestays}" class="border-b border-gray-200">
+                        <tr th:each="homestay : ${homestays}" class="hover:bg-gray-50 border-b border-gray-200">
                             <td class="py-2 px-4" th:text="${homestay.id}"></td>
                             <td class="py-2 px-4" th:text="${homestay.name}"></td>
                             <td class="py-2 px-4" th:text="${homestay.address}"></td>
@@ -74,12 +80,21 @@
                             <td class="py-2 px-4" th:text="${homestay.description}"></td>
                             <td class="py-2 px-4" th:text="${homestay.pricePerNight} + ' VND'"></td>
                             <td class="py-2 px-4">
-                                <img th:if="${homestay.image}" th:src="@{${homestay.image}}" alt="Homestay Image" width="100">
+                                <img th:if="${homestay.image}"
+                                     th:src="@{${homestay.image}}"
+                                     alt="Homestay Image"
+                                     class="w-100 h-50 rounded-md shadow-md">
                             </td>
-                            <td class="py-2 px-4 text-center">
-                                <a th:href="@{/admin/homestays/add(id=${homestay.id})}" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600">Chỉnh sửa</a>
-                                <a th:href="@{/admin/homestays/delete/{id}(id=${homestay.id})}" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 mt-2"
-                                   onclick="return confirm('Bạn có chắc chắn muốn xóa homestay này?')">Xóa</a>
+                            <td class="py-2 px-4 text-center space-y-2">
+                                <a th:href="@{/admin/homestays/add(id=${homestay.id})}"
+                                   class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 block w-full">
+                                    Chỉnh sửa
+                                </a>
+                                <a th:href="@{/admin/homestays/delete/{id}(id=${homestay.id})}"
+                                   class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 block w-full"
+                                   onclick="return confirm('Bạn có chắc chắn muốn xóa homestay này?')">
+                                    Xóa
+                                </a>
                             </td>
                         </tr>
                     </tbody>

@@ -42,32 +42,28 @@ public class AdminController {
     @Autowired
     private TicketService ticketService;
 
-    // Trang dashboard
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        // Lấy số lượng người dùng đã đăng ký
         long userCount = userService.countUsers();
         model.addAttribute("userCount", userCount);
 
-        // Lấy số lượng homestay đã đăng ký
         long homestayCount = homestayService.countHomestays();
         model.addAttribute("homestayCount", homestayCount);
 
-        // Lấy số lượng booking đang chờ xác nhận
         long pendingBookingCount = bookingService.getBookingsByStatus(Booking.BookingStatus.PENDING).size();
         model.addAttribute("pendingBookingCount", pendingBookingCount);
 
-        // Lấy tổng doanh thu từ các booking đã xác nhận
         double totalRevenue = bookingService.getTotalRevenue();
         model.addAttribute("totalRevenue", totalRevenue);
 
         return "admin/dashboard";
     }
 
-    // Quản lý người dùng
     @GetMapping("/users")
     public String listUsers(Model model) {
-        model.addAttribute("users", userService.getAllUsers());
+        List<User> users = userService.getAllUsers();
+        model.addAttribute("users", users);
+        model.addAttribute("debug", true);
         return "admin/manage-user";
     }
 

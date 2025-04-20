@@ -127,38 +127,49 @@
                 <!-- Reviews List -->
                 <div class="space-y-6">
                     <div th:if="${reviews != null and !reviews.empty}" th:each="review : ${reviews}" class="border-b pb-4">
-                        <div class="flex items-center mb-2 justify-between">
-                            <div class="flex items-center">
-                                <span th:text="${review.user.username}" class="font-medium mr-2"></span>
-                                <div class="flex">
-                                    <span th:each="i : ${#numbers.sequence(1, 5)}">
-                                        <span th:if="${i <= review.rating}" class="text-yellow-500">★</span>
-                                        <span th:if="${i > review.rating}" class="text-gray-300">★</span>
-                                    </span>
-                                </div>
-                                <span class="text-gray-500 text-sm ml-2" th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}"></span>
+                        <div class="flex items-start mb-2">
+                            <!-- Avatar -->
+                            <div class="mr-4">
+                                <img th:src="@{${review.user.avatar != null ? review.user.avatar : '/images/default-avatar.png'}}" 
+                                     alt="User Avatar" 
+                                     class="w-12 h-12 rounded-full object-cover">
                             </div>
-                            <!-- Thêm nút sửa và xóa cho người dùng đã đăng nhập và là người viết bình luận -->
-                            <div th:if="${currentUser != null && currentUser.username == review.user.username}" class="flex space-x-2">
-                                <button th:data-id="${review.id}" 
-                                        th:data-comment="${review.comment}" 
-                                        th:data-rating="${review.rating}"
-                                        onclick="openEditModal(this.getAttribute('data-id'), this.getAttribute('data-comment'), this.getAttribute('data-rating'))" 
-                                        class="text-blue-500 hover:text-blue-700">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
-                                </button>
-                                <form th:action="@{/user/homestays/reviews/{id}/delete(id=${review.id})}" method="post" class="inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bình luận này?');">
-                                    <button type="submit" class="text-red-500 hover:text-red-700">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                </form>
+                            <!-- Review Content -->
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center">
+                                        <span th:text="${review.user.username}" class="font-medium mr-2"></span>
+                                        <div class="flex">
+                                            <span th:each="i : ${#numbers.sequence(1, 5)}">
+                                                <span th:if="${i <= review.rating}" class="text-yellow-500">★</span>
+                                                <span th:if="${i > review.rating}" class="text-gray-300">★</span>
+                                            </span>
+                                        </div>
+                                        <span class="text-gray-500 text-sm ml-2" th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}"></span>
+                                    </div>
+                                    <!-- Thêm nút sửa và xóa cho người dùng đã đăng nhập và là người viết bình luận -->
+                                    <div th:if="${currentUser != null && currentUser.username == review.user.username}" class="flex space-x-2">
+                                        <button th:data-id="${review.id}" 
+                                                th:data-comment="${review.comment}" 
+                                                th:data-rating="${review.rating}"
+                                                onclick="openEditModal(this.getAttribute('data-id'), this.getAttribute('data-comment'), this.getAttribute('data-rating'))" 
+                                                class="text-blue-500 hover:text-blue-700">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </button>
+                                        <form th:action="@{/user/homestays/reviews/{id}/delete(id=${review.id})}" method="post" class="inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bình luận này?');">
+                                            <button type="submit" class="text-red-500 hover:text-red-700">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <p class="text-gray-700" th:text="${review.comment}"></p>
                             </div>
                         </div>
-                        <p class="text-gray-700" th:text="${review.comment}"></p>
                     </div>
                     <div th:if="${reviews == null or reviews.empty}" class="text-center text-gray-500 py-4">
                         Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá!

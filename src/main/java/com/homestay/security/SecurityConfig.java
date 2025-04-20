@@ -135,8 +135,14 @@ public class SecurityConfig implements WebMvcConfigurer {
                     .map(GrantedAuthority::getAuthority)
                     .anyMatch(role -> role.equals("ROLE_ADMIN"));
 
+            boolean isOwner = authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .anyMatch(role -> role.equals("ROLE_OWNER"));
+
             if (isAdmin) {
                 return "/admin/dashboard"; 
+            } else if (isOwner) {
+                return "/owner/dashboard";
             } else {
                 return "/user/home"; 
             }

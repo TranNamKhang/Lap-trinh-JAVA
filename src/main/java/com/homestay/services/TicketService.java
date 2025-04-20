@@ -25,8 +25,8 @@ public class TicketService {
 
     @Transactional
     public Ticket generateTicket(Booking booking) {
-        // Check if ticket already exists for this booking
-        Optional<Ticket> existingTicket = ticketRepository.findByBookingId(booking.getId());
+        List<Ticket> tickets = ticketRepository.findByBookingId(booking.getId());
+        Optional<Ticket> existingTicket = tickets.isEmpty() ? Optional.empty() : Optional.of(tickets.get(0));
         if (existingTicket.isPresent()) {
             logger.info("Ticket already exists for booking ID: {}", booking.getId());
             return existingTicket.get();
@@ -75,7 +75,8 @@ public class TicketService {
     }
 
     public Optional<Ticket> getTicketByBookingId(Long bookingId) {
-        return ticketRepository.findByBookingId(bookingId);
+        List<Ticket> tickets = ticketRepository.findByBookingId(bookingId);
+        return tickets.isEmpty() ? Optional.empty() : Optional.of(tickets.get(0));
     }
 
     @Transactional
@@ -88,5 +89,13 @@ public class TicketService {
         for (Long bookingId : bookingIds) {
             deleteByBookingId(bookingId);
         }
+    }
+
+    public List<Ticket> getTicketsByBookingId(Long bookingId) {
+        return ticketRepository.findByBookingId(bookingId);
+    }
+
+    public List<Ticket> getUnprintedTicketsByBookingId(Long bookingId) {
+        return ticketRepository.findByBookingIdAndPrintedFalse(bookingId);
     }
 }

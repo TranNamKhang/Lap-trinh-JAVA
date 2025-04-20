@@ -5,67 +5,200 @@
     <title>Quản lý Người dùng</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 font-sans">
-    <div class="flex flex-col md:flex-row">
-        <!-- Sidebar -->
-        <div class="w-full md:w-64 h-auto md:h-screen bg-gray-800 text-white fixed md:relative">
-            <div class="h-16 bg-gray-900 flex items-center justify-center text-xl font-bold">
-                Homestay Admin
-            </div>
-            <nav class="mt-4 flex flex-col">
-                <a href="/admin/dashboard" class="py-3 px-6 hover:bg-gray-700 transition"> Dashboard</a>
-                <a href="/admin/users" class="py-3 px-6 hover:bg-gray-700 transition bg-gray-700"> Quản lý Người dùng</a>
-                <a href="/admin/homestays" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Homestay</a>
-                <a href="/admin/bookings/pending" class="py-3 px-6 hover:bg-gray-700 transition"> Đặt phòng chờ duyệt</a>
-                <a href="/admin/tickets" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Vé</a>
-                <a href="/admin/tickets/unprinted" class="py-3 px-6 hover:bg-gray-700 transition"> Vé chưa in</a>
-                <a href="/" class="py-3 px-6 hover:bg-gray-700 transition"> Về Trang chủ</a>
-                <a href="/logout" class="py-3 px-6 hover:bg-gray-700 transition"> Đăng xuất</a>
-            </nav>
+
+<!-- Sidebar and Content Container -->
+<div class="flex flex-col md:flex-row min-h-screen">
+    <!-- Sidebar -->
+    <div class="w-full md:w-64 h-auto md:h-screen bg-gray-800 text-white fixed md:relative">
+        <div class="h-16 bg-gray-900 flex items-center justify-center text-xl font-bold">
+            Homestay Admin
         </div>
-
-<div class="container mx-auto mt-8 px-4">
-    <h1 class="text-3xl font-bold text-center mb-6">Danh sách Người dùng</h1>
-
-    <!-- Hiển thị thông báo nếu không có người dùng -->
-    <div th:if="${#lists.isEmpty(users)}" class="text-center text-red-500">
-        <p>Không có người dùng nào.</p>
+        <nav class="mt-4 flex flex-col">
+            <a href="/admin/dashboard" class="py-3 px-6 hover:bg-gray-700 transition"> Dashboard</a>
+            <a href="/admin/users" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Người dùng</a>
+            <a href="/admin/homestays" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Homestay</a>
+            <a href="/admin/bookings/pending" class="py-3 px-6 hover:bg-gray-700 transition"> Đặt phòng chờ duyệt</a>
+            <a href="/admin/tickets" class="py-3 px-6 hover:bg-gray-700 transition"> Quản lý Vé</a>
+            <a href="/admin/tickets/unprinted" class="py-3 px-6 hover:bg-gray-700 transition"> Vé chưa in</a>
+            <a href="/user/home" class="py-3 px-6 hover:bg-gray-700 transition"> Về Trang chủ</a>
+            <a href="/auth/logout" class="py-3 px-6 hover:bg-gray-700 transition"> Đăng xuất</a>
+        </nav>
     </div>
 
-    <!-- Table hiển thị người dùng -->
-    <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md" th:if="${!#lists.isEmpty(users)}">
-        <thead class="bg-gray-200">
-        <tr>
-            <th class="py-3 px-4 text-left">ID</th>
-            <th class="py-3 px-4 text-left">Tên</th>
-            <th class="py-3 px-4 text-left">Email</th>
-            <th class="py-3 px-4 text-left">Số điện thoại</th>
-            <th class="py-3 px-4 text-left">Role</th>
-            <th class="py-3 px-4 text-left">Hành động</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="user : ${users}" class="border-b border-gray-200">
-            <td class="py-3 px-4" th:text="${user.id}"></td>
-            <td class="py-3 px-4" th:text="${user.username}"></td>
-            <td class="py-3 px-4" th:text="${user.email}"></td>
-            <td class="py-3 px-4" th:text="${user.phone}"></td>
-            <td class="py-3 px-4" th:text="${user.role}"></td>
-            <td class="py-3 px-4 text-center">
-                <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600">Chỉnh sửa</a>
-                <a th:href="@{/admin/users/delete/{id}(id=${user.id})}" 
-                   onclick="return confirm('Bạn có chắc chắn muốn xóa?')" 
-                   class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 ml-2">Xóa</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <!-- Main Content -->
+    <div class="flex-1 ml-0 md:ml-64 p-6 md:p-8">
+        <div class="container mx-auto">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-users mr-3 text-blue-500"></i> Danh sách Người dùng
+                </h1>
 
-    <div class="mt-4 text-center">
-        <a href="/admin/dashboard" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600">Quay lại Dashboard</a>
+                <!-- Stats Cards -->
+                <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100 text-blue-500">
+                                <i class="fas fa-users text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-gray-500">Tổng số người dùng</p>
+                                <p class="text-2xl font-bold text-blue-500" th:text="${#lists.size(users)}"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100 text-green-500">
+                                <i class="fas fa-user-shield text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-gray-500">Quản trị viên</p>
+                                <p class="text-2xl font-bold text-green-500" th:text="${#lists.size(users.?[role.name() == 'ADMIN'])}"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-500">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-purple-100 text-purple-500">
+                                <i class="fas fa-user text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-gray-500">Người dùng</p>
+                                <p class="text-2xl font-bold text-purple-500" th:text="${#lists.size(users.?[role.name() == 'USER'])}"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="mb-6">
+                    <div class="flex border-b border-gray-200">
+                        <button onclick="showTab('admin-tab')" class="px-6 py-3 text-gray-600 hover:text-gray-800 focus:outline-none border-b-2 border-transparent hover:border-gray-300 active-tab flex items-center" id="admin-button">
+                            <i class="fas fa-user-shield mr-2"></i> Quản trị viên
+                        </button>
+                        <button onclick="showTab('user-tab')" class="px-6 py-3 text-gray-600 hover:text-gray-800 focus:outline-none border-b-2 border-transparent hover:border-gray-300 flex items-center" id="user-button">
+                            <i class="fas fa-user mr-2"></i> Người dùng
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Admin Table -->
+                <div id="admin-tab" class="tab-content">
+                    <div th:if="${#lists.isEmpty(users.?[role.name() == 'ADMIN'])}" class="text-center p-8 bg-gray-50 rounded-lg">
+                        <i class="fas fa-user-shield text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-500">Không có quản trị viên nào.</p>
+                    </div>
+
+                    <div class="overflow-x-auto" th:if="${!#lists.isEmpty(users.?[role.name() == 'ADMIN'])}">
+                        <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="py-3 px-4 text-left text-gray-600 font-semibold">ID</th>
+                                    <th class="py-3 px-4 text-left text-gray-600 font-semibold">Tên</th>
+                                    <th class="py-3 px-4 text-left text-gray-600 font-semibold">Email</th>
+                                    <th class="py-3 px-4 text-left text-gray-600 font-semibold">Số điện thoại</th>
+                                    <th class="py-3 px-4 text-left text-gray-600 font-semibold">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="user : ${users}" th:if="${user.role.name() == 'ADMIN'}" class="border-b border-gray-200 hover:bg-gray-50 transition">
+                                    <td class="py-3 px-4" th:text="${user.id}"></td>
+                                    <td class="py-3 px-4" th:text="${user.username}"></td>
+                                    <td class="py-3 px-4" th:text="${user.email}"></td>
+                                    <td class="py-3 px-4" th:text="${user.phone}"></td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex space-x-2">
+                                            <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600 transition flex items-center">
+                                                <i class="fas fa-edit mr-1"></i> Chỉnh sửa
+                                            </a>
+                                            <a th:href="@{/admin/users/delete/{id}(id=${user.id})}" 
+                                               onclick="return confirm('Bạn có chắc chắn muốn xóa?')" 
+                                               class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition flex items-center">
+                                                <i class="fas fa-trash mr-1"></i> Xóa
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- User Table -->
+                <div id="user-tab" class="tab-content hidden">
+                    <div th:if="${#lists.isEmpty(users.?[role.name() == 'USER'])}" class="text-center p-8 bg-gray-50 rounded-lg">
+                        <i class="fas fa-user text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-500">Không có người dùng nào.</p>
+                    </div>
+
+                    <div class="overflow-x-auto" th:if="${!#lists.isEmpty(users.?[role.name() == 'USER'])}">
+                        <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="py-3 px-4 text-left text-gray-600 font-semibold">ID</th>
+                                    <th class="py-3 px-4 text-left text-gray-600 font-semibold">Tên</th>
+                                    <th class="py-3 px-4 text-left text-gray-600 font-semibold">Email</th>
+                                    <th class="py-3 px-4 text-left text-gray-600 font-semibold">Số điện thoại</th>
+                                    <th class="py-3 px-4 text-left text-gray-600 font-semibold">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="user : ${users}" th:if="${user.role.name() == 'USER'}" class="border-b border-gray-200 hover:bg-gray-50 transition">
+                                    <td class="py-3 px-4" th:text="${user.id}"></td>
+                                    <td class="py-3 px-4" th:text="${user.username}"></td>
+                                    <td class="py-3 px-4" th:text="${user.email}"></td>
+                                    <td class="py-3 px-4" th:text="${user.phone}"></td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex space-x-2">
+                                            <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600 transition flex items-center">
+                                                <i class="fas fa-edit mr-1"></i> Chỉnh sửa
+                                            </a>
+                                            <a th:href="@{/admin/users/delete/{id}(id=${user.id})}" 
+                                               onclick="return confirm('Bạn có chắc chắn muốn xóa?')" 
+                                               class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition flex items-center">
+                                                <i class="fas fa-trash mr-1"></i> Xóa
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
     </div>
 </div>
 
+<script>
+    function showTab(tabId) {
+        // Hide all tab contents
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.add('hidden');
+        });
+        
+        // Remove active class from all buttons
+        document.querySelectorAll('button').forEach(button => {
+            button.classList.remove('border-blue-500');
+            button.classList.add('border-transparent');
+        });
+        
+        // Show selected tab content
+        document.getElementById(tabId).classList.remove('hidden');
+        
+        // Add active class to clicked button
+        const buttonId = tabId === 'admin-tab' ? 'admin-button' : 'user-button';
+        document.getElementById(buttonId).classList.remove('border-transparent');
+        document.getElementById(buttonId).classList.add('border-blue-500');
+    }
+
+    // Show admin tab by default
+    showTab('admin-tab');
+</script>
 </body>
 </html>

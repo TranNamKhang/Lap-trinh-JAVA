@@ -39,7 +39,7 @@ public class UserService {
     private final PaymentRepository paymentRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${upload.avatar.dir:D:/java/Lap-trinh-JAVA-main/uploads/avatars}")
+    @Value("${upload.avatar.dir:C:/Users/tdanh/Documents/chotottravel/uploads/avatars}")
     private String uploadDir;
 
     public UserService(UserRepository userRepository, 

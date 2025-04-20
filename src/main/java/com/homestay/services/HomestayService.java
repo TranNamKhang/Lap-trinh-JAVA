@@ -135,6 +135,10 @@ public class HomestayService {
         return reviewService.getAverageRating(homestay);
     }
 
+    public List<Homestay> getHomestaysByOwnerId(Long ownerId) {
+        return homestayRepository.findByOwnerId(ownerId);
+    }
+
     public long countHomestays() {
         return homestayRepository.count();
     }
