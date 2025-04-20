@@ -18,6 +18,10 @@ import java.util.List;
 import org.springframework.web.bind.annotation.PathVariable;
 import java.util.Map;
 import java.util.HashMap;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ResponseBody;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/user")
@@ -134,5 +138,42 @@ public class HomeController {
         model.addAttribute("provinces", provinces);
         model.addAttribute("averageRatings", averageRatings);
         return "user/home";
+    }
+
+    @GetMapping("/search")
+    public String searchHomestays(@RequestParam String keyword, Model model) {
+        List<String> provinces = Arrays.asList(
+            "Hà Nội", "Hồ Chí Minh", "Đà Nẵng", "Hải Phòng", "Cần Thơ",
+            "Bình Thuận", "Nha Trang", "Đà Lạt", "Hạ Long", "Phú Quốc"
+        );
+        
+        List<Homestay> homestays = homestayService.getHomestaysByName(keyword);
+        Map<Long, Double> averageRatings = new HashMap<>();
+        for (Homestay homestay : homestays) {
+            averageRatings.put(homestay.getId(), homestayService.getAverageRating(homestay));
+        }
+        
+        model.addAttribute("homestays", homestays);
+        model.addAttribute("provinces", provinces);
+        model.addAttribute("averageRatings", averageRatings);
+        model.addAttribute("keyword", keyword);
+        return "user/home";
+    }
+
+    @GetMapping("/api/search/suggestions")
+    @ResponseBody
+    public ResponseEntity<List<Map<String, Object>>> getSearchSuggestions(@RequestParam String keyword) {
+        List<Homestay> suggestions = homestayService.getHomestaysByName(keyword);
+        List<Map<String, Object>> response = new ArrayList<>();
+        
+        for (Homestay homestay : suggestions) {
+            Map<String, Object> homestayData = new HashMap<>();
+            homestayData.put("id", homestay.getId());
+            homestayData.put("name", homestay.getName());
+            homestayData.put("province", homestay.getProvince());
+            response.add(homestayData);
+        }
+        
+        return ResponseEntity.ok(response);
     }
 }

@@ -2,6 +2,7 @@ package com.homestay.services;
 
 import com.homestay.models.User;
 import com.homestay.models.Booking;
+import com.homestay.models.Homestay;
 import com.homestay.models.Role;
 import com.homestay.repositories.UserRepository;
 import com.homestay.repositories.ReviewRepository;
@@ -156,21 +157,40 @@ public class UserService {
             throw new IllegalArgumentException("Người dùng không tồn tại!");
         }
         
-        List<Booking> userBookings = bookingRepository.findByUserId(id);
-        for (Booking booking : userBookings) {
-            paymentRepository.deleteByBookingId(booking.getId());
+        // 1. Xóa tất cả các homestay của user và các bản ghi liên quan
+        List<Homestay> userHomestays = homestayRepository.findByOwnerId(id);
+        for (Homestay homestay : userHomestays) {
+            // Xóa các review của homestay
+            reviewRepository.deleteByHomestayId(homestay.getId());
+            
+            // Xóa các booking của homestay và các bản ghi liên quan
+            List<Booking> homestayBookings = bookingRepository.findByHomestayId(homestay.getId());
+            for (Booking booking : homestayBookings) {
+                // Xóa payments trước
+                paymentRepository.deleteByBookingId(booking.getId());
+                // Xóa tickets trước
+                ticketRepository.deleteByBookingId(booking.getId());
+                // Sau đó mới xóa booking
+                bookingRepository.deleteById(booking.getId());
+            }
         }
-        
-        for (Booking booking : userBookings) {
-            ticketRepository.deleteByBookingId(booking.getId());
-        }
-        
-        bookingRepository.deleteByUserId(id);
-        
-        reviewRepository.deleteByUserId(id);
-        
         homestayRepository.deleteByOwnerId(id);
         
+        // 2. Xóa các booking của user và các bản ghi liên quan
+        List<Booking> userBookings = bookingRepository.findByUserId(id);
+        for (Booking booking : userBookings) {
+            // Xóa payments trước
+            paymentRepository.deleteByBookingId(booking.getId());
+            // Xóa tickets trước
+            ticketRepository.deleteByBookingId(booking.getId());
+            // Sau đó mới xóa booking
+            bookingRepository.deleteById(booking.getId());
+        }
+        
+        // 3. Xóa tất cả các review của user
+        reviewRepository.deleteByUserId(id);
+        
+        // 4. Cuối cùng mới xóa user
         userRepository.deleteById(id);
         logger.info("🗑️ Người dùng ID: {} đã bị xóa!", id);
     }
@@ -219,5 +239,9 @@ public class UserService {
         Files.copy(file.getInputStream(), filePath);
 
         return "/uploads/avatars/" + fileName;
+    }
+
+    public long countUsers() {
+        return userRepository.count();
     }
 }

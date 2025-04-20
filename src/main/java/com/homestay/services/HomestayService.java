@@ -52,6 +52,10 @@ public class HomestayService {
         return homestayRepository.findByProvinceContainingIgnoreCase(province);
     }
 
+    public List<Homestay> getHomestaysByName(String name) {
+        return homestayRepository.findByNameContainingIgnoreCase(name);
+    }
+
     public Optional<Homestay> getHomestayById(Long id) {
         return homestayRepository.findById(id);
     }
@@ -129,5 +133,9 @@ public class HomestayService {
 
     public double getAverageRating(Homestay homestay) {
         return reviewService.getAverageRating(homestay);
+    }
+
+    public long countHomestays() {
+        return homestayRepository.count();
     }
 }

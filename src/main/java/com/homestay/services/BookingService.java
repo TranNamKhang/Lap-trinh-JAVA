@@ -90,6 +90,13 @@ public class BookingService {
         return bookingRepository.findByStatus(status);
     }
 
+    public double getTotalRevenue() {
+        List<Booking> confirmedBookings = bookingRepository.findByStatus(Booking.BookingStatus.CONFIRMED);
+        return confirmedBookings.stream()
+                .mapToDouble(Booking::getTotalPrice)
+                .sum();
+    }
+
     @Transactional
     public boolean updateBookingStatus(Long id, Booking.BookingStatus bookingStatus) {
         logger.info("Attempting to update status of booking ID: {} to {}", id, bookingStatus);

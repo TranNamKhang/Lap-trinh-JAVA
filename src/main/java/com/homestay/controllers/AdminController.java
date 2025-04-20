@@ -45,7 +45,22 @@ public class AdminController {
     // Trang dashboard
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        model.addAttribute("visitorCount", visitCounterService.getTotalVisits());
+        // Lấy số lượng người dùng đã đăng ký
+        long userCount = userService.countUsers();
+        model.addAttribute("userCount", userCount);
+
+        // Lấy số lượng homestay đã đăng ký
+        long homestayCount = homestayService.countHomestays();
+        model.addAttribute("homestayCount", homestayCount);
+
+        // Lấy số lượng booking đang chờ xác nhận
+        long pendingBookingCount = bookingService.getBookingsByStatus(Booking.BookingStatus.PENDING).size();
+        model.addAttribute("pendingBookingCount", pendingBookingCount);
+
+        // Lấy tổng doanh thu từ các booking đã xác nhận
+        double totalRevenue = bookingService.getTotalRevenue();
+        model.addAttribute("totalRevenue", totalRevenue);
+
         return "admin/dashboard";
     }
 
